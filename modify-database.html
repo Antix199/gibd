@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GlaciarIng - Modify Database</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="assets/css/components.css">
+</head>
+<body>
+    <!-- Header Component -->
+    <header class="header">
+        <div class="search-container">
+            <input type="text" class="search-box" placeholder="Search..." id="searchInput">
+        </div>
+        <div class="user-info">
+            <button class="btn btn-primary" id="backToMainBtn">Back to Main</button>
+            <div class="user-profile">
+                <span class="user-avatar">👤</span>
+                <span class="user-name">John Doe</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <h1 class="page-title">Modify Database</h1>
+        
+        <!-- Add New Record Section -->
+        <section class="section">
+            <h2 class="section-title">Add New Record</h2>
+            <form class="add-record-form" id="addRecordForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="recordId">ID</label>
+                        <input type="number" id="recordId" class="form-input" placeholder="Auto-generated">
+                    </div>
+                    <div class="form-group">
+                        <label for="recordName">Name</label>
+                        <input type="text" id="recordName" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="recordDate">Date</label>
+                        <input type="date" id="recordDate" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="recordStatus">Status</label>
+                        <select id="recordStatus" class="form-select" required>
+                            <option value="">Select Status</option>
+                            <option value="Active">Active</option>
+                            <option value="Completed">Completed</option>
+                            <option value="Pending">Pending</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="recordAmount">Amount</label>
+                        <input type="number" id="recordAmount" class="form-input" step="0.01" min="0">
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Add Record</button>
+                    </div>
+                </div>
+            </form>
+        </section>
+        
+        <!-- Load Data from Archive Section -->
+        <section class="section">
+            <h2 class="section-title">Load Data from Archive</h2>
+            <div class="file-upload-container">
+                <div class="file-upload">
+                    <input type="file" id="fileInput" class="file-input" accept=".csv,.xlsx,.xls" hidden>
+                    <button type="button" class="btn btn-secondary" id="selectFileBtn">Seleccionar archivo</button>
+                    <span class="file-info" id="fileInfo">Ningún archivo seleccionado</span>
+                    <button type="button" class="btn btn-primary" id="uploadBtn" disabled>Upload</button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Manage Existing Records Section -->
+        <section class="section">
+            <h2 class="section-title">Manage Existing Records</h2>
+            <div class="table-container manage-table">
+                <table class="data-table" id="manageTable">
+                    <thead>
+                        <tr>
+                            <th>
+                                <input type="checkbox" id="selectAll" class="checkbox">
+                            </th>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Amount</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="manageTableBody">
+                        <!-- Data will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="action-buttons">
+                <button class="btn btn-danger" id="deleteSelectedBtn" disabled>Delete Selected</button>
+                <button class="btn btn-warning" id="editSelectedBtn" disabled>Edit Selected</button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Edit Modal -->
+    <div class="modal-overlay" id="editModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Edit Record</h3>
+                <button class="modal-close" id="closeEditModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="editRecordForm">
+                    <div class="form-group">
+                        <label for="editName">Name</label>
+                        <input type="text" id="editName" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editDate">Date</label>
+                        <input type="date" id="editDate" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editStatus">Status</label>
+                        <select id="editStatus" class="form-select" required>
+                            <option value="Active">Active</option>
+                            <option value="Completed">Completed</option>
+                            <option value="Pending">Pending</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="editAmount">Amount</label>
+                        <input type="number" id="editAmount" class="form-input" step="0.01" min="0">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelEditBtn">Cancel</button>
+                <button class="btn btn-primary" id="saveEditBtn">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <p>Processing...</p>
+    </div>
+
+    <!-- Scripts -->
+    <script src="assets/js/data.js"></script>
+    <script src="assets/js/components.js"></script>
+    <script src="assets/js/modify-database.js"></script>
+</body>
+</html>
