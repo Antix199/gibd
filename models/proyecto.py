@@ -89,15 +89,9 @@ class Proyecto:
         if not self.contrato or len(self.contrato.strip()) < 2:
             errors.append("El contrato debe tener al menos 2 caracteres")
 
-        if len(self.contrato) > 100:
-            errors.append("El contrato no puede exceder 100 caracteres")
-
         # Validar cliente
         if not self.cliente or len(self.cliente.strip()) < 2:
             errors.append("El cliente debe tener al menos 2 caracteres")
-
-        if len(self.cliente) > 100:
-            errors.append("El cliente no puede exceder 100 caracteres")
 
         # Validar región
         if not self.region or len(self.region.strip()) < 2:
@@ -190,8 +184,8 @@ def format_amount(amount: float) -> str:
 def create_indexes(collection):
     """Crea índices optimizados para la colección de proyectos"""
     try:
-        # Índice único en el campo 'id'
-        collection.create_index("id", unique=True)
+        # Índice en el campo 'id' (no único)
+        collection.create_index("id")
 
         # Índice compuesto para búsquedas frecuentes
         collection.create_index([("estado", 1), ("fecha_inicio", -1)])

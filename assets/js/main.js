@@ -1,267 +1,485 @@
 /**
- * Main Page JavaScript
- * Handles the Data Filtering and Display page functionality
+ * Main Page JavaScript - Sistema de Gestión de Proyectos GlaciarIng
+ * Funcionalidades completas de filtrado y visualización
  */
 
 class MainPage {
     constructor() {
+        this.allProjects = [];
+        this.filteredProjects = [];
+        this.currentPage = 1;
+        this.projectsPerPage = 50;
+        
         this.currentFilters = {
+            search: '',
+            id: '',
+            contrato: '',
             cliente: '',
-            estado: ''
+            estado: '',
+            region: '',
+            ciudad: '',
+            fechaInicioDesde: '',
+            fechaInicioHasta: '',
+            fechaTerminoDesde: '',
+            fechaTerminoHasta: '',
+            montoDesde: '',
+            montoHasta: ''
         };
         
         this.init();
     }
 
-    init() {
+    async init() {
+        console.log('🏗️ Inicializando MainPage...');
         this.setupEventListeners();
-        this.loadData();
-        this.setupSearch();
+        await this.loadAllProjects();
+        this.applyFiltersAndDisplay();
+        console.log('✅ MainPage inicializada correctamente');
     }
 
     setupEventListeners() {
-        // Navigation
-        const modifyDbBtn = document.getElementById('modifyDbBtn');
-        if (modifyDbBtn) {
-            modifyDbBtn.addEventListener('click', () => {
-                window.location.href = 'modify-database.html';
-            });
-        }
-
-        // Filter buttons
-        const applyFiltersBtn = document.getElementById('applyFiltersBtn');
-        const clearFiltersBtn = document.getElementById('clearFiltersBtn');
-
-        if (applyFiltersBtn) {
-            applyFiltersBtn.addEventListener('click', () => this.applyFilters());
-        }
-
-        if (clearFiltersBtn) {
-            clearFiltersBtn.addEventListener('click', () => this.clearFilters());
-        }
-
-        // Generate PDF button
-        const generatePdfBtn = document.getElementById('generatePdfBtn');
-        if (generatePdfBtn) {
-            generatePdfBtn.addEventListener('click', () => this.generatePDF());
-        }
-
-        // Enter key on filter inputs
-        const clienteFilter = document.getElementById('clienteFilter');
-        const estadoFilter = document.getElementById('estadoFilter');
-
-        if (clienteFilter) {
-            clienteFilter.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    this.applyFilters();
+        // Toggle filters visibility
+        const toggleFilters = document.getElementById('toggleFilters');
+        if (toggleFilters) {
+            toggleFilters.addEventListener('click', () => {
+                const filtersContainer = document.getElementById('filtersContainer');
+                if (filtersContainer) {
+                    filtersContainer.classList.toggle('hidden');
                 }
             });
         }
 
+        // Apply filters button
+        const applyFiltersBtn = document.getElementById('applyFiltersBtn');
+        if (applyFiltersBtn) {
+            applyFiltersBtn.addEventListener('click', () => {
+                this.collectFiltersAndApply();
+            });
+        }
+
+        // Clear filters button
+        const clearFiltersBtn = document.getElementById('clearFiltersBtn');
+        if (clearFiltersBtn) {
+            clearFiltersBtn.addEventListener('click', () => {
+                this.clearAllFilters();
+            });
+        }
+
+        // Export filtered button
+        const exportFilteredBtn = document.getElementById('exportFilteredBtn');
+        if (exportFilteredBtn) {
+            exportFilteredBtn.addEventListener('click', () => {
+                this.exportFilteredData();
+            });
+        }
+
+        // Real-time search on main search box
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                this.currentFilters.search = e.target.value.trim();
+                this.applyFiltersAndDisplay();
+            });
+        }
+
+        // Enter key on filter inputs for quick apply
+        const filterInputs = [
+            'idFilter', 'contratoFilter', 'clienteFilter', 'regionFilter', 'ciudadFilter',
+            'fechaInicioDesde', 'fechaInicioHasta', 'fechaTerminoDesde', 'fechaTerminoHasta',
+            'montoDesde', 'montoHasta'
+        ];
+
+        filterInputs.forEach(inputId => {
+            const input = document.getElementById(inputId);
+            if (input) {
+                input.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.collectFiltersAndApply();
+                    }
+                });
+            }
+        });
+
+        // Auto-apply on select change
+        const estadoFilter = document.getElementById('estadoFilter');
         if (estadoFilter) {
             estadoFilter.addEventListener('change', () => {
-                this.applyFilters();
+                this.collectFiltersAndApply();
             });
         }
     }
 
-    setupSearch() {
-        // Setup real-time search on the main search box
-        UIComponents.setupSearch('searchInput', (query) => {
-            this.currentFilters.cliente = query;
-            this.loadData();
-        });
-    }
-
-    async loadData() {
+    async loadAllProjects() {
         try {
-            UIComponents.showLoading('Loading data...');
+            console.log('📡 Cargando todos los proyectos...');
+            UIComponents.showLoading('Cargando proyectos...');
 
-            const data = await dataManager.getFilteredRecords(
-                this.currentFilters.cliente,
-                this.currentFilters.estado
-            );
+            const response = await fetch('/api/proyectos');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
 
-            this.populateTable(data);
-            this.updateStatistics(data);
+            const result = await response.json();
+            this.allProjects = result.data || [];
+            
+            console.log('✅ Proyectos cargados:', this.allProjects.length);
             UIComponents.hideLoading();
 
         } catch (error) {
-            console.error('Error loading data:', error);
-            UIComponents.showNotification('Error loading data', 'error');
+            console.error('❌ Error cargando proyectos:', error);
+            UIComponents.showNotification('Error cargando proyectos', 'error');
             UIComponents.hideLoading();
         }
     }
 
-    populateTable(data) {
-        const tableBody = document.getElementById('tableBody');
-        if (!tableBody) return;
+    collectFiltersAndApply() {
+        // Recopilar todos los valores de filtros
+        this.currentFilters.id = document.getElementById('idFilter')?.value.trim() || '';
+        this.currentFilters.contrato = document.getElementById('contratoFilter')?.value.trim() || '';
+        this.currentFilters.cliente = document.getElementById('clienteFilter')?.value.trim() || '';
+        this.currentFilters.estado = document.getElementById('estadoFilter')?.value || '';
+        this.currentFilters.region = document.getElementById('regionFilter')?.value.trim() || '';
+        this.currentFilters.ciudad = document.getElementById('ciudadFilter')?.value.trim() || '';
+        this.currentFilters.fechaInicioDesde = document.getElementById('fechaInicioDesde')?.value || '';
+        this.currentFilters.fechaInicioHasta = document.getElementById('fechaInicioHasta')?.value || '';
+        this.currentFilters.fechaTerminoDesde = document.getElementById('fechaTerminoDesde')?.value || '';
+        this.currentFilters.fechaTerminoHasta = document.getElementById('fechaTerminoHasta')?.value || '';
+        this.currentFilters.montoDesde = document.getElementById('montoDesde')?.value || '';
+        this.currentFilters.montoHasta = document.getElementById('montoHasta')?.value || '';
 
-        // Clear existing rows
+        console.log('🔍 Filtros aplicados:', this.currentFilters);
+        this.applyFiltersAndDisplay();
+        UIComponents.showNotification('Filtros aplicados exitosamente', 'success');
+    }
+
+    applyFiltersAndDisplay() {
+        this.filteredProjects = this.allProjects.filter(project => {
+            return this.matchesAllFilters(project);
+        });
+
+        console.log('📊 Proyectos filtrados:', this.filteredProjects.length, 'de', this.allProjects.length);
+        this.displayProjects();
+        this.updateStatistics();
+    }
+
+    matchesAllFilters(project) {
+        // Búsqueda general (ID, contrato, cliente)
+        if (this.currentFilters.search) {
+            const searchTerm = this.currentFilters.search.toLowerCase();
+            const searchMatch = 
+                (project.id && project.id.toString().toLowerCase().includes(searchTerm)) ||
+                (project.contrato && project.contrato.toLowerCase().includes(searchTerm)) ||
+                (project.cliente && project.cliente.toLowerCase().includes(searchTerm));
+            
+            if (!searchMatch) return false;
+        }
+
+        // Filtro por ID específico
+        if (this.currentFilters.id && project.id) {
+            if (!project.id.toString().toLowerCase().includes(this.currentFilters.id.toLowerCase())) {
+                return false;
+            }
+        }
+
+        // Filtro por contrato
+        if (this.currentFilters.contrato && project.contrato) {
+            if (!project.contrato.toLowerCase().includes(this.currentFilters.contrato.toLowerCase())) {
+                return false;
+            }
+        }
+
+        // Filtro por cliente
+        if (this.currentFilters.cliente && project.cliente) {
+            if (!project.cliente.toLowerCase().includes(this.currentFilters.cliente.toLowerCase())) {
+                return false;
+            }
+        }
+
+        // Filtro por estado
+        if (this.currentFilters.estado && project.estado !== this.currentFilters.estado) {
+            return false;
+        }
+
+        // Filtro por región
+        if (this.currentFilters.region && project.region) {
+            if (!project.region.toLowerCase().includes(this.currentFilters.region.toLowerCase())) {
+                return false;
+            }
+        }
+
+        // Filtro por ciudad
+        if (this.currentFilters.ciudad && project.ciudad) {
+            if (!project.ciudad.toLowerCase().includes(this.currentFilters.ciudad.toLowerCase())) {
+                return false;
+            }
+        }
+
+        // Filtros de fecha de inicio
+        if (this.currentFilters.fechaInicioDesde || this.currentFilters.fechaInicioHasta) {
+            const fechaInicio = project.fecha_inicio ? new Date(project.fecha_inicio) : null;
+            
+            if (this.currentFilters.fechaInicioDesde) {
+                const fechaDesde = new Date(this.currentFilters.fechaInicioDesde);
+                if (!fechaInicio || fechaInicio < fechaDesde) {
+                    return false;
+                }
+            }
+            
+            if (this.currentFilters.fechaInicioHasta) {
+                const fechaHasta = new Date(this.currentFilters.fechaInicioHasta);
+                if (!fechaInicio || fechaInicio > fechaHasta) {
+                    return false;
+                }
+            }
+        }
+
+        // Filtros de fecha de término
+        if (this.currentFilters.fechaTerminoDesde || this.currentFilters.fechaTerminoHasta) {
+            const fechaTermino = project.fecha_termino ? new Date(project.fecha_termino) : null;
+            
+            if (this.currentFilters.fechaTerminoDesde) {
+                const fechaDesde = new Date(this.currentFilters.fechaTerminoDesde);
+                if (!fechaTermino || fechaTermino < fechaDesde) {
+                    return false;
+                }
+            }
+            
+            if (this.currentFilters.fechaTerminoHasta) {
+                const fechaHasta = new Date(this.currentFilters.fechaTerminoHasta);
+                if (!fechaTermino || fechaTermino > fechaHasta) {
+                    return false;
+                }
+            }
+        }
+
+        // Filtros de monto
+        if (this.currentFilters.montoDesde || this.currentFilters.montoHasta) {
+            const monto = parseFloat(project.monto) || 0;
+            
+            if (this.currentFilters.montoDesde) {
+                const montoDesde = parseFloat(this.currentFilters.montoDesde);
+                if (monto < montoDesde) {
+                    return false;
+                }
+            }
+            
+            if (this.currentFilters.montoHasta) {
+                const montoHasta = parseFloat(this.currentFilters.montoHasta);
+                if (monto > montoHasta) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    displayProjects() {
+        const tableBody = document.getElementById('tableBody');
+        if (!tableBody) {
+            console.error('❌ Elemento tableBody no encontrado');
+            return;
+        }
+
         tableBody.innerHTML = '';
 
-        if (data.length === 0) {
+        if (this.filteredProjects.length === 0) {
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td colspan="9" style="text-align: center; padding: 2rem; color: var(--gray-500);">
-                    No records found
+                <td colspan="9" class="text-center" style="padding: 2rem; color: #666;">
+                    <i class="fas fa-search" style="font-size: 2rem; margin-bottom: 1rem; display: block;"></i>
+                    No se encontraron proyectos con los filtros aplicados
                 </td>
             `;
             tableBody.appendChild(row);
             return;
         }
 
-        // Create rows
-        data.forEach(record => {
-            const row = document.createElement('tr');
-            row.className = 'fade-in';
-            
-            row.innerHTML = `
-                <td>${record.id}</td>
-                <td>${record.contrato}</td>
-                <td>${record.cliente}</td>
-                <td>${formatDate(record.fecha_inicio)}</td>
-                <td>${record.fecha_termino ? formatDate(record.fecha_termino) : '-'}</td>
-                <td>${record.region}</td>
-                <td>${record.ciudad}</td>
-                <td>
-                    <span class="status-badge status-${record.estado.toLowerCase()}">
-                        ${record.estado}
-                    </span>
-                </td>
-                <td>${formatCurrency(record.monto)}</td>
-            `;
+        // Paginación
+        const startIndex = (this.currentPage - 1) * this.projectsPerPage;
+        const endIndex = Math.min(startIndex + this.projectsPerPage, this.filteredProjects.length);
+        const projectsToShow = this.filteredProjects.slice(startIndex, endIndex);
 
+        projectsToShow.forEach(project => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${project.id || 'N/A'}</td>
+                <td title="${project.contrato || 'N/A'}">${this.truncateText(project.contrato || 'N/A', 30)}</td>
+                <td title="${project.cliente || 'N/A'}">${this.truncateText(project.cliente || 'N/A', 25)}</td>
+                <td>${this.formatDate(project.fecha_inicio)}</td>
+                <td>${this.formatDate(project.fecha_termino)}</td>
+                <td>${project.region || 'N/A'}</td>
+                <td>${project.ciudad || 'N/A'}</td>
+                <td><span class="status-badge status-${(project.estado || 'pendiente').toLowerCase()}">${project.estado || 'Pendiente'}</span></td>
+                <td class="text-right">$${this.formatNumber(project.monto || 0)}</td>
+            `;
             tableBody.appendChild(row);
         });
+
+        this.updatePagination();
     }
 
-    updateStatistics(data) {
-        // Update any statistics display if needed
-        const stats = {
-            total: data.length,
-            totalAmount: data.reduce((sum, record) => sum + record.amount, 0)
-        };
+    updateStatistics() {
+        // Actualizar contadores
+        const totalProjects = document.getElementById('totalProjects');
+        const filteredCount = document.getElementById('filteredCount');
 
-        // You can add statistics display here if needed
-        console.log('Current view statistics:', stats);
+        if (totalProjects) {
+            totalProjects.textContent = this.allProjects.length.toLocaleString();
+        }
+
+        if (filteredCount) {
+            filteredCount.textContent = this.filteredProjects.length.toLocaleString();
+        }
+
+        // Calcular estadísticas adicionales
+        const totalMonto = this.filteredProjects.reduce((sum, project) => sum + (parseFloat(project.monto) || 0), 0);
+        const totalMontoElement = document.getElementById('totalMonto');
+        if (totalMontoElement) {
+            totalMontoElement.textContent = '$' + this.formatNumber(totalMonto);
+        }
+
+        // Estadísticas por estado
+        const estadisticas = this.filteredProjects.reduce((acc, project) => {
+            const estado = project.estado || 'Sin Estado';
+            acc[estado] = (acc[estado] || 0) + 1;
+            return acc;
+        }, {});
+
+        console.log('📈 Estadísticas:', estadisticas);
     }
 
-    applyFilters() {
-        const clienteFilter = document.getElementById('clienteFilter');
-        const estadoFilter = document.getElementById('estadoFilter');
+    updatePagination() {
+        const totalPages = Math.ceil(this.filteredProjects.length / this.projectsPerPage);
+        const paginationContainer = document.getElementById('pagination');
 
-        if (clienteFilter) {
-            this.currentFilters.cliente = clienteFilter.value.trim();
+        if (!paginationContainer) return;
+
+        if (totalPages <= 1) {
+            paginationContainer.innerHTML = '';
+            return;
         }
 
-        if (estadoFilter) {
-            const estadoValue = estadoFilter.value;
-            this.currentFilters.estado = estadoValue === 'Seleccionar Estado' ? '' : estadoValue;
+        let paginationHTML = '';
+
+        // Botón anterior
+        if (this.currentPage > 1) {
+            paginationHTML += `<button class="btn btn-secondary" onclick="mainPage.goToPage(${this.currentPage - 1})">Anterior</button>`;
         }
 
-        this.loadData();
-        
-        // Show feedback
-        UIComponents.showNotification('Filters applied successfully', 'success');
+        // Números de página
+        const startPage = Math.max(1, this.currentPage - 2);
+        const endPage = Math.min(totalPages, this.currentPage + 2);
+
+        for (let i = startPage; i <= endPage; i++) {
+            const activeClass = i === this.currentPage ? 'btn-primary' : 'btn-secondary';
+            paginationHTML += `<button class="btn ${activeClass}" onclick="mainPage.goToPage(${i})">${i}</button>`;
+        }
+
+        // Botón siguiente
+        if (this.currentPage < totalPages) {
+            paginationHTML += `<button class="btn btn-secondary" onclick="mainPage.goToPage(${this.currentPage + 1})">Siguiente</button>`;
+        }
+
+        paginationContainer.innerHTML = paginationHTML;
     }
 
-    clearFilters() {
-        // Reset filter inputs
-        const clienteFilter = document.getElementById('clienteFilter');
-        const estadoFilter = document.getElementById('estadoFilter');
-        const searchInput = document.getElementById('searchInput');
-
-        if (clienteFilter) {
-            clienteFilter.value = '';
-        }
-
-        if (estadoFilter) {
-            estadoFilter.value = '';
-        }
-
-        if (searchInput) {
-            searchInput.value = '';
-        }
-
-        // Reset current filters
-        this.currentFilters = {
-            cliente: '',
-            estado: ''
-        };
-
-        this.loadData();
-        
-        // Show feedback
-        UIComponents.showNotification('Filters cleared', 'info');
+    goToPage(page) {
+        this.currentPage = page;
+        this.displayProjects();
     }
 
-    async generatePDF() {
+    clearAllFilters() {
+        // Limpiar todos los campos de filtro
+        const filterInputs = [
+            'searchInput', 'idFilter', 'contratoFilter', 'clienteFilter', 'estadoFilter',
+            'regionFilter', 'ciudadFilter', 'fechaInicioDesde', 'fechaInicioHasta',
+            'fechaTerminoDesde', 'fechaTerminoHasta', 'montoDesde', 'montoHasta'
+        ];
+
+        filterInputs.forEach(inputId => {
+            const input = document.getElementById(inputId);
+            if (input) {
+                input.value = '';
+            }
+        });
+
+        // Resetear filtros internos
+        Object.keys(this.currentFilters).forEach(key => {
+            this.currentFilters[key] = '';
+        });
+
+        this.currentPage = 1;
+        this.applyFiltersAndDisplay();
+        UIComponents.showNotification('Filtros limpiados', 'info');
+    }
+
+    async exportFilteredData() {
         try {
-            UIComponents.showLoading('Generating export...');
-
-            // Get current filtered data
-            const data = await dataManager.getFilteredRecords(
-                this.currentFilters.cliente,
-                this.currentFilters.estado
-            );
-
-            if (data.length === 0) {
-                UIComponents.hideLoading();
-                UIComponents.showNotification('No data to export', 'warning');
+            if (this.filteredProjects.length === 0) {
+                UIComponents.showNotification('No hay datos para exportar con los filtros actuales', 'warning');
                 return;
             }
 
-            // Create CSV content
-            const headers = ['ID', 'Contrato', 'Cliente', 'Fecha_Inicio', 'Fecha_Termino', 'Region', 'Ciudad', 'Estado', 'Monto'];
+            // Crear CSV
+            const headers = ['ID', 'Contrato', 'Cliente', 'Fecha Inicio', 'Fecha Término', 'Región', 'Ciudad', 'Estado', 'Monto'];
             const csvContent = [
                 headers.join(','),
-                ...data.map(record => [
-                    record.id,
-                    `"${record.contrato}"`,
-                    `"${record.cliente}"`,
-                    formatDate(record.fecha_inicio),
-                    record.fecha_termino ? formatDate(record.fecha_termino) : '',
-                    `"${record.region}"`,
-                    `"${record.ciudad}"`,
-                    record.estado,
-                    record.monto
+                ...this.filteredProjects.map(project => [
+                    project.id || '',
+                    `"${(project.contrato || '').replace(/"/g, '""')}"`,
+                    `"${(project.cliente || '').replace(/"/g, '""')}"`,
+                    project.fecha_inicio || '',
+                    project.fecha_termino || '',
+                    `"${(project.region || '').replace(/"/g, '""')}"`,
+                    `"${(project.ciudad || '').replace(/"/g, '""')}"`,
+                    project.estado || '',
+                    project.monto || 0
                 ].join(','))
             ].join('\n');
 
-            // Create and download file
-            const blob = new Blob([csvContent], { type: 'text/csv' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `glaciaring_data_${new Date().toISOString().split('T')[0]}.csv`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
+            // Descargar archivo
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `proyectos_filtrados_${new Date().toISOString().split('T')[0]}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
 
-            UIComponents.hideLoading();
-            UIComponents.showNotification('Data exported successfully!', 'success');
-
+            UIComponents.showNotification(`${this.filteredProjects.length} proyectos exportados exitosamente`, 'success');
         } catch (error) {
-            console.error('Error generating export:', error);
-            UIComponents.showNotification('Error generating export', 'error');
-            UIComponents.hideLoading();
+            console.error('Error al exportar datos:', error);
+            UIComponents.showNotification('Error al exportar datos', 'error');
         }
+    }
+
+    // Métodos utilitarios
+    truncateText(text, maxLength) {
+        if (!text || text.length <= maxLength) return text;
+        return text.substring(0, maxLength) + '...';
+    }
+
+    formatDate(dateString) {
+        if (!dateString) return 'N/A';
+        try {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('es-CL');
+        } catch (error) {
+            return 'N/A';
+        }
+    }
+
+    formatNumber(number) {
+        if (!number) return '0';
+        return Number(number).toLocaleString('es-CL');
     }
 }
 
-// Initialize the page when DOM is loaded
+// Inicializar cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', () => {
-    new MainPage();
-});
-
-// Handle page visibility changes
-document.addEventListener('visibilitychange', () => {
-    if (!document.hidden) {
-        // Refresh data when page becomes visible (in case data was modified in another tab)
-        if (window.mainPage) {
-            window.mainPage.loadData();
-        }
-    }
+    console.log('🚀 DOM cargado, inicializando MainPage...');
+    window.mainPage = new MainPage();
 });

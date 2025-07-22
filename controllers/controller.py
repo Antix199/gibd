@@ -2,7 +2,7 @@ from typing import List, Optional, Dict, Any
 from datetime import datetime
 import logging
 from bson import ObjectId
-from pymongo.errors import PyMongoError, DuplicateKeyError
+from pymongo.errors import PyMongoError
 
 from db.conexion import get_collection, test_mongodb_connection
 from models.proyecto import Proyecto, STATUS_OPTIONS, create_indexes, get_collection_stats
@@ -66,9 +66,7 @@ class ProyectoController:
             logger.info(f"✅ Proyecto creado con ID: {proyecto.id}, MongoDB _id: {result.inserted_id}")
             return True
 
-        except DuplicateKeyError:
-            logger.error(f"❌ Ya existe un proyecto con ID: {proyecto.id}")
-            return False
+
         except PyMongoError as e:
             logger.error(f"❌ Error de MongoDB al crear proyecto: {e}")
             return False
@@ -259,12 +257,6 @@ class ProyectoController:
                 # Generar ID solo si no existe
                 if not proyecto.id:
                     proyecto.id = self._generate_next_id()
-                else:
-                    # Verificar que el ID no esté duplicado
-                    existing = collection.find_one({"id": proyecto.id})
-                    if existing:
-                        logger.warning(f"⚠️ ID {proyecto.id} ya existe, generando nuevo ID")
-                        proyecto.id = self._generate_next_id()
 
                 # Preparar documento
                 data = proyecto.to_dict()

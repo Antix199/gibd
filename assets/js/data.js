@@ -81,6 +81,130 @@ class DataManager {
     }
 
     /**
+     * Get records with advanced filtering
+     */
+    async getAdvancedFilteredRecords(filters = {}) {
+        try {
+            const data = await this.getAllRecords();
+
+            return data.filter(record => {
+                // Búsqueda general (ID, contrato, cliente)
+                if (filters.search) {
+                    const searchTerm = filters.search.toLowerCase();
+                    const searchMatch =
+                        (record.id && record.id.toString().toLowerCase().includes(searchTerm)) ||
+                        (record.contrato && record.contrato.toLowerCase().includes(searchTerm)) ||
+                        (record.cliente && record.cliente.toLowerCase().includes(searchTerm));
+
+                    if (!searchMatch) return false;
+                }
+
+                // Filtro por ID específico
+                if (filters.id && record.id) {
+                    if (!record.id.toString().toLowerCase().includes(filters.id.toLowerCase())) {
+                        return false;
+                    }
+                }
+
+                // Filtro por contrato
+                if (filters.contrato && record.contrato) {
+                    if (!record.contrato.toLowerCase().includes(filters.contrato.toLowerCase())) {
+                        return false;
+                    }
+                }
+
+                // Filtro por cliente
+                if (filters.cliente && record.cliente) {
+                    if (!record.cliente.toLowerCase().includes(filters.cliente.toLowerCase())) {
+                        return false;
+                    }
+                }
+
+                // Filtro por estado
+                if (filters.estado && record.estado !== filters.estado) {
+                    return false;
+                }
+
+                // Filtro por región
+                if (filters.region && record.region) {
+                    if (!record.region.toLowerCase().includes(filters.region.toLowerCase())) {
+                        return false;
+                    }
+                }
+
+                // Filtro por ciudad
+                if (filters.ciudad && record.ciudad) {
+                    if (!record.ciudad.toLowerCase().includes(filters.ciudad.toLowerCase())) {
+                        return false;
+                    }
+                }
+
+                // Filtros de fecha de inicio
+                if (filters.fechaInicioDesde || filters.fechaInicioHasta) {
+                    const fechaInicio = record.fecha_inicio ? new Date(record.fecha_inicio) : null;
+
+                    if (filters.fechaInicioDesde) {
+                        const fechaDesde = new Date(filters.fechaInicioDesde);
+                        if (!fechaInicio || fechaInicio < fechaDesde) {
+                            return false;
+                        }
+                    }
+
+                    if (filters.fechaInicioHasta) {
+                        const fechaHasta = new Date(filters.fechaInicioHasta);
+                        if (!fechaInicio || fechaInicio > fechaHasta) {
+                            return false;
+                        }
+                    }
+                }
+
+                // Filtros de fecha de término
+                if (filters.fechaTerminoDesde || filters.fechaTerminoHasta) {
+                    const fechaTermino = record.fecha_termino ? new Date(record.fecha_termino) : null;
+
+                    if (filters.fechaTerminoDesde) {
+                        const fechaDesde = new Date(filters.fechaTerminoDesde);
+                        if (!fechaTermino || fechaTermino < fechaDesde) {
+                            return false;
+                        }
+                    }
+
+                    if (filters.fechaTerminoHasta) {
+                        const fechaHasta = new Date(filters.fechaTerminoHasta);
+                        if (!fechaTermino || fechaTermino > fechaHasta) {
+                            return false;
+                        }
+                    }
+                }
+
+                // Filtros de monto
+                if (filters.montoDesde || filters.montoHasta) {
+                    const monto = parseFloat(record.monto) || 0;
+
+                    if (filters.montoDesde) {
+                        const montoDesde = parseFloat(filters.montoDesde);
+                        if (monto < montoDesde) {
+                            return false;
+                        }
+                    }
+
+                    if (filters.montoHasta) {
+                        const montoHasta = parseFloat(filters.montoHasta);
+                        if (monto > montoHasta) {
+                            return false;
+                        }
+                    }
+                }
+
+                return true;
+            });
+        } catch (error) {
+            console.error('Error filtering records with advanced filters:', error);
+            throw error;
+        }
+    }
+
+    /**
      * Get record by ID
      */
     async getRecordById(id) {
