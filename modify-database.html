@@ -17,7 +17,7 @@
             <button class="btn btn-primary" id="backToMainBtn">Back to Main</button>
             <div class="user-profile">
                 <span class="user-avatar">👤</span>
-                <span class="user-name">John Doe</span>
+                <span class="user-name">Usuario</span>
             </div>
         </div>
     </header>
@@ -33,45 +33,88 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="recordId">ID</label>
-                        <input type="number" id="recordId" class="form-input" placeholder="Auto-generated">
+                        <input type="number" id="recordId" name="recordId" class="form-input" placeholder="Auto-generado">
                     </div>
                     <div class="form-group">
-                        <label for="recordName">Name</label>
-                        <input type="text" id="recordName" class="form-input" required>
+                        <label for="recordContrato">Contrato</label>
+                        <input type="text" id="recordContrato" name="recordContrato" class="form-input" required>
                     </div>
                     <div class="form-group">
-                        <label for="recordDate">Date</label>
-                        <input type="date" id="recordDate" class="form-input" required>
+                        <label for="recordCliente">Cliente</label>
+                        <input type="text" id="recordCliente" name="recordCliente" class="form-input" required>
                     </div>
                     <div class="form-group">
-                        <label for="recordStatus">Status</label>
-                        <select id="recordStatus" class="form-select" required>
-                            <option value="">Select Status</option>
-                            <option value="Active">Active</option>
-                            <option value="Completed">Completed</option>
-                            <option value="Pending">Pending</option>
+                        <label for="recordFechaInicio">Fecha Inicio</label>
+                        <input type="date" id="recordFechaInicio" name="recordFechaInicio" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="recordFechaTermino">Fecha Término</label>
+                        <input type="date" id="recordFechaTermino" name="recordFechaTermino" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="recordRegion">Región</label>
+                        <input type="text" id="recordRegion" name="recordRegion" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="recordCiudad">Ciudad</label>
+                        <input type="text" id="recordCiudad" name="recordCiudad" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="recordEstado">Estado</label>
+                        <select id="recordEstado" name="recordEstado" class="form-select" required>
+                            <option value="">Seleccionar Estado</option>
+                            <option value="Activo">Activo</option>
+                            <option value="Completado">Completado</option>
+                            <option value="Pendiente">Pendiente</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="recordAmount">Amount</label>
-                        <input type="number" id="recordAmount" class="form-input" step="0.01" min="0">
+                        <label for="recordMonto">Monto (CLP)</label>
+                        <input type="number" id="recordMonto" name="recordMonto" class="form-input" step="1" min="0" required>
                     </div>
                     <div class="form-actions">
-                        <button type="submit" class="btn btn-primary">Add Record</button>
+                        <button type="submit" class="btn btn-primary">Agregar Proyecto</button>
                     </div>
                 </div>
             </form>
         </section>
-        
+
+
+
         <!-- Load Data from Archive Section -->
         <section class="section">
-            <h2 class="section-title">Load Data from Archive</h2>
+            <h2 class="section-title">Cargar Datos desde CSV</h2>
             <div class="file-upload-container">
+                <div class="csv-format-info">
+                    <h4>Formato CSV Esperado:</h4>
+                    <p>El archivo CSV debe contener las siguientes columnas (en cualquier orden):</p>
+                    <ul>
+                        <li><strong>ID:</strong> Identificador único del proyecto (opcional - se genera automáticamente si no se proporciona)</li>
+                        <li><strong>Contrato:</strong> Nombre del contrato</li>
+                        <li><strong>Cliente:</strong> Nombre del cliente</li>
+                        <li><strong>Fecha_Inicio:</strong> Fecha de inicio (YYYY-MM-DD, DD/MM/YYYY, o DD-MM-YYYY)</li>
+                        <li><strong>Fecha_Termino:</strong> Fecha de término (opcional)</li>
+                        <li><strong>Region:</strong> Región del proyecto</li>
+                        <li><strong>Ciudad:</strong> Ciudad del proyecto</li>
+                        <li><strong>Estado:</strong> Activo, Completado, o Pendiente</li>
+                        <li><strong>Monto:</strong> Monto del proyecto (números)</li>
+                    </ul>
+                    <p><em>Ejemplos de primera línea aceptados:</em><br>
+                    <code>ID,Contrato,Cliente,Fecha_Inicio,Fecha_Termino,Region,Ciudad,Estado,Monto</code><br>
+                    <code>Id,Contrato,Cliente,fecha_inicio,fecha_término,Región,Ciudad,Estado,Monto</code></p>
+                    <p><em>Notas importantes:</em></p>
+                    <ul>
+                        <li>Solo el campo <strong>Contrato</strong> es obligatorio</li>
+                        <li>Los valores <code>NULL</code> se tratan como campos vacíos</li>
+                        <li>Las fechas pueden estar en formato DD-MM-YYYY o YYYY-MM-DD</li>
+                        <li>Los campos vacíos se llenan con valores por defecto</li>
+                    </ul>
+                </div>
                 <div class="file-upload">
-                    <input type="file" id="fileInput" class="file-input" accept=".csv,.xlsx,.xls" hidden>
-                    <button type="button" class="btn btn-secondary" id="selectFileBtn">Seleccionar archivo</button>
+                    <input type="file" id="fileInput" class="file-input" accept=".csv" hidden>
+                    <button type="button" class="btn btn-secondary" id="selectFileBtn">Seleccionar Archivo CSV</button>
                     <span class="file-info" id="fileInfo">Ningún archivo seleccionado</span>
-                    <button type="button" class="btn btn-primary" id="uploadBtn" disabled>Upload</button>
+                    <button type="button" class="btn btn-primary" id="uploadBtn" disabled>Cargar Datos</button>
                 </div>
             </div>
         </section>
@@ -87,11 +130,15 @@
                                 <input type="checkbox" id="selectAll" class="checkbox">
                             </th>
                             <th>ID</th>
-                            <th>Name</th>
-                            <th>Date</th>
-                            <th>Status</th>
-                            <th>Amount</th>
-                            <th>Actions</th>
+                            <th>Contrato</th>
+                            <th>Cliente</th>
+                            <th>Fecha Inicio</th>
+                            <th>Fecha Término</th>
+                            <th>Región</th>
+                            <th>Ciudad</th>
+                            <th>Estado</th>
+                            <th>Monto</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody id="manageTableBody">
@@ -116,24 +163,40 @@
             <div class="modal-body">
                 <form id="editRecordForm">
                     <div class="form-group">
-                        <label for="editName">Name</label>
-                        <input type="text" id="editName" class="form-input" required>
+                        <label for="editContrato">Contrato</label>
+                        <input type="text" id="editContrato" class="form-input" required>
                     </div>
                     <div class="form-group">
-                        <label for="editDate">Date</label>
-                        <input type="date" id="editDate" class="form-input" required>
+                        <label for="editCliente">Cliente</label>
+                        <input type="text" id="editCliente" class="form-input" required>
                     </div>
                     <div class="form-group">
-                        <label for="editStatus">Status</label>
-                        <select id="editStatus" class="form-select" required>
-                            <option value="Active">Active</option>
-                            <option value="Completed">Completed</option>
-                            <option value="Pending">Pending</option>
+                        <label for="editFechaInicio">Fecha Inicio</label>
+                        <input type="date" id="editFechaInicio" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editFechaTermino">Fecha Término</label>
+                        <input type="date" id="editFechaTermino" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="editRegion">Región</label>
+                        <input type="text" id="editRegion" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editCiudad">Ciudad</label>
+                        <input type="text" id="editCiudad" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editEstado">Estado</label>
+                        <select id="editEstado" class="form-select" required>
+                            <option value="Activo">Activo</option>
+                            <option value="Completado">Completado</option>
+                            <option value="Pendiente">Pendiente</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="editAmount">Amount</label>
-                        <input type="number" id="editAmount" class="form-input" step="0.01" min="0">
+                        <label for="editMonto">Monto (CLP)</label>
+                        <input type="number" id="editMonto" class="form-input" step="1" min="0">
                     </div>
                 </form>
             </div>

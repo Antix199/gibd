@@ -1,193 +1,222 @@
 /**
  * Data Management Module
- * Handles all data operations and storage
+ * Handles all data operations via API
  */
 
 class DataManager {
     constructor() {
-        this.storageKey = 'glaciaring_data';
-        this.data = this.loadData();
-        this.nextId = this.getNextId();
+        this.apiBaseUrl = '/api';
+        this.cache = new Map();
+        this.cacheTimeout = 5 * 60 * 1000; // 5 minutos
     }
 
     /**
-     * Load data from localStorage or return default data
+     * Make API request
      */
-    loadData() {
-        const stored = localStorage.getItem(this.storageKey);
-        if (stored) {
-            try {
-                return JSON.parse(stored);
-            } catch (e) {
-                console.error('Error parsing stored data:', e);
-            }
-        }
-        
-        // Default sample data
-        return [
-            {
-                id: 1001,
-                name: "Alice Smith",
-                date: "2023-01-15",
-                status: "Completed",
-                amount: 120.00
-            },
-            {
-                id: 1002,
-                name: "Bob Johnson",
-                date: "2023-01-18",
-                status: "Pending",
-                amount: 75.50
-            },
-            {
-                id: 1003,
-                name: "Charlie Brown",
-                date: "2023-01-20",
-                status: "Active",
-                amount: 200.00
-            },
-            {
-                id: 1004,
-                name: "Diana Prince",
-                date: "2023-01-22",
-                status: "Completed",
-                amount: 99.99
-            },
-            {
-                id: 1005,
-                name: "Eve Adams",
-                date: "2023-01-25",
-                status: "Pending",
-                amount: 50.00
-            }
-        ];
-    }
-
-    /**
-     * Save data to localStorage
-     */
-    saveData() {
+    async apiRequest(endpoint, options = {}) {
         try {
-            localStorage.setItem(this.storageKey, JSON.stringify(this.data));
-            return true;
-        } catch (e) {
-            console.error('Error saving data:', e);
-            return false;
+            const url = `${this.apiBaseUrl}${endpoint}`;
+            const defaultOptions = {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            };
+
+            const response = await fetch(url, { ...defaultOptions, ...options });
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || `HTTP error! status: ${response.status}`);
+            }
+
+            return data;
+        } catch (error) {
+            console.error('API request failed:', error);
+            throw error;
         }
     }
 
     /**
-     * Get next available ID
+     * Check API health
      */
-    getNextId() {
-        if (this.data.length === 0) return 1001;
-        return Math.max(...this.data.map(item => item.id)) + 1;
+    async checkHealth() {
+        try {
+            const response = await this.apiRequest('/health');
+            return response;
+        } catch (error) {
+            console.error('Health check failed:', error);
+            return { status: 'error', message: error.message };
+        }
     }
 
     /**
      * Get all records
      */
-    getAllRecords() {
-        return [...this.data];
+    async getAllRecords() {
+        try {
+            const response = await this.apiRequest('/proyectos');
+            return response.data || [];
+        } catch (error) {
+            console.error('Error getting all records:', error);
+            return [];
+        }
     }
 
     /**
      * Get filtered records
      */
-    getFilteredRecords(nameFilter = '', statusFilter = '') {
-        return this.data.filter(record => {
-            const nameMatch = !nameFilter || 
-                record.name.toLowerCase().includes(nameFilter.toLowerCase());
-            const statusMatch = !statusFilter || record.status === statusFilter;
-            return nameMatch && statusMatch;
-        });
+    async getFilteredRecords(clienteFilter = '', estadoFilter = '') {
+        try {
+            const params = new URLSearchParams();
+            if (clienteFilter) params.append('cliente', clienteFilter);
+            if (estadoFilter) params.append('estado', estadoFilter);
+
+            const endpoint = `/proyectos${params.toString() ? '?' + params.toString() : ''}`;
+            const response = await this.apiRequest(endpoint);
+            return response.data || [];
+        } catch (error) {
+            console.error('Error getting filtered records:', error);
+            return [];
+        }
     }
 
     /**
      * Get record by ID
      */
-    getRecordById(id) {
-        return this.data.find(record => record.id === parseInt(id));
+    async getRecordById(id) {
+        try {
+            const response = await this.apiRequest(`/proyectos/${id}`);
+            return response.data;
+        } catch (error) {
+            console.error('Error getting record by ID:', error);
+            return null;
+        }
     }
 
     /**
      * Add new record
      */
-    addRecord(recordData) {
-        const newRecord = {
-            id: recordData.id || this.nextId++,
-            name: recordData.name,
-            date: recordData.date,
-            status: recordData.status,
-            amount: parseFloat(recordData.amount) || 0
-        };
-
-        this.data.push(newRecord);
-        this.saveData();
-        return newRecord;
+    async addRecord(recordData) {
+        try {
+            const response = await this.apiRequest('/proyectos', {
+                method: 'POST',
+                body: JSON.stringify({
+                    id: recordData.id || null,
+                    contrato: recordData.contrato,
+                    cliente: recordData.cliente,
+                    fecha_inicio: recordData.fecha_inicio,
+                    fecha_termino: recordData.fecha_termino,
+                    region: recordData.region,
+                    ciudad: recordData.ciudad,
+                    estado: recordData.estado,
+                    monto: parseFloat(recordData.monto) || 0
+                })
+            });
+            return response.data;
+        } catch (error) {
+            console.error('Error adding record:', error);
+            throw error;
+        }
     }
 
     /**
      * Update existing record
      */
-    updateRecord(id, recordData) {
-        const index = this.data.findIndex(record => record.id === parseInt(id));
-        if (index === -1) return false;
-
-        this.data[index] = {
-            ...this.data[index],
-            name: recordData.name,
-            date: recordData.date,
-            status: recordData.status,
-            amount: parseFloat(recordData.amount) || 0
-        };
-
-        this.saveData();
-        return this.data[index];
+    async updateRecord(id, recordData) {
+        try {
+            const response = await this.apiRequest(`/proyectos/${id}`, {
+                method: 'PUT',
+                body: JSON.stringify({
+                    contrato: recordData.contrato,
+                    cliente: recordData.cliente,
+                    fecha_inicio: recordData.fecha_inicio,
+                    fecha_termino: recordData.fecha_termino,
+                    region: recordData.region,
+                    ciudad: recordData.ciudad,
+                    estado: recordData.estado,
+                    monto: parseFloat(recordData.monto) || 0
+                })
+            });
+            return response.data;
+        } catch (error) {
+            console.error('Error updating record:', error);
+            throw error;
+        }
     }
 
     /**
      * Delete record by ID
      */
-    deleteRecord(id) {
-        const index = this.data.findIndex(record => record.id === parseInt(id));
-        if (index === -1) return false;
-
-        this.data.splice(index, 1);
-        this.saveData();
-        return true;
+    async deleteRecord(id) {
+        try {
+            await this.apiRequest(`/proyectos/${id}`, {
+                method: 'DELETE'
+            });
+            return true;
+        } catch (error) {
+            console.error('Error deleting record:', error);
+            return false;
+        }
     }
 
     /**
      * Delete multiple records by IDs
      */
-    deleteRecords(ids) {
-        const numericIds = ids.map(id => parseInt(id));
-        this.data = this.data.filter(record => !numericIds.includes(record.id));
-        this.saveData();
-        return true;
+    async deleteRecords(ids) {
+        try {
+            await this.apiRequest('/proyectos/bulk-delete', {
+                method: 'POST',
+                body: JSON.stringify({ ids })
+            });
+            return true;
+        } catch (error) {
+            console.error('Error deleting records:', error);
+            return false;
+        }
     }
 
     /**
      * Import data from array
      */
-    importData(newData) {
+    async importData(newData) {
         try {
-            const validData = newData.filter(record => 
-                record.name && record.status && typeof record.amount === 'number'
+            // Filtrar datos válidos con los nuevos campos (solo requiere contrato)
+            const validData = newData.filter(record =>
+                record.contrato && record.contrato.trim() !== ''
             );
 
-            validData.forEach(record => {
-                record.id = record.id || this.nextId++;
-                record.date = record.date || new Date().toISOString().split('T')[0];
-                record.amount = parseFloat(record.amount) || 0;
+            // Mapear a la estructura correcta
+            const proyectos = validData.map(record => ({
+                id: record.id || null,
+                contrato: record.contrato,
+                cliente: record.cliente,
+                fecha_inicio: record.fecha_inicio || null, // No asignar fecha por defecto aquí
+                fecha_termino: record.fecha_termino || null,
+                region: record.region,
+                ciudad: record.ciudad,
+                estado: record.estado || 'Activo',
+                monto: parseFloat(record.monto) || 0
+            }));
+
+            console.log('=== DATOS ENVIADOS AL SERVIDOR ===');
+            proyectos.forEach((proyecto, index) => {
+                console.log(`Proyecto ${index + 1}:`, {
+                    id: proyecto.id,
+                    contrato: proyecto.contrato,
+                    fecha_inicio: proyecto.fecha_inicio,
+                    fecha_termino: proyecto.fecha_termino
+                });
             });
 
-            this.data.push(...validData);
-            this.saveData();
-            return validData.length;
-        } catch (e) {
-            console.error('Error importing data:', e);
+            const response = await this.apiRequest('/proyectos/bulk-import', {
+                method: 'POST',
+                body: JSON.stringify({ proyectos })
+            });
+
+            console.log('Respuesta de importación:', response);
+            return proyectos.length;
+        } catch (error) {
+            console.error('Error importing data:', error);
             return 0;
         }
     }
@@ -195,36 +224,46 @@ class DataManager {
     /**
      * Export data to JSON
      */
-    exportData() {
-        return JSON.stringify(this.data, null, 2);
-    }
-
-    /**
-     * Clear all data
-     */
-    clearData() {
-        this.data = [];
-        this.nextId = 1001;
-        this.saveData();
+    async exportData() {
+        try {
+            const data = await this.getAllRecords();
+            return JSON.stringify(data, null, 2);
+        } catch (error) {
+            console.error('Error exporting data:', error);
+            return '[]';
+        }
     }
 
     /**
      * Get statistics
      */
-    getStatistics() {
-        const total = this.data.length;
-        const completed = this.data.filter(r => r.status === 'Completed').length;
-        const pending = this.data.filter(r => r.status === 'Pending').length;
-        const active = this.data.filter(r => r.status === 'Active').length;
-        const totalAmount = this.data.reduce((sum, r) => sum + r.amount, 0);
+    async getStatistics() {
+        try {
+            const response = await this.apiRequest('/statistics');
+            return response.data || {};
+        } catch (error) {
+            console.error('Error getting statistics:', error);
+            return {
+                total: 0,
+                completed: 0,
+                pending: 0,
+                active: 0,
+                totalAmount: 0
+            };
+        }
+    }
 
-        return {
-            total,
-            completed,
-            pending,
-            active,
-            totalAmount
-        };
+    /**
+     * Get status options
+     */
+    async getStatusOptions() {
+        try {
+            const response = await this.apiRequest('/status-options');
+            return response.data || ['Active', 'Completed', 'Pending'];
+        } catch (error) {
+            console.error('Error getting status options:', error);
+            return ['Active', 'Completed', 'Pending'];
+        }
     }
 }
 
@@ -233,9 +272,11 @@ window.dataManager = new DataManager();
 
 // Utility functions
 window.formatCurrency = function(amount) {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('es-CL', {
         style: 'currency',
-        currency: 'USD'
+        currency: 'CLP',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
     }).format(amount);
 };
 
@@ -247,22 +288,50 @@ window.formatDate = function(dateString) {
 
 window.validateRecord = function(record) {
     const errors = [];
-    
-    if (!record.name || record.name.trim().length < 2) {
-        errors.push('Name must be at least 2 characters long');
+
+    // Normalizar nombres de campos
+    const contrato = record.contrato || record.recordContrato;
+    const cliente = record.cliente || record.recordCliente;
+    const fecha_inicio = record.fecha_inicio || record.recordFechaInicio;
+    const region = record.region || record.recordRegion;
+    const ciudad = record.ciudad || record.recordCiudad;
+    const estado = record.estado || record.recordEstado;
+    const monto = record.monto || record.recordMonto;
+
+    // Validar contrato
+    if (!contrato || contrato.trim().length < 2) {
+        errors.push('El contrato debe tener al menos 2 caracteres');
     }
-    
-    if (!record.status || !['Active', 'Completed', 'Pending'].includes(record.status)) {
-        errors.push('Please select a valid status');
+
+    // Validar cliente
+    if (!cliente || cliente.trim().length < 2) {
+        errors.push('El cliente debe tener al menos 2 caracteres');
     }
-    
-    if (record.amount && (isNaN(record.amount) || record.amount < 0)) {
-        errors.push('Amount must be a positive number');
+
+    // Validar región
+    if (!region || region.trim().length < 2) {
+        errors.push('La región debe tener al menos 2 caracteres');
     }
-    
-    if (!record.date) {
-        errors.push('Date is required');
+
+    // Validar ciudad
+    if (!ciudad || ciudad.trim().length < 2) {
+        errors.push('La ciudad debe tener al menos 2 caracteres');
     }
-    
+
+    // Validar estado
+    if (!estado || !['Activo', 'Completado', 'Pendiente'].includes(estado)) {
+        errors.push('Por favor selecciona un estado válido');
+    }
+
+    // Validar monto (opcional, pero si se proporciona debe ser válido)
+    if (monto !== undefined && monto !== '' && (isNaN(monto) || parseFloat(monto) < 0)) {
+        errors.push('El monto debe ser un número positivo');
+    }
+
+    // Validar fecha de inicio
+    if (!fecha_inicio || fecha_inicio.trim() === '') {
+        errors.push('La fecha de inicio es requerida');
+    }
+
     return errors;
 };

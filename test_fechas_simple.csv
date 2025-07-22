@@ -1,0 +1,4 @@
+Id,Contrato,Cliente,fecha_inicio,fecha_término,Región,Ciudad,Estado,Monto
+7001,Proyecto Test Con Fecha,Cliente Test,25-12-2022,26-12-2022,Santiago,Santiago,Activo,1000000
+7002,Proyecto Test Sin Fecha,Cliente Test 2,,,Valparaíso,Valparaíso,Pendiente,2000000
+7003,Proyecto Test Fecha Parcial,Cliente Test 3,15-06-2023,,Biobío,Concepción,Completado,3000000

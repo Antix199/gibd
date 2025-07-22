@@ -11,7 +11,7 @@
     <!-- Header Component -->
     <header class="header">
         <div class="search-container">
-            <input type="text" class="search-box" placeholder="Search..." id="searchInput">
+            <input type="text" class="search-box" placeholder="Buscar por cliente..." id="searchInput">
         </div>
         <div class="user-info">
             <button class="btn btn-primary" id="modifyDbBtn">Modify Database</button>
@@ -30,16 +30,16 @@
         <section class="filters-section">
             <div class="filters">
                 <div class="filter-group">
-                    <label for="nameFilter">Name</label>
-                    <input type="text" id="nameFilter" class="filter-input" placeholder="dd-mm-aaaa">
+                    <label for="clienteFilter">Cliente</label>
+                    <input type="text" id="clienteFilter" class="filter-input" placeholder="Nombre del cliente">
                 </div>
                 <div class="filter-group">
-                    <label for="statusFilter">Select Status</label>
-                    <select id="statusFilter" class="filter-select">
-                        <option value="">Select Status</option>
-                        <option value="Active">Active</option>
-                        <option value="Completed">Completed</option>
-                        <option value="Pending">Pending</option>
+                    <label for="estadoFilter">Estado</label>
+                    <select id="estadoFilter" class="filter-select">
+                        <option value="">Seleccionar Estado</option>
+                        <option value="Activo">Activo</option>
+                        <option value="Completado">Completado</option>
+                        <option value="Pendiente">Pendiente</option>
                     </select>
                 </div>
                 <div class="filter-actions">
@@ -56,10 +56,14 @@
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Name</th>
-                            <th>Date</th>
-                            <th>Status</th>
-                            <th>Amount</th>
+                            <th>Contrato</th>
+                            <th>Cliente</th>
+                            <th>Fecha Inicio</th>
+                            <th>Fecha Término</th>
+                            <th>Región</th>
+                            <th>Ciudad</th>
+                            <th>Estado</th>
+                            <th>Monto</th>
                         </tr>
                     </thead>
                     <tbody id="tableBody">

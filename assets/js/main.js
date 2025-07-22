@@ -6,8 +6,8 @@
 class MainPage {
     constructor() {
         this.currentFilters = {
-            name: '',
-            status: ''
+            cliente: '',
+            estado: ''
         };
         
         this.init();
@@ -47,19 +47,19 @@ class MainPage {
         }
 
         // Enter key on filter inputs
-        const nameFilter = document.getElementById('nameFilter');
-        const statusFilter = document.getElementById('statusFilter');
+        const clienteFilter = document.getElementById('clienteFilter');
+        const estadoFilter = document.getElementById('estadoFilter');
 
-        if (nameFilter) {
-            nameFilter.addEventListener('keypress', (e) => {
+        if (clienteFilter) {
+            clienteFilter.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') {
                     this.applyFilters();
                 }
             });
         }
 
-        if (statusFilter) {
-            statusFilter.addEventListener('change', () => {
+        if (estadoFilter) {
+            estadoFilter.addEventListener('change', () => {
                 this.applyFilters();
             });
         }
@@ -68,27 +68,24 @@ class MainPage {
     setupSearch() {
         // Setup real-time search on the main search box
         UIComponents.setupSearch('searchInput', (query) => {
-            this.currentFilters.name = query;
+            this.currentFilters.cliente = query;
             this.loadData();
         });
     }
 
-    loadData() {
+    async loadData() {
         try {
             UIComponents.showLoading('Loading data...');
-            
-            // Simulate loading delay for better UX
-            setTimeout(() => {
-                const data = dataManager.getFilteredRecords(
-                    this.currentFilters.name,
-                    this.currentFilters.status
-                );
 
-                this.populateTable(data);
-                this.updateStatistics(data);
-                UIComponents.hideLoading();
-            }, 300);
-            
+            const data = await dataManager.getFilteredRecords(
+                this.currentFilters.cliente,
+                this.currentFilters.estado
+            );
+
+            this.populateTable(data);
+            this.updateStatistics(data);
+            UIComponents.hideLoading();
+
         } catch (error) {
             console.error('Error loading data:', error);
             UIComponents.showNotification('Error loading data', 'error');
@@ -106,7 +103,7 @@ class MainPage {
         if (data.length === 0) {
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td colspan="5" style="text-align: center; padding: 2rem; color: var(--gray-500);">
+                <td colspan="9" style="text-align: center; padding: 2rem; color: var(--gray-500);">
                     No records found
                 </td>
             `;
@@ -121,14 +118,18 @@ class MainPage {
             
             row.innerHTML = `
                 <td>${record.id}</td>
-                <td>${record.name}</td>
-                <td>${formatDate(record.date)}</td>
+                <td>${record.contrato}</td>
+                <td>${record.cliente}</td>
+                <td>${formatDate(record.fecha_inicio)}</td>
+                <td>${record.fecha_termino ? formatDate(record.fecha_termino) : '-'}</td>
+                <td>${record.region}</td>
+                <td>${record.ciudad}</td>
                 <td>
-                    <span class="status-badge status-${record.status.toLowerCase()}">
-                        ${record.status}
+                    <span class="status-badge status-${record.estado.toLowerCase()}">
+                        ${record.estado}
                     </span>
                 </td>
-                <td>${formatCurrency(record.amount)}</td>
+                <td>${formatCurrency(record.monto)}</td>
             `;
 
             tableBody.appendChild(row);
@@ -147,21 +148,16 @@ class MainPage {
     }
 
     applyFilters() {
-        const nameFilter = document.getElementById('nameFilter');
-        const statusFilter = document.getElementById('statusFilter');
+        const clienteFilter = document.getElementById('clienteFilter');
+        const estadoFilter = document.getElementById('estadoFilter');
 
-        if (nameFilter) {
-            let nameValue = nameFilter.value.trim();
-            // Clear placeholder text
-            if (nameValue === 'dd-mm-aaaa') {
-                nameValue = '';
-            }
-            this.currentFilters.name = nameValue;
+        if (clienteFilter) {
+            this.currentFilters.cliente = clienteFilter.value.trim();
         }
 
-        if (statusFilter) {
-            const statusValue = statusFilter.value;
-            this.currentFilters.status = statusValue === 'Select Status' ? '' : statusValue;
+        if (estadoFilter) {
+            const estadoValue = estadoFilter.value;
+            this.currentFilters.estado = estadoValue === 'Seleccionar Estado' ? '' : estadoValue;
         }
 
         this.loadData();
@@ -172,16 +168,16 @@ class MainPage {
 
     clearFilters() {
         // Reset filter inputs
-        const nameFilter = document.getElementById('nameFilter');
-        const statusFilter = document.getElementById('statusFilter');
+        const clienteFilter = document.getElementById('clienteFilter');
+        const estadoFilter = document.getElementById('estadoFilter');
         const searchInput = document.getElementById('searchInput');
 
-        if (nameFilter) {
-            nameFilter.value = '';
+        if (clienteFilter) {
+            clienteFilter.value = '';
         }
 
-        if (statusFilter) {
-            statusFilter.value = '';
+        if (estadoFilter) {
+            estadoFilter.value = '';
         }
 
         if (searchInput) {
@@ -190,8 +186,8 @@ class MainPage {
 
         // Reset current filters
         this.currentFilters = {
-            name: '',
-            status: ''
+            cliente: '',
+            estado: ''
         };
 
         this.loadData();
@@ -200,14 +196,14 @@ class MainPage {
         UIComponents.showNotification('Filters cleared', 'info');
     }
 
-    generatePDF() {
+    async generatePDF() {
         try {
             UIComponents.showLoading('Generating export...');
-            
+
             // Get current filtered data
-            const data = dataManager.getFilteredRecords(
-                this.currentFilters.name,
-                this.currentFilters.status
+            const data = await dataManager.getFilteredRecords(
+                this.currentFilters.cliente,
+                this.currentFilters.estado
             );
 
             if (data.length === 0) {
@@ -216,35 +212,36 @@ class MainPage {
                 return;
             }
 
-            // Simulate export process
-            setTimeout(() => {
-                // Create CSV content
-                const headers = ['ID', 'Name', 'Date', 'Status', 'Amount'];
-                const csvContent = [
-                    headers.join(','),
-                    ...data.map(record => [
-                        record.id,
-                        `"${record.name}"`,
-                        record.date,
-                        record.status,
-                        record.amount
-                    ].join(','))
-                ].join('\n');
+            // Create CSV content
+            const headers = ['ID', 'Contrato', 'Cliente', 'Fecha_Inicio', 'Fecha_Termino', 'Region', 'Ciudad', 'Estado', 'Monto'];
+            const csvContent = [
+                headers.join(','),
+                ...data.map(record => [
+                    record.id,
+                    `"${record.contrato}"`,
+                    `"${record.cliente}"`,
+                    formatDate(record.fecha_inicio),
+                    record.fecha_termino ? formatDate(record.fecha_termino) : '',
+                    `"${record.region}"`,
+                    `"${record.ciudad}"`,
+                    record.estado,
+                    record.monto
+                ].join(','))
+            ].join('\n');
 
-                // Create and download file
-                const blob = new Blob([csvContent], { type: 'text/csv' });
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `glaciaring_data_${new Date().toISOString().split('T')[0]}.csv`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                window.URL.revokeObjectURL(url);
+            // Create and download file
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `glaciaring_data_${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
 
-                UIComponents.hideLoading();
-                UIComponents.showNotification('Data exported successfully!', 'success');
-            }, 1000);
+            UIComponents.hideLoading();
+            UIComponents.showNotification('Data exported successfully!', 'success');
 
         } catch (error) {
             console.error('Error generating export:', error);

@@ -277,17 +277,17 @@
     min-width: 80px;
 }
 
-.status-completed {
+.status-completado {
     background-color: var(--success-color);
     color: var(--white);
 }
 
-.status-pending {
+.status-pendiente {
     background-color: var(--warning-color);
     color: var(--white);
 }
 
-.status-active {
+.status-activo {
     background-color: var(--primary-color);
     color: var(--white);
 }
@@ -455,6 +455,81 @@
     border-radius: 50%;
     animation: spin 1s linear infinite;
     margin-bottom: var(--spacing-md);
+}
+
+/* ===== CSV INFO ===== */
+.csv-info-container {
+    background-color: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--border-radius-sm);
+    padding: var(--spacing-md);
+}
+
+.csv-format-info {
+    background-color: var(--blue-50);
+    border: 1px solid var(--blue-200);
+    border-radius: var(--border-radius-sm);
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+.csv-format-info h4 {
+    margin: 0 0 var(--spacing-sm) 0;
+    color: var(--blue-700);
+    font-size: var(--font-size-md);
+}
+
+.csv-format-info p {
+    margin: var(--spacing-sm) 0;
+    color: var(--gray-700);
+    font-size: var(--font-size-sm);
+}
+
+.csv-format-info ul {
+    margin: var(--spacing-sm) 0;
+    padding-left: var(--spacing-lg);
+}
+
+.csv-format-info li {
+    margin: var(--spacing-xs) 0;
+    color: var(--gray-700);
+    font-size: var(--font-size-sm);
+}
+
+.csv-format-info code {
+    background-color: var(--gray-100);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--border-radius-xs);
+    font-family: 'Courier New', monospace;
+    font-size: var(--font-size-xs);
+    color: var(--gray-800);
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-md);
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.info-item label {
+    font-weight: 600;
+    color: var(--gray-700);
+    font-size: var(--font-size-sm);
+}
+
+.info-item span {
+    color: var(--gray-900);
+    font-weight: 500;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    background-color: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--border-radius-xs);
 }
 
 /* ===== RESPONSIVE COMPONENTS ===== */

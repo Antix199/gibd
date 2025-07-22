@@ -1,16 +1,17 @@
-# GlaciarIng - UI Prototype
+# GlaciarIng - Full Stack Application
 
-Un prototipo ejecutable de interfaz de usuario para el sistema de gestión de datos GlaciarIng.
+Una aplicación completa de gestión de proyectos con frontend moderno y backend Python conectado a MongoDB Atlas.
 
 ## 🚀 Características
 
 ### ✨ **Funcionalidades Principales**
 - **Visualización de datos** con filtros avanzados
 - **Gestión completa de registros** (CRUD)
-- **Importación de archivos** CSV/Excel (simulada)
+- **API REST** con Flask y MongoDB Atlas
+- **Importación de archivos** CSV/Excel
 - **Exportación de datos** a CSV
 - **Interfaz responsive** y moderna
-- **Almacenamiento local** (localStorage)
+- **Base de datos en la nube** (MongoDB Atlas)
 
 ### 🎨 **Diseño**
 - **Colores suaves** y profesionales
@@ -38,29 +39,51 @@ glaciaring/
 
 ## 🛠️ Tecnologías Utilizadas
 
+### **Frontend:**
 - **HTML5** - Estructura semántica
 - **CSS3** - Estilos modernos con variables CSS
 - **JavaScript ES6+** - Funcionalidad interactiva
-- **LocalStorage** - Persistencia de datos local
+- **Fetch API** - Comunicación con backend
 - **Responsive Design** - Compatible con móviles
+
+### **Backend:**
+- **Python 3.12** - Lenguaje de programación
+- **Flask** - Framework web
+- **PyMongo** - Driver de MongoDB
+- **Flask-CORS** - Manejo de CORS
+
+### **Base de Datos:**
+- **MongoDB Atlas** - Base de datos en la nube
+- **Índices optimizados** - Para búsquedas rápidas
+- **Agregaciones** - Para estadísticas
 
 ## 🚀 Cómo Ejecutar
 
-### Opción 1: Servidor Local Simple
+### **Requisitos Previos:**
 ```bash
-# Con Python 3
-python -m http.server 8000
+# 1. Instalar dependencias
+.venv\Scripts\python.exe -m pip install -r requirements.txt
 
-# Con Node.js (si tienes npx)
-npx serve .
-
-# Con PHP
-php -S localhost:8000
+# 2. Verificar conexión a MongoDB Atlas
+.venv\Scripts\python.exe test_connection.py
 ```
 
-### Opción 2: Abrir Directamente
-1. Abre `index.html` en tu navegador
-2. Navega entre las pantallas usando los botones
+### **Opción 1: Script de Inicio (Recomendado)**
+```bash
+# Windows
+start_server.bat
+
+# O manualmente
+.venv\Scripts\python.exe api_server.py
+```
+
+### **Opción 2: Desarrollo**
+```bash
+# Ejecutar servidor de desarrollo
+.venv\Scripts\python.exe api_server.py
+
+# Abrir navegador en: http://localhost:5000
+```
 
 ## 📱 Pantallas
 
@@ -137,5 +160,3 @@ Para convertir este prototipo en una aplicación completa:
 5. **Deployment** - Configurar para producción
 
 ---
-
-**¡Disfruta explorando el prototipo!** 🎉
