@@ -24,7 +24,7 @@ class Proyecto:
         self.id = id
         self.contrato = contrato
         self.cliente = cliente
-        self.fecha_inicio = fecha_inicio if fecha_inicio else datetime.now()
+        self.fecha_inicio = fecha_inicio
         self.fecha_termino = fecha_termino
         self.region = region
         self.ciudad = ciudad

@@ -522,7 +522,7 @@ class ModifyDatabasePage {
                 <td>${record.id}</td>
                 <td>${record.contrato}</td>
                 <td>${record.cliente}</td>
-                <td>${formatDate(record.fecha_inicio)}</td>
+                <td>${record.fecha_inicio ? formatDate(record.fecha_inicio) : '-'}</td>
                 <td>${record.fecha_termino ? formatDate(record.fecha_termino) : '-'}</td>
                 <td>${record.region}</td>
                 <td>${record.ciudad}</td>

@@ -314,7 +314,7 @@ class DataManager {
                 id: record.id || null,
                 contrato: record.contrato,
                 cliente: record.cliente,
-                fecha_inicio: record.fecha_inicio || null, // No asignar fecha por defecto aquí
+                fecha_inicio: record.fecha_inicio || null, 
                 fecha_termino: record.fecha_termino || null,
                 region: record.region,
                 ciudad: record.ciudad,

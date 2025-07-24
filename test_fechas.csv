@@ -1,4 +1,0 @@
-Id,Contrato,Cliente,fecha_inicio,fecha_término,Región,Ciudad,Estado,Monto
-6001,"Proyecto Test 1","Cliente Test 1","25-12-2022","26-12-2022","Santiago","Santiago","Activo",1000000
-6002,"Proyecto Test 2","Cliente Test 2","01-01-2023","","Valparaíso","Valparaíso","Pendiente",2000000
-6003,"Proyecto Test 3","Cliente Test 3","15-06-2023","30-06-2023","Biobío","Concepción","Completado",3000000

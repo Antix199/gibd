@@ -150,10 +150,10 @@ def create_proyecto():
         
         # Crear objeto Proyecto
         try:
-            fecha_inicio_value = datetime.fromisoformat(data.get('fecha_inicio')) if data.get('fecha_inicio') else datetime.now()
+            fecha_inicio_value = datetime.fromisoformat(data.get('fecha_inicio')) if data.get('fecha_inicio') else None
         except ValueError as e:
             logger.error(f"❌ Error parseando fecha_inicio: {e}")
-            fecha_inicio_value = datetime.now()
+            fecha_inicio_value = None
 
         try:
             fecha_termino_value = datetime.fromisoformat(data.get('fecha_termino')) if data.get('fecha_termino') else None
@@ -360,12 +360,10 @@ def bulk_import_proyectos():
                     fecha_inicio = datetime.fromisoformat(fecha_inicio_str)
                     logger.info(f"✅ Fecha inicio parseada: {fecha_inicio_str} → {fecha_inicio}")
                 except ValueError as e:
-                    logger.warning(f"⚠️ Error parseando fecha_inicio '{fecha_inicio_str}': {e}")
-                    logger.info(f"📅 Usando fecha actual para proyecto ID {item.get('id', 'sin ID')}")
-                    fecha_inicio = datetime.now()
+                    logger.warning(f"⚠️ Error parseando fecha_inicio '{fecha_inicio_str}': {e}, usando None")
+                    fecha_inicio = None
             else:
-                logger.info(f"📅 No hay fecha_inicio válida para proyecto ID {item.get('id', 'sin ID')}, usando fecha actual")
-                fecha_inicio = datetime.now()
+                fecha_inicio = None
 
             # Parsear fecha de término
             fecha_termino_str = item.get('fecha_termino')
