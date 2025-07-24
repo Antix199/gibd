@@ -295,12 +295,8 @@ class MainPage {
             return;
         }
 
-        // Paginación
-        const startIndex = (this.currentPage - 1) * this.projectsPerPage;
-        const endIndex = Math.min(startIndex + this.projectsPerPage, this.filteredProjects.length);
-        const projectsToShow = this.filteredProjects.slice(startIndex, endIndex);
-
-        projectsToShow.forEach(project => {
+        // Mostrar todos los proyectos filtrados (sin paginación)
+        this.filteredProjects.forEach(project => {
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>${project.id || 'N/A'}</td>
@@ -316,7 +312,8 @@ class MainPage {
             tableBody.appendChild(row);
         });
 
-        this.updatePagination();
+        // Ya no necesitamos paginación, pero mantenemos las estadísticas
+        this.hidePagination();
     }
 
     updateStatistics() {
@@ -382,6 +379,13 @@ class MainPage {
         }
 
         paginationContainer.innerHTML = paginationHTML;
+    }
+
+    hidePagination() {
+        const paginationContainer = document.getElementById('pagination');
+        if (paginationContainer) {
+            paginationContainer.innerHTML = '';
+        }
     }
 
     goToPage(page) {
