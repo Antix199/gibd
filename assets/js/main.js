@@ -300,8 +300,8 @@ class MainPage {
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>${project.id || 'N/A'}</td>
-                <td title="${project.contrato || 'N/A'}">${this.truncateText(project.contrato || 'N/A', 30)}</td>
-                <td title="${project.cliente || 'N/A'}">${this.truncateText(project.cliente || 'N/A', 25)}</td>
+                <td>${project.contrato || 'N/A'}</td>
+                <td>${project.cliente || 'N/A'}</td>
                 <td>${this.formatDate(project.fecha_inicio)}</td>
                 <td>${this.formatDate(project.fecha_termino)}</td>
                 <td>${project.region || 'N/A'}</td>
@@ -470,7 +470,11 @@ class MainPage {
         if (!dateString) return 'N/A';
         try {
             const date = new Date(dateString);
-            return date.toLocaleDateString('es-CL');
+            // Usar formato DD/MM/YYYY para consistencia con modify-database
+            const day = date.getDate().toString().padStart(2, '0');
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const year = date.getFullYear();
+            return `${day}/${month}/${year}`;
         } catch (error) {
             return 'N/A';
         }
