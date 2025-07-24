@@ -4,13 +4,15 @@ GlaciarIng API Server
 API REST para conectar el frontend con MongoDB Atlas
 """
 
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory, session, redirect, url_for
 from flask_cors import CORS
 import logging
 import sys
 import os
 from datetime import datetime
 import json
+import secrets
+from functools import wraps
 
 # Agregar el directorio raíz al path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -33,6 +35,9 @@ CORS(app)  # Permitir CORS para el frontend
 # Configuración
 app.config['JSON_SORT_KEYS'] = False
 
+# Configuración de sesiones (usando sesiones nativas de Flask)
+app.config['SECRET_KEY'] = secrets.token_hex(16)
+
 class CustomJSONEncoder(json.JSONEncoder):
     """Encoder personalizado para manejar datetime y ObjectId"""
     def default(self, obj):
@@ -42,22 +47,168 @@ class CustomJSONEncoder(json.JSONEncoder):
 
 app.json.encoder = CustomJSONEncoder
 
+# ===== SISTEMA DE AUTENTICACIÓN =====
+
+# Credenciales válidas para login de la aplicación
+VALID_CREDENTIALS = {
+    'Admin': {'password': 'Admin123', 'type': 'admin'},
+    'Lector': {'password': 'Lector123', 'type': 'reader'}
+}
+
+def login_required(f):
+    """Decorador para requerir autenticación"""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_id' not in session:
+            return jsonify({
+                'success': False,
+                'error': 'Autenticación requerida'
+            }), 401
+        return f(*args, **kwargs)
+    return decorated_function
+
+def admin_required(f):
+    """Decorador para requerir permisos de administrador"""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_id' not in session:
+            return jsonify({
+                'success': False,
+                'error': 'Autenticación requerida'
+            }), 401
+        if session.get('user_type') != 'admin':
+            return jsonify({
+                'success': False,
+                'error': 'Permisos de administrador requeridos'
+            }), 403
+        return f(*args, **kwargs)
+    return decorated_function
+
 # ===== RUTAS PARA SERVIR EL FRONTEND =====
 
 @app.route('/')
 def serve_index():
-    """Sirve la página principal"""
+    """Sirve la página principal (solo para administradores autenticados)"""
+    if 'user_id' not in session:
+        return redirect('/login')
+    if session.get('user_type') != 'admin':
+        return redirect('/reader')
     return send_from_directory('.', 'index.html')
+
+@app.route('/login')
+def serve_login():
+    """Sirve la página de login"""
+    return send_from_directory('.', 'login.html')
+
+@app.route('/reader')
+def serve_reader():
+    """Sirve la página para usuarios lectores"""
+    if 'user_id' not in session:
+        return redirect('/login')
+    if session.get('user_type') != 'reader':
+        return redirect('/')
+    return send_from_directory('.', 'reader.html')
 
 @app.route('/modify-database.html')
 def serve_modify():
-    """Sirve la página de modificación"""
+    """Sirve la página de modificación (solo administradores)"""
+    if 'user_id' not in session:
+        return redirect('/login')
+    if session.get('user_type') != 'admin':
+        return jsonify({'error': 'Acceso denegado'}), 403
     return send_from_directory('.', 'modify-database.html')
 
 @app.route('/<path:filename>')
 def serve_static(filename):
     """Sirve archivos estáticos"""
     return send_from_directory('.', filename)
+
+# ===== ENDPOINTS DE AUTENTICACIÓN =====
+
+@app.route('/api/login', methods=['POST'])
+def login():
+    """Endpoint para autenticación de usuarios"""
+    try:
+        data = request.get_json()
+        username = data.get('username')
+        password = data.get('password')
+
+        if not username or not password:
+            return jsonify({
+                'success': False,
+                'error': 'Usuario y contraseña son requeridos'
+            }), 400
+
+        # Verificar credenciales
+        if username in VALID_CREDENTIALS:
+            user_data = VALID_CREDENTIALS[username]
+            if user_data['password'] == password:
+                # Crear sesión
+                session['user_id'] = username
+                session['user_type'] = user_data['type']
+
+                logger.info(f"✅ Login exitoso para usuario: {username} (tipo: {user_data['type']})")
+
+                return jsonify({
+                    'success': True,
+                    'user_type': user_data['type'],
+                    'message': 'Login exitoso'
+                })
+
+        logger.warning(f"❌ Intento de login fallido para usuario: {username}")
+        return jsonify({
+            'success': False,
+            'error': 'Credenciales inválidas'
+        }), 401
+
+    except Exception as e:
+        logger.error(f"Error en login: {e}")
+        return jsonify({
+            'success': False,
+            'error': 'Error interno del servidor'
+        }), 500
+
+@app.route('/api/logout', methods=['POST'])
+def logout():
+    """Endpoint para cerrar sesión"""
+    try:
+        user_id = session.get('user_id')
+        session.clear()
+        logger.info(f"✅ Logout exitoso para usuario: {user_id}")
+
+        return jsonify({
+            'success': True,
+            'message': 'Logout exitoso'
+        })
+
+    except Exception as e:
+        logger.error(f"Error en logout: {e}")
+        return jsonify({
+            'success': False,
+            'error': 'Error interno del servidor'
+        }), 500
+
+@app.route('/api/check-session', methods=['GET'])
+def check_session():
+    """Endpoint para verificar el estado de la sesión"""
+    try:
+        if 'user_id' in session:
+            return jsonify({
+                'authenticated': True,
+                'user_id': session['user_id'],
+                'user_type': session.get('user_type')
+            })
+        else:
+            return jsonify({
+                'authenticated': False
+            })
+
+    except Exception as e:
+        logger.error(f"Error verificando sesión: {e}")
+        return jsonify({
+            'authenticated': False,
+            'error': str(e)
+        }), 500
 
 # ===== API ENDPOINTS =====
 
@@ -79,17 +230,21 @@ def health_check():
         }), 500
 
 @app.route('/api/proyectos', methods=['GET'])
+@login_required
 def get_proyectos():
     """Obtiene todos los proyectos o proyectos filtrados"""
     try:
+        # Obtener tipo de usuario de la sesión
+        user_type = session.get('user_type', 'admin')
+
         # Obtener parámetros de filtro
         cliente_filter = request.args.get('cliente', '')
         estado_filter = request.args.get('estado', '')
 
         if cliente_filter or estado_filter:
-            proyectos = proyecto_controller.search_proyectos(cliente_filter, estado_filter)
+            proyectos = proyecto_controller.search_proyectos(cliente_filter, estado_filter, user_type)
         else:
-            proyectos = proyecto_controller.get_all_proyectos()
+            proyectos = proyecto_controller.get_all_proyectos(user_type)
         
         # Convertir a formato JSON serializable
         proyectos_json = []
@@ -111,10 +266,13 @@ def get_proyectos():
         }), 500
 
 @app.route('/api/proyectos/<int:proyecto_id>', methods=['GET'])
+@login_required
 def get_proyecto(proyecto_id):
     """Obtiene un proyecto específico por ID"""
     try:
-        proyecto = proyecto_controller.get_proyecto_by_id(proyecto_id)
+        # Obtener tipo de usuario de la sesión
+        user_type = session.get('user_type', 'admin')
+        proyecto = proyecto_controller.get_proyecto_by_id(proyecto_id, user_type)
         
         if proyecto:
             return jsonify({
@@ -135,6 +293,7 @@ def get_proyecto(proyecto_id):
         }), 500
 
 @app.route('/api/proyectos', methods=['POST'])
+@admin_required
 def create_proyecto():
     """Crea un nuevo proyecto"""
     try:
@@ -209,6 +368,7 @@ def create_proyecto():
         }), 500
 
 @app.route('/api/proyectos/<int:proyecto_id>', methods=['PUT'])
+@admin_required
 def update_proyecto(proyecto_id):
     """Actualiza un proyecto existente"""
     try:
@@ -278,6 +438,7 @@ def update_proyecto(proyecto_id):
         }), 500
 
 @app.route('/api/proyectos/<int:proyecto_id>', methods=['DELETE'])
+@admin_required
 def delete_proyecto(proyecto_id):
     """Elimina un proyecto"""
     try:
@@ -300,6 +461,7 @@ def delete_proyecto(proyecto_id):
         }), 500
 
 @app.route('/api/proyectos/bulk-delete', methods=['POST'])
+@admin_required
 def bulk_delete_proyectos():
     """Elimina múltiples proyectos"""
     try:
@@ -334,6 +496,7 @@ def bulk_delete_proyectos():
         }), 500
 
 @app.route('/api/proyectos/bulk-import', methods=['POST'])
+@admin_required
 def bulk_import_proyectos():
     """Importa múltiples proyectos"""
     try:
@@ -411,10 +574,13 @@ def bulk_import_proyectos():
         }), 500
 
 @app.route('/api/statistics', methods=['GET'])
+@login_required
 def get_statistics():
     """Obtiene estadísticas de los proyectos"""
     try:
-        stats = proyecto_controller.get_statistics()
+        # Obtener tipo de usuario de la sesión
+        user_type = session.get('user_type', 'admin')
+        stats = proyecto_controller.get_statistics(user_type)
         return jsonify({
             'success': True,
             'data': stats

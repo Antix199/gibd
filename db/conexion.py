@@ -11,10 +11,10 @@ logger = logging.getLogger(__name__)
 class DatabaseConnection:
     """Clase para manejar la conexión a MongoDB Atlas"""
 
-    def __init__(self):
-        # Credenciales de MongoDB Atlas
-        self.username = "aparedes03"
-        self.password = "oOyDbzVbX7nOFipE"
+    def __init__(self, username=None, password=None):
+        # Credenciales de MongoDB Atlas - usar las proporcionadas o las por defecto
+        self.username = username or "Admin"
+        self.password = password or "Admin123"
         self.cluster_url = "glaciaring.dz4x4cs.mongodb.net"
         self.database_name = "glaciaring_db"
 
@@ -35,6 +35,20 @@ class DatabaseConnection:
         )
 
         return connection_string
+
+    def update_credentials(self, username, password):
+        """Actualiza las credenciales y reconstruye la cadena de conexión"""
+        self.username = username
+        self.password = password
+        self.connection_string = self._build_connection_string()
+
+        # Cerrar conexión existente si existe
+        if self.client:
+            self.client.close()
+            self.client = None
+            self.db = None
+
+        logger.info(f"🔄 Credenciales actualizadas para usuario: {username}")
 
     def connect(self):
         """Establece la conexión con MongoDB Atlas"""
@@ -113,15 +127,37 @@ class DatabaseConnection:
             self.client.close()
             logger.info("🔌 Conexión cerrada")
 
+# Mapeo de tipos de usuario a credenciales de MongoDB
+# Nota: Ambos tipos de usuario usan las mismas credenciales de MongoDB Atlas
+# La diferenciación de permisos se maneja a nivel de aplicación
+USER_CREDENTIALS = {
+    'admin': {'username': 'Admin', 'password': 'Admin123'},
+    'reader': {'username': 'Admin', 'password': 'Admin123'}  # Usar las mismas credenciales válidas
+}
+
 # Instancia global de la conexión
 db_connection = DatabaseConnection()
 
+def get_db_for_user(user_type='admin'):
+    """Función helper para obtener la base de datos con credenciales específicas del usuario"""
+    if user_type in USER_CREDENTIALS:
+        credentials = USER_CREDENTIALS[user_type]
+        db_connection.update_credentials(credentials['username'], credentials['password'])
+    return db_connection.get_database()
+
+def get_collection_for_user(collection_name, user_type='admin'):
+    """Función helper para obtener una colección con credenciales específicas del usuario"""
+    if user_type in USER_CREDENTIALS:
+        credentials = USER_CREDENTIALS[user_type]
+        db_connection.update_credentials(credentials['username'], credentials['password'])
+    return db_connection.get_collection(collection_name)
+
 def get_db():
-    """Función helper para obtener la base de datos"""
+    """Función helper para obtener la base de datos (mantiene compatibilidad)"""
     return db_connection.get_database()
 
 def get_collection(collection_name):
-    """Función helper para obtener una colección"""
+    """Función helper para obtener una colección (mantiene compatibilidad)"""
     return db_connection.get_collection(collection_name)
 
 def test_mongodb_connection():

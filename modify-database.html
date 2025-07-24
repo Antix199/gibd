@@ -15,9 +15,10 @@
         </div>
         <div class="user-info">
             <button class="btn btn-primary" id="backToMainBtn">Back to Main</button>
+            <button class="btn btn-secondary" id="logoutBtn" onclick="logout()">Cerrar Sesión</button>
             <div class="user-profile">
                 <span class="user-avatar">👤</span>
-                <span class="user-name">Usuario</span>
+                <span class="user-name">Administrador</span>
             </div>
         </div>
     </header>
@@ -217,5 +218,45 @@
     <script src="assets/js/data.js"></script>
     <script src="assets/js/components.js"></script>
     <script src="assets/js/modify-database.js"></script>
+    <script>
+        // Función para cerrar sesión
+        async function logout() {
+            try {
+                const response = await fetch('/api/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                if (response.ok) {
+                    window.location.href = '/login';
+                } else {
+                    console.error('Error al cerrar sesión');
+                }
+            } catch (error) {
+                console.error('Error de conexión al cerrar sesión:', error);
+                // Redirigir al login de todas formas
+                window.location.href = '/login';
+            }
+        }
+
+        // Verificar autenticación al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('/api/check-session')
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.authenticated) {
+                        window.location.href = '/login';
+                    } else if (data.user_type !== 'admin') {
+                        window.location.href = '/reader';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error verificando sesión:', error);
+                    window.location.href = '/login';
+                });
+        });
+    </script>
 </body>
 </html>

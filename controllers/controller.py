@@ -4,7 +4,7 @@ import logging
 from bson import ObjectId
 from pymongo.errors import PyMongoError
 
-from db.conexion import get_collection, test_mongodb_connection
+from db.conexion import get_collection, get_collection_for_user, test_mongodb_connection
 from models.proyecto import Proyecto, STATUS_OPTIONS, create_indexes, get_collection_stats
 
 logger = logging.getLogger(__name__)
@@ -32,11 +32,17 @@ class ProyectoController:
 
 
 
-    def get_collection(self):
-        """Obtiene la colección de proyectos"""
-        if self._collection is None:
-            self._initialize_collection()
-        return self._collection
+    def get_collection(self, user_type='admin'):
+        """Obtiene la colección de proyectos con credenciales específicas del usuario"""
+        try:
+            # Usar credenciales específicas del usuario
+            return get_collection_for_user(self.collection_name, user_type)
+        except Exception as e:
+            logger.error(f"❌ Error obteniendo colección para usuario {user_type}: {e}")
+            # Fallback a la colección por defecto
+            if self._collection is None:
+                self._initialize_collection()
+            return self._collection
 
 
 
@@ -74,10 +80,10 @@ class ProyectoController:
             logger.error(f"❌ Error inesperado al crear proyecto: {e}")
             return False
 
-    def get_all_proyectos(self) -> List[Proyecto]:
+    def get_all_proyectos(self, user_type='admin') -> List[Proyecto]:
         """Obtiene todos los proyectos de MongoDB Atlas"""
         try:
-            collection = self.get_collection()
+            collection = self.get_collection(user_type)
 
             # Obtener documentos ordenados por ID
             cursor = collection.find().sort("id", 1)
@@ -97,10 +103,10 @@ class ProyectoController:
             logger.error(f"❌ Error inesperado al obtener proyectos: {e}")
             return []
 
-    def get_proyecto_by_id(self, proyecto_id: int) -> Optional[Proyecto]:
+    def get_proyecto_by_id(self, proyecto_id: int, user_type='admin') -> Optional[Proyecto]:
         """Obtiene un proyecto por su ID"""
         try:
-            collection = self.get_collection()
+            collection = self.get_collection(user_type)
             doc = collection.find_one({"id": proyecto_id})
 
             if doc:
@@ -178,10 +184,10 @@ class ProyectoController:
             logger.error(f"❌ Error inesperado al eliminar proyecto {proyecto_id}: {e}")
             return False
 
-    def search_proyectos(self, cliente_filter: str = "", estado_filter: str = "") -> List[Proyecto]:
+    def search_proyectos(self, cliente_filter: str = "", estado_filter: str = "", user_type='admin') -> List[Proyecto]:
         """Busca proyectos por cliente y/o estado usando índices de MongoDB"""
         try:
-            collection = self.get_collection()
+            collection = self.get_collection(user_type)
             query = {}
 
             # Filtro por cliente usando índice de texto
@@ -278,10 +284,10 @@ class ProyectoController:
             logger.error(f"❌ Error inesperado en inserción masiva: {e}")
             return False
 
-    def get_statistics(self) -> Dict[str, Any]:
+    def get_statistics(self, user_type='admin') -> Dict[str, Any]:
         """Obtiene estadísticas de la colección"""
         try:
-            collection = self.get_collection()
+            collection = self.get_collection(user_type)
             return get_collection_stats(collection)
         except Exception as e:
             logger.error(f"❌ Error obteniendo estadísticas: {e}")

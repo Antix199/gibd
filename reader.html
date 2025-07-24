@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GlaciarIng - Data Filtering and Display</title>
+    <title>GlaciarIng - Data Filtering and Display (Lector)</title>
     <link rel="stylesheet" href="assets/css/styles.css">
     <link rel="stylesheet" href="assets/css/components.css">
 </head>
@@ -14,18 +14,17 @@
             <input type="text" class="search-box" placeholder="Buscar por ID, contrato o cliente..." id="searchInput">
         </div>
         <div class="user-info">
-            <button class="btn btn-primary" id="modifyDbBtn" onclick="window.location.href='modify-database.html'">Modify Database</button>
             <button class="btn btn-secondary" id="logoutBtn" onclick="logout()">Cerrar Sesión</button>
             <div class="user-profile">
                 <span class="user-avatar">👤</span>
-                <span class="user-name">Administrador</span>
+                <span class="user-name">Usuario Lector</span>
             </div>
         </div>
     </header>
 
     <!-- Main Content -->
     <main class="container">
-        <h1 class="page-title">Data Filtering and Display</h1>
+        <h1 class="page-title">Data Filtering and Display - Modo Lectura</h1>
         
         <!-- Advanced Filters Section -->
         <section class="filters-section">
@@ -181,7 +180,7 @@
                         'Content-Type': 'application/json',
                     }
                 });
-
+                
                 if (response.ok) {
                     window.location.href = '/login';
                 } else {
@@ -193,7 +192,7 @@
                 window.location.href = '/login';
             }
         }
-
+        
         // Verificar autenticación al cargar la página
         document.addEventListener('DOMContentLoaded', function() {
             fetch('/api/check-session')
@@ -201,8 +200,8 @@
                 .then(data => {
                     if (!data.authenticated) {
                         window.location.href = '/login';
-                    } else if (data.user_type !== 'admin') {
-                        window.location.href = '/reader';
+                    } else if (data.user_type !== 'reader') {
+                        window.location.href = '/';
                     }
                 })
                 .catch(error => {
