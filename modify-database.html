@@ -139,6 +139,27 @@
                             <th>Ciudad</th>
                             <th>Estado</th>
                             <th>Monto</th>
+                            <th>RUT Cliente</th>
+                            <th>Tipo Cliente</th>
+                            <th>Persona Contacto</th>
+                            <th>Teléfono</th>
+                            <th>Email</th>
+                            <th>Superficie Terreno</th>
+                            <th>Superficie Construida</th>
+                            <th>Tipo Obra</th>
+                            <th>EMS</th>
+                            <th>Estudio Sísmico</th>
+                            <th>Estudio Geoeléctrico</th>
+                            <th>Topografía</th>
+                            <th>Sondaje</th>
+                            <th>Hidráulica/Hidrología</th>
+                            <th>Descripción</th>
+                            <th>Certificado Experiencia</th>
+                            <th>Orden Compra</th>
+                            <th>Contrato</th>
+                            <th>Factura</th>
+                            <th>Número Factura</th>
+                            <th>Número Orden Compra</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -161,43 +182,177 @@
                 <h3>Edit Record</h3>
                 <button class="modal-close" id="closeEditModal">&times;</button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
                 <form id="editRecordForm">
-                    <div class="form-group">
-                        <label for="editContrato">Contrato</label>
-                        <input type="text" id="editContrato" class="form-input" required>
+                    <!-- Información Básica -->
+                    <div class="form-section">
+                        <h4>Información Básica</h4>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="editContrato">Contrato</label>
+                                <input type="text" id="editContrato" class="form-input" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="editCliente">Cliente</label>
+                                <input type="text" id="editCliente" class="form-input" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="editFechaInicio">Fecha Inicio</label>
+                                <input type="date" id="editFechaInicio" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label for="editFechaTermino">Fecha Término</label>
+                                <input type="date" id="editFechaTermino" class="form-input">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="editRegion">Región</label>
+                                <input type="text" id="editRegion" class="form-input" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="editCiudad">Ciudad</label>
+                                <input type="text" id="editCiudad" class="form-input" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="editEstado">Estado</label>
+                                <select id="editEstado" class="form-select" required>
+                                    <option value="Activo">Activo</option>
+                                    <option value="Completado">Completado</option>
+                                    <option value="Pendiente">Pendiente</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="editMonto">Monto (CLP)</label>
+                                <input type="number" id="editMonto" class="form-input" step="1" min="0">
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="editCliente">Cliente</label>
-                        <input type="text" id="editCliente" class="form-input" required>
+
+                    <!-- Información del Cliente -->
+                    <div class="form-section">
+                        <h4>Información del Cliente</h4>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="editRutCliente">RUT Cliente</label>
+                                <input type="text" id="editRutCliente" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label for="editTipoCliente">Tipo Cliente</label>
+                                <select id="editTipoCliente" class="form-select">
+                                    <option value="">Seleccionar...</option>
+                                    <option value="Público">Público</option>
+                                    <option value="Privado">Privado</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="editPersonaContacto">Persona de Contacto</label>
+                                <input type="text" id="editPersonaContacto" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label for="editTelefonoContacto">Teléfono</label>
+                                <input type="text" id="editTelefonoContacto" class="form-input">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="editCorreoContacto">Email</label>
+                                <input type="email" id="editCorreoContacto" class="form-input">
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="editFechaInicio">Fecha Inicio</label>
-                        <input type="date" id="editFechaInicio" class="form-input" required>
+
+                    <!-- Información Técnica -->
+                    <div class="form-section">
+                        <h4>Información Técnica</h4>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="editSuperficieTerreno">Superficie Terreno (m²)</label>
+                                <input type="number" id="editSuperficieTerreno" class="form-input" step="0.01" min="0">
+                            </div>
+                            <div class="form-group">
+                                <label for="editSuperficieConstruida">Superficie Construida (m²)</label>
+                                <input type="number" id="editSuperficieConstruida" class="form-input" step="0.01" min="0">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="editTipoObraLista">Tipo de Obra</label>
+                                <select id="editTipoObraLista" class="form-select">
+                                    <option value="">Seleccionar...</option>
+                                    <option value="VIVIENDAS">Viviendas</option>
+                                    <option value="EDUCACIONAL">Educacional</option>
+                                    <option value="SALUD">Salud</option>
+                                    <option value="MUNICIPAL">Municipal</option>
+                                    <option value="DEPORTIVO">Deportivo</option>
+                                    <option value="INDUSTRIAL">Industrial</option>
+                                    <option value="OTROS">Otros</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="editFechaTermino">Fecha Término</label>
-                        <input type="date" id="editFechaTermino" class="form-input">
+
+                    <!-- Estudios y Servicios -->
+                    <div class="form-section">
+                        <h4>Estudios y Servicios</h4>
+                        <div class="form-row">
+                            <div class="form-group checkbox-group">
+                                <label><input type="checkbox" id="editEms"> EMS</label>
+                                <label><input type="checkbox" id="editEstudioSismico"> Estudio Sísmico</label>
+                                <label><input type="checkbox" id="editEstudioGeoelectrico"> Estudio Geoeléctrico</label>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group checkbox-group">
+                                <label><input type="checkbox" id="editTopografia"> Topografía</label>
+                                <label><input type="checkbox" id="editSondaje"> Sondaje</label>
+                                <label><input type="checkbox" id="editHidraulicaHidrologia"> Hidráulica/Hidrología</label>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group checkbox-group">
+                                <label><input type="checkbox" id="editCertificadoExperiencia"> Certificado de Experiencia</label>
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="editRegion">Región</label>
-                        <input type="text" id="editRegion" class="form-input" required>
+
+                    <!-- Documentos -->
+                    <div class="form-section">
+                        <h4>Documentos</h4>
+                        <div class="form-row">
+                            <div class="form-group checkbox-group">
+                                <label><input type="checkbox" id="editOrdenCompra"> Orden de Compra</label>
+                                <label><input type="checkbox" id="editContratoDoc"> Contrato</label>
+                                <label><input type="checkbox" id="editFactura"> Factura</label>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="editNumeroOrdenCompra">Número Orden de Compra</label>
+                                <input type="text" id="editNumeroOrdenCompra" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label for="editNumeroFactura">Número de Factura</label>
+                                <input type="text" id="editNumeroFactura" class="form-input">
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="editCiudad">Ciudad</label>
-                        <input type="text" id="editCiudad" class="form-input" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="editEstado">Estado</label>
-                        <select id="editEstado" class="form-select" required>
-                            <option value="Activo">Activo</option>
-                            <option value="Completado">Completado</option>
-                            <option value="Pendiente">Pendiente</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="editMonto">Monto (CLP)</label>
-                        <input type="number" id="editMonto" class="form-input" step="1" min="0">
+
+                    <!-- Descripción -->
+                    <div class="form-section">
+                        <h4>Descripción</h4>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="editDescripcion">Descripción</label>
+                                <textarea id="editDescripcion" class="form-input" rows="3"></textarea>
+                            </div>
+                        </div>
                     </div>
                 </form>
             </div>

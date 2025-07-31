@@ -9,7 +9,7 @@ class Proyecto:
     """Modelo para representar un proyecto/registro en MongoDB Atlas"""
 
     def __init__(self,
-                 id: Optional[int] = None,
+                 id: int = None,
                  contrato: str = "",
                  cliente: str = "",
                  fecha_inicio: Optional[datetime] = None,
@@ -18,6 +18,30 @@ class Proyecto:
                  ciudad: str = "",
                  estado: str = "Activo",
                  monto: float = 0.0,
+                 # Información del cliente
+                 rut_cliente: str = "",
+                 tipo_cliente: str = "",
+                 persona_contacto: str = "",
+                 telefono_contacto: str = "",
+                 correo_contacto: str = "",
+                 # Información técnica
+                 superficie_terreno: Optional[float] = None,
+                 superficie_construida: Optional[float] = None,
+                 tipo_obra_lista: str = "",
+                 # Estudios y servicios
+                 ems: bool = False,
+                 estudio_sismico: bool = False,
+                 estudio_geoelectrico: bool = False,
+                 topografia: bool = False,
+                 sondaje: bool = False,
+                 hidraulica_hidrologia: bool = False,
+                 descripcion: str = "",
+                 certificado_experiencia: bool = False,
+                 orden_compra: bool = False,
+                 contrato_doc: bool = False,
+                 factura: bool = False,
+                 numero_factura: str = "",
+                 numero_orden_compra: str = "",
                  _id: Optional[ObjectId] = None,
                  created_at: Optional[datetime] = None,
                  updated_at: Optional[datetime] = None):
@@ -30,6 +54,30 @@ class Proyecto:
         self.ciudad = ciudad
         self.estado = estado
         self.monto = monto
+        # Información del cliente
+        self.rut_cliente = rut_cliente
+        self.tipo_cliente = tipo_cliente
+        self.persona_contacto = persona_contacto
+        self.telefono_contacto = telefono_contacto
+        self.correo_contacto = correo_contacto
+        # Información técnica
+        self.superficie_terreno = superficie_terreno
+        self.superficie_construida = superficie_construida
+        self.tipo_obra_lista = tipo_obra_lista
+        # Estudios y servicios
+        self.ems = ems
+        self.estudio_sismico = estudio_sismico
+        self.estudio_geoelectrico = estudio_geoelectrico
+        self.topografia = topografia
+        self.sondaje = sondaje
+        self.hidraulica_hidrologia = hidraulica_hidrologia
+        self.descripcion = descripcion
+        self.certificado_experiencia = certificado_experiencia
+        self.orden_compra = orden_compra
+        self.contrato_doc = contrato_doc
+        self.factura = factura
+        self.numero_factura = numero_factura
+        self.numero_orden_compra = numero_orden_compra
         self._id = _id  # MongoDB ObjectId
         self.created_at = created_at if created_at else datetime.now()
         self.updated_at = updated_at if updated_at else datetime.now()
@@ -46,6 +94,30 @@ class Proyecto:
             'ciudad': self.ciudad,
             'estado': self.estado,
             'monto': self.monto,
+            # Información del cliente
+            'rut_cliente': self.rut_cliente,
+            'tipo_cliente': self.tipo_cliente,
+            'persona_contacto': self.persona_contacto,
+            'telefono_contacto': self.telefono_contacto,
+            'correo_contacto': self.correo_contacto,
+            # Información técnica
+            'superficie_terreno': self.superficie_terreno,
+            'superficie_construida': self.superficie_construida,
+            'tipo_obra_lista': self.tipo_obra_lista,
+            # Estudios y servicios
+            'ems': self.ems,
+            'estudio_sismico': self.estudio_sismico,
+            'estudio_geoelectrico': self.estudio_geoelectrico,
+            'topografia': self.topografia,
+            'sondaje': self.sondaje,
+            'hidraulica_hidrologia': self.hidraulica_hidrologia,
+            'descripcion': self.descripcion,
+            'certificado_experiencia': self.certificado_experiencia,
+            'orden_compra': self.orden_compra,
+            'contrato_doc': self.contrato_doc,
+            'factura': self.factura,
+            'numero_factura': self.numero_factura,
+            'numero_orden_compra': self.numero_orden_compra,
             'created_at': self.created_at,
             'updated_at': datetime.now()  # Siempre actualizar timestamp
         }
@@ -69,6 +141,30 @@ class Proyecto:
             ciudad=data.get('ciudad', ''),
             estado=data.get('estado', 'Activo'),
             monto=data.get('monto', 0.0),
+            # Información del cliente
+            rut_cliente=data.get('rut_cliente', ''),
+            tipo_cliente=data.get('tipo_cliente', ''),
+            persona_contacto=data.get('persona_contacto', ''),
+            telefono_contacto=data.get('telefono_contacto', ''),
+            correo_contacto=data.get('correo_contacto', ''),
+            # Información técnica
+            superficie_terreno=data.get('superficie_terreno'),
+            superficie_construida=data.get('superficie_construida'),
+            tipo_obra_lista=data.get('tipo_obra_lista', ''),
+            # Estudios y servicios
+            ems=data.get('ems', False),
+            estudio_sismico=data.get('estudio_sismico', False),
+            estudio_geoelectrico=data.get('estudio_geoelectrico', False),
+            topografia=data.get('topografia', False),
+            sondaje=data.get('sondaje', False),
+            hidraulica_hidrologia=data.get('hidraulica_hidrologia', False),
+            descripcion=data.get('descripcion', ''),
+            certificado_experiencia=data.get('certificado_experiencia', False),
+            orden_compra=data.get('orden_compra', False),
+            contrato_doc=data.get('contrato_doc', False),
+            factura=data.get('factura', False),
+            numero_factura=data.get('numero_factura', ''),
+            numero_orden_compra=data.get('numero_orden_compra', ''),
             _id=data.get('_id'),
             created_at=data.get('created_at'),
             updated_at=data.get('updated_at')

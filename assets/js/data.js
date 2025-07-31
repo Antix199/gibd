@@ -258,7 +258,31 @@ class DataManager {
                     region: recordData.region,
                     ciudad: recordData.ciudad,
                     estado: recordData.estado,
-                    monto: parseFloat(recordData.monto) || 0
+                    monto: parseFloat(recordData.monto) || 0,
+                    // Información del cliente
+                    rut_cliente: recordData.rut_cliente || '',
+                    tipo_cliente: recordData.tipo_cliente || '',
+                    persona_contacto: recordData.persona_contacto || '',
+                    telefono_contacto: recordData.telefono_contacto || '',
+                    correo_contacto: recordData.correo_contacto || '',
+                    // Información técnica
+                    superficie_terreno: recordData.superficie_terreno ? parseFloat(recordData.superficie_terreno) : null,
+                    superficie_construida: recordData.superficie_construida ? parseFloat(recordData.superficie_construida) : null,
+                    tipo_obra_lista: recordData.tipo_obra_lista || '',
+                    // Estudios y servicios
+                    ems: recordData.ems || false,
+                    estudio_sismico: recordData.estudio_sismico || false,
+                    estudio_geoelectrico: recordData.estudio_geoelectrico || false,
+                    topografia: recordData.topografia || false,
+                    sondaje: recordData.sondaje || false,
+                    hidraulica_hidrologia: recordData.hidraulica_hidrologia || false,
+                    descripcion: recordData.descripcion || '',
+                    certificado_experiencia: recordData.certificado_experiencia || false,
+                    orden_compra: recordData.orden_compra || false,
+                    contrato_doc: recordData.contrato_doc || false,
+                    factura: recordData.factura || false,
+                    numero_factura: recordData.numero_factura || '',
+                    numero_orden_compra: recordData.numero_orden_compra || ''
                 })
             });
             return response.data;
@@ -309,17 +333,41 @@ class DataManager {
                 record.contrato && record.contrato.trim() !== ''
             );
 
-            // Mapear a la estructura correcta
+            // Mapear a la estructura correcta con todos los campos
             const proyectos = validData.map(record => ({
                 id: record.id || null,
                 contrato: record.contrato,
                 cliente: record.cliente,
-                fecha_inicio: record.fecha_inicio || null, 
+                fecha_inicio: record.fecha_inicio || null,
                 fecha_termino: record.fecha_termino || null,
                 region: record.region,
                 ciudad: record.ciudad,
                 estado: record.estado || 'Activo',
-                monto: parseFloat(record.monto) || 0
+                monto: parseFloat(record.monto) || 0,
+                // Información del cliente
+                rut_cliente: record.rut_cliente || '',
+                tipo_cliente: record.tipo_cliente || '',
+                persona_contacto: record.persona_contacto || '',
+                telefono_contacto: record.telefono_contacto || '',
+                correo_contacto: record.correo_contacto || '',
+                // Información técnica
+                superficie_terreno: record.superficie_terreno ? parseFloat(record.superficie_terreno) : null,
+                superficie_construida: record.superficie_construida ? parseFloat(record.superficie_construida) : null,
+                tipo_obra_lista: record.tipo_obra_lista || '',
+                // Estudios y servicios
+                ems: record.ems || false,
+                estudio_sismico: record.estudio_sismico || false,
+                estudio_geoelectrico: record.estudio_geoelectrico || false,
+                topografia: record.topografia || false,
+                sondaje: record.sondaje || false,
+                hidraulica_hidrologia: record.hidraulica_hidrologia || false,
+                descripcion: record.descripcion || '',
+                certificado_experiencia: record.certificado_experiencia || false,
+                orden_compra: record.orden_compra || false,
+                contrato_doc: record.contrato_doc || false,
+                factura: record.factura || false,
+                numero_factura: record.numero_factura || '',
+                numero_orden_compra: record.numero_orden_compra || ''
             }));
 
             console.log('=== DATOS ENVIADOS AL SERVIDOR ===');

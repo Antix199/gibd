@@ -315,7 +315,31 @@ class ModifyDatabasePage {
                     region: this.getCSVValue(row, ['region', 'Region', 'región', 'Región']),
                     ciudad: this.getCSVValue(row, ['ciudad', 'Ciudad', 'city', 'City']),
                     estado: this.mapEstado(this.getCSVValue(row, ['estado', 'Estado', 'status', 'Status'])),
-                    monto: this.parseMonto(this.getCSVValue(row, ['monto', 'Monto', 'amount', 'Amount']))
+                    monto: this.parseMonto(this.getCSVValue(row, ['monto', 'Monto', 'amount', 'Amount'])),
+                    // Información del cliente
+                    rut_cliente: this.getCSVValue(row, ['RUT_cliente', 'rut_cliente', 'RUT Cliente', 'RUT']),
+                    tipo_cliente: this.getCSVValue(row, ['Tipo_cliente', 'tipo_cliente', 'Tipo Cliente', 'Tipo']),
+                    persona_contacto: this.getCSVValue(row, ['Persona_contacto', 'persona_contacto', 'Persona Contacto', 'Contacto']),
+                    telefono_contacto: this.getCSVValue(row, ['Telefono_contacto', 'telefono_contacto', 'Teléfono Contacto', 'Teléfono']),
+                    correo_contacto: this.getCSVValue(row, ['Correo_contacto', 'correo_contacto', 'Correo Contacto', 'Email']),
+                    // Información técnica
+                    superficie_terreno: this.parseFloat(this.getCSVValue(row, ['Superficie_terreno', 'superficie_terreno', 'Superficie Terreno'])),
+                    superficie_construida: this.parseFloat(this.getCSVValue(row, ['Superficie_construida', 'superficie_construida', 'Superficie Construida'])),
+                    tipo_obra_lista: this.getCSVValue(row, ['Tipo_obra_lista', 'tipo_obra_lista', 'Tipo Obra Lista', 'Tipo Obra']),
+                    // Estudios y servicios
+                    ems: this.parseBoolean(this.getCSVValue(row, ['EMS', 'ems'])),
+                    estudio_sismico: this.parseBoolean(this.getCSVValue(row, ['Estudio_sismico', 'estudio_sismico', 'Estudio Sísmico'])),
+                    estudio_geoelectrico: this.parseBoolean(this.getCSVValue(row, ['Estudio_Geoeléctrico', 'estudio_geoelectrico', 'Estudio Geoeléctrico'])),
+                    topografia: this.parseBoolean(this.getCSVValue(row, ['Topografía', 'topografia', 'Topografia'])),
+                    sondaje: this.parseBoolean(this.getCSVValue(row, ['Sondaje', 'sondaje'])),
+                    hidraulica_hidrologia: this.parseBoolean(this.getCSVValue(row, ['Hidráulica/Hidrología', 'hidraulica_hidrologia', 'Hidráulica', 'Hidrología'])),
+                    descripcion: this.getCSVValue(row, ['Descripción', 'descripcion', 'Descripcion']),
+                    certificado_experiencia: this.parseBoolean(this.getCSVValue(row, ['Certificado_experiencia', 'certificado_experiencia', 'Certificado Experiencia'])),
+                    orden_compra: this.parseBoolean(this.getCSVValue(row, ['Orden_compra', 'orden_compra', 'Orden Compra'])),
+                    contrato_doc: this.parseBoolean(this.getCSVValue(row, ['Contrato_existe', 'contrato_existe', 'Contrato Existe', 'Contrato'])),
+                    factura: this.parseBoolean(this.getCSVValue(row, ['Factura', 'factura'])),
+                    numero_factura: this.getCSVValue(row, ['Numero_factura', 'numero_factura', 'Número Factura']),
+                    numero_orden_compra: this.getCSVValue(row, ['Numero_orden_compra', 'numero_orden_compra', 'Número Orden Compra'])
                 };
 
                 console.log(`Proyecto ID ${idValue}: fecha_inicio parseada = "${proyecto.fecha_inicio}", fecha_termino parseada = "${proyecto.fecha_termino}"`);
@@ -482,6 +506,34 @@ class ModifyDatabasePage {
         }
     }
 
+    parseBoolean(value) {
+        // Parsea valores booleanos desde CSV
+        if (typeof value === 'boolean') return value;
+        if (!value || value === '') return false;
+
+        const lowerValue = value.toString().toLowerCase().trim();
+        return lowerValue === 'true' || lowerValue === 'sí' || lowerValue === 'si' ||
+               lowerValue === '1' || lowerValue === 'yes' || lowerValue === 'y';
+    }
+
+    parseFloat(value) {
+        // Parsea valores flotantes desde CSV
+        if (!value || value === '' || value === 'NULL' || value === 'null') return null;
+
+        try {
+            // Limpiar el valor (remover espacios, comas como separadores de miles)
+            const cleanValue = value.toString()
+                .replace(/\s/g, '')
+                .replace(/,/g, ''); // Asumir que las comas son separadores de miles
+
+            const parsed = parseFloat(cleanValue);
+            return isNaN(parsed) ? null : parsed;
+        } catch (error) {
+            console.warn('Error parseando float:', value, error);
+            return null;
+        }
+    }
+
     async loadExistingRecords() {
         try {
             const data = await dataManager.getAllRecords();
@@ -502,7 +554,7 @@ class ModifyDatabasePage {
         if (data.length === 0) {
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td colspan="11" style="text-align: center; padding: 2rem; color: var(--gray-500);">
+                <td colspan="32" style="text-align: center; padding: 2rem; color: var(--gray-500);">
                     No records found
                 </td>
             `;
@@ -532,6 +584,27 @@ class ModifyDatabasePage {
                     </span>
                 </td>
                 <td>${formatCurrency(record.monto)}</td>
+                <td>${record.rut_cliente || 'N/A'}</td>
+                <td>${record.tipo_cliente || 'N/A'}</td>
+                <td>${record.persona_contacto || 'N/A'}</td>
+                <td>${record.telefono_contacto || 'N/A'}</td>
+                <td>${record.correo_contacto || 'N/A'}</td>
+                <td>${record.superficie_terreno ? record.superficie_terreno.toLocaleString() + ' m²' : 'N/A'}</td>
+                <td>${record.superficie_construida ? record.superficie_construida.toLocaleString() + ' m²' : 'N/A'}</td>
+                <td>${record.tipo_obra_lista || 'N/A'}</td>
+                <td>${record.ems ? '✓' : '✗'}</td>
+                <td>${record.estudio_sismico ? '✓' : '✗'}</td>
+                <td>${record.estudio_geoelectrico ? '✓' : '✗'}</td>
+                <td>${record.topografia ? '✓' : '✗'}</td>
+                <td>${record.sondaje ? '✓' : '✗'}</td>
+                <td>${record.hidraulica_hidrologia ? '✓' : '✗'}</td>
+                <td>${record.descripcion || 'N/A'}</td>
+                <td>${record.certificado_experiencia ? '✓' : '✗'}</td>
+                <td>${record.orden_compra ? '✓' : '✗'}</td>
+                <td>${record.contrato_doc ? '✓' : '✗'}</td>
+                <td>${record.factura ? '✓' : '✗'}</td>
+                <td>${record.numero_factura || 'N/A'}</td>
+                <td>${record.numero_orden_compra || 'N/A'}</td>
                 <td>
                     <button class="btn btn-small btn-warning" onclick="modifyPage.editRecord(${record.id})">
                         Editar
@@ -580,15 +653,48 @@ class ModifyDatabasePage {
 
             this.currentEditId = id;
 
-            // Populate edit form
-            document.getElementById('editContrato').value = record.contrato;
-            document.getElementById('editCliente').value = record.cliente;
-            document.getElementById('editFechaInicio').value = formatDate(record.fecha_inicio);
+            // Populate edit form - Información básica
+            document.getElementById('editContrato').value = record.contrato || '';
+            document.getElementById('editCliente').value = record.cliente || '';
+            document.getElementById('editFechaInicio').value = record.fecha_inicio ? formatDate(record.fecha_inicio) : '';
             document.getElementById('editFechaTermino').value = record.fecha_termino ? formatDate(record.fecha_termino) : '';
-            document.getElementById('editRegion').value = record.region;
-            document.getElementById('editCiudad').value = record.ciudad;
-            document.getElementById('editEstado').value = record.estado;
-            document.getElementById('editMonto').value = record.monto;
+            document.getElementById('editRegion').value = record.region || '';
+            document.getElementById('editCiudad').value = record.ciudad || '';
+            document.getElementById('editEstado').value = record.estado || 'Activo';
+            document.getElementById('editMonto').value = record.monto || 0;
+
+            // Información del cliente
+            document.getElementById('editRutCliente').value = record.rut_cliente || '';
+            document.getElementById('editTipoCliente').value = record.tipo_cliente || '';
+            document.getElementById('editPersonaContacto').value = record.persona_contacto || '';
+            document.getElementById('editTelefonoContacto').value = record.telefono_contacto || '';
+            document.getElementById('editCorreoContacto').value = record.correo_contacto || '';
+
+            // Información técnica
+            document.getElementById('editSuperficieTerreno').value = record.superficie_terreno || '';
+            document.getElementById('editSuperficieConstruida').value = record.superficie_construida || '';
+            document.getElementById('editTipoObraLista').value = record.tipo_obra_lista || '';
+
+            // Estudios y servicios (checkboxes)
+            document.getElementById('editEms').checked = record.ems || false;
+            document.getElementById('editEstudioSismico').checked = record.estudio_sismico || false;
+            document.getElementById('editEstudioGeoelectrico').checked = record.estudio_geoelectrico || false;
+            document.getElementById('editTopografia').checked = record.topografia || false;
+            document.getElementById('editSondaje').checked = record.sondaje || false;
+            document.getElementById('editHidraulicaHidrologia').checked = record.hidraulica_hidrologia || false;
+            document.getElementById('editCertificadoExperiencia').checked = record.certificado_experiencia || false;
+
+            // Documentos (checkboxes)
+            document.getElementById('editOrdenCompra').checked = record.orden_compra || false;
+            document.getElementById('editContratoDoc').checked = record.contrato_doc || false;
+            document.getElementById('editFactura').checked = record.factura || false;
+
+            // Números de documentos
+            document.getElementById('editNumeroOrdenCompra').value = record.numero_orden_compra || '';
+            document.getElementById('editNumeroFactura').value = record.numero_factura || '';
+
+            // Descripción
+            document.getElementById('editDescripcion').value = record.descripcion || '';
 
             // Show modal
             document.getElementById('editModal').classList.add('active');
@@ -617,6 +723,7 @@ class ModifyDatabasePage {
 
         try {
             const data = {
+                // Información básica
                 contrato: document.getElementById('editContrato').value,
                 cliente: document.getElementById('editCliente').value,
                 fecha_inicio: document.getElementById('editFechaInicio').value,
@@ -624,7 +731,40 @@ class ModifyDatabasePage {
                 region: document.getElementById('editRegion').value,
                 ciudad: document.getElementById('editCiudad').value,
                 estado: document.getElementById('editEstado').value,
-                monto: document.getElementById('editMonto').value
+                monto: document.getElementById('editMonto').value,
+
+                // Información del cliente
+                rut_cliente: document.getElementById('editRutCliente').value,
+                tipo_cliente: document.getElementById('editTipoCliente').value,
+                persona_contacto: document.getElementById('editPersonaContacto').value,
+                telefono_contacto: document.getElementById('editTelefonoContacto').value,
+                correo_contacto: document.getElementById('editCorreoContacto').value,
+
+                // Información técnica
+                superficie_terreno: document.getElementById('editSuperficieTerreno').value,
+                superficie_construida: document.getElementById('editSuperficieConstruida').value,
+                tipo_obra_lista: document.getElementById('editTipoObraLista').value,
+
+                // Estudios y servicios (checkboxes)
+                ems: document.getElementById('editEms').checked,
+                estudio_sismico: document.getElementById('editEstudioSismico').checked,
+                estudio_geoelectrico: document.getElementById('editEstudioGeoelectrico').checked,
+                topografia: document.getElementById('editTopografia').checked,
+                sondaje: document.getElementById('editSondaje').checked,
+                hidraulica_hidrologia: document.getElementById('editHidraulicaHidrologia').checked,
+                certificado_experiencia: document.getElementById('editCertificadoExperiencia').checked,
+
+                // Documentos (checkboxes)
+                orden_compra: document.getElementById('editOrdenCompra').checked,
+                contrato_doc: document.getElementById('editContratoDoc').checked,
+                factura: document.getElementById('editFactura').checked,
+
+                // Números de documentos
+                numero_orden_compra: document.getElementById('editNumeroOrdenCompra').value,
+                numero_factura: document.getElementById('editNumeroFactura').value,
+
+                // Descripción
+                descripcion: document.getElementById('editDescripcion').value
             };
 
             // Validate

@@ -329,7 +329,31 @@ def create_proyecto():
             region=data.get('region', ''),
             ciudad=data.get('ciudad', ''),
             estado=data.get('estado', 'Activo'),
-            monto=float(data.get('monto', 0))
+            monto=float(data.get('monto', 0)),
+            # Información del cliente
+            rut_cliente=data.get('rut_cliente', ''),
+            tipo_cliente=data.get('tipo_cliente', ''),
+            persona_contacto=data.get('persona_contacto', ''),
+            telefono_contacto=data.get('telefono_contacto', ''),
+            correo_contacto=data.get('correo_contacto', ''),
+            # Información técnica
+            superficie_terreno=data.get('superficie_terreno'),
+            superficie_construida=data.get('superficie_construida'),
+            tipo_obra_lista=data.get('tipo_obra_lista', ''),
+            # Estudios y servicios
+            ems=data.get('ems', False),
+            estudio_sismico=data.get('estudio_sismico', False),
+            estudio_geoelectrico=data.get('estudio_geoelectrico', False),
+            topografia=data.get('topografia', False),
+            sondaje=data.get('sondaje', False),
+            hidraulica_hidrologia=data.get('hidraulica_hidrologia', False),
+            descripcion=data.get('descripcion', ''),
+            certificado_experiencia=data.get('certificado_experiencia', False),
+            orden_compra=data.get('orden_compra', False),
+            contrato_doc=data.get('contrato_doc', False),
+            factura=data.get('factura', False),
+            numero_factura=data.get('numero_factura', ''),
+            numero_orden_compra=data.get('numero_orden_compra', '')
         )
 
         logger.info(f"📋 Proyecto creado: {proyecto}")
@@ -388,7 +412,7 @@ def update_proyecto(proyecto_id):
                 'error': 'Proyecto no encontrado'
             }), 404
         
-        # Actualizar campos
+        # Actualizar campos básicos
         proyecto.contrato = data.get('contrato', proyecto.contrato)
         proyecto.cliente = data.get('cliente', proyecto.cliente)
         proyecto.region = data.get('region', proyecto.region)
@@ -396,6 +420,36 @@ def update_proyecto(proyecto_id):
         proyecto.estado = data.get('estado', proyecto.estado)
         proyecto.monto = float(data.get('monto', proyecto.monto))
 
+        # Actualizar información del cliente
+        proyecto.rut_cliente = data.get('rut_cliente', proyecto.rut_cliente)
+        proyecto.tipo_cliente = data.get('tipo_cliente', proyecto.tipo_cliente)
+        proyecto.persona_contacto = data.get('persona_contacto', proyecto.persona_contacto)
+        proyecto.telefono_contacto = data.get('telefono_contacto', proyecto.telefono_contacto)
+        proyecto.correo_contacto = data.get('correo_contacto', proyecto.correo_contacto)
+
+        # Actualizar información técnica
+        if 'superficie_terreno' in data:
+            proyecto.superficie_terreno = float(data['superficie_terreno']) if data['superficie_terreno'] else None
+        if 'superficie_construida' in data:
+            proyecto.superficie_construida = float(data['superficie_construida']) if data['superficie_construida'] else None
+        proyecto.tipo_obra_lista = data.get('tipo_obra_lista', proyecto.tipo_obra_lista)
+
+        # Actualizar estudios y servicios
+        proyecto.ems = data.get('ems', proyecto.ems)
+        proyecto.estudio_sismico = data.get('estudio_sismico', proyecto.estudio_sismico)
+        proyecto.estudio_geoelectrico = data.get('estudio_geoelectrico', proyecto.estudio_geoelectrico)
+        proyecto.topografia = data.get('topografia', proyecto.topografia)
+        proyecto.sondaje = data.get('sondaje', proyecto.sondaje)
+        proyecto.hidraulica_hidrologia = data.get('hidraulica_hidrologia', proyecto.hidraulica_hidrologia)
+        proyecto.descripcion = data.get('descripcion', proyecto.descripcion)
+        proyecto.certificado_experiencia = data.get('certificado_experiencia', proyecto.certificado_experiencia)
+        proyecto.orden_compra = data.get('orden_compra', proyecto.orden_compra)
+        proyecto.contrato_doc = data.get('contrato_doc', proyecto.contrato_doc)
+        proyecto.factura = data.get('factura', proyecto.factura)
+        proyecto.numero_factura = data.get('numero_factura', proyecto.numero_factura)
+        proyecto.numero_orden_compra = data.get('numero_orden_compra', proyecto.numero_orden_compra)
+
+        # Actualizar fechas
         if data.get('fecha_inicio'):
             try:
                 proyecto.fecha_inicio = datetime.fromisoformat(data.get('fecha_inicio'))
@@ -549,7 +603,31 @@ def bulk_import_proyectos():
                 region=item.get('region', ''),
                 ciudad=item.get('ciudad', ''),
                 estado=item.get('estado', 'Activo'),
-                monto=float(item.get('monto', 0))
+                monto=float(item.get('monto', 0)),
+                # Información del cliente
+                rut_cliente=item.get('rut_cliente', ''),
+                tipo_cliente=item.get('tipo_cliente', ''),
+                persona_contacto=item.get('persona_contacto', ''),
+                telefono_contacto=item.get('telefono_contacto', ''),
+                correo_contacto=item.get('correo_contacto', ''),
+                # Información técnica
+                superficie_terreno=item.get('superficie_terreno'),
+                superficie_construida=item.get('superficie_construida'),
+                tipo_obra_lista=item.get('tipo_obra_lista', ''),
+                # Estudios y servicios
+                ems=item.get('ems', False),
+                estudio_sismico=item.get('estudio_sismico', False),
+                estudio_geoelectrico=item.get('estudio_geoelectrico', False),
+                topografia=item.get('topografia', False),
+                sondaje=item.get('sondaje', False),
+                hidraulica_hidrologia=item.get('hidraulica_hidrologia', False),
+                descripcion=item.get('descripcion', ''),
+                certificado_experiencia=item.get('certificado_experiencia', False),
+                orden_compra=item.get('orden_compra', False),
+                contrato_doc=item.get('contrato_doc', False),
+                factura=item.get('factura', False),
+                numero_factura=item.get('numero_factura', ''),
+                numero_orden_compra=item.get('numero_orden_compra', '')
             )
             logger.info(f"✅ Proyecto creado: ID={proyecto.id}, Contrato={proyecto.contrato}")
             proyectos.append(proyecto)
