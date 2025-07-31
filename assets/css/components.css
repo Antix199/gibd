@@ -337,6 +337,38 @@
     overflow: hidden;
     box-shadow: var(--shadow-sm);
     border: 1px solid var(--gray-300);
+    position: relative;
+}
+
+/* Scroll horizontal mejorado */
+.table-container::-webkit-scrollbar {
+    height: 12px;
+    width: 12px;
+}
+
+.table-container::-webkit-scrollbar-track {
+    background: var(--gray-100);
+    border-radius: 6px;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+    background: var(--gray-400);
+    border-radius: 6px;
+    border: 2px solid var(--gray-100);
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+    background: var(--gray-500);
+}
+
+.table-container::-webkit-scrollbar-corner {
+    background: var(--gray-100);
+}
+
+
+/* Ocultar indicador cuando no hay scroll */
+.table-container.no-scroll::after {
+    display: none;
 }
 
 .manage-table {
@@ -360,6 +392,7 @@
     position: sticky;
     top: 0;
     z-index: 10;
+    white-space: nowrap;
 }
 
 .data-table td {
@@ -367,6 +400,17 @@
     border-bottom: 1px solid var(--gray-200);
     background-color: var(--white);
     transition: var(--transition-fast);
+    white-space: nowrap;
+    vertical-align: top;
+}
+
+/* Permitir texto en múltiples líneas para campos largos */
+.data-table td.description-cell,
+.data-table td.long-text {
+    white-space: normal;
+    word-wrap: break-word;
+    max-width: 300px;
+    line-height: 1.4;
 }
 
 .data-table tbody tr:hover {

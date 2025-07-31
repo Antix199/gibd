@@ -286,7 +286,7 @@ class MainPage {
         if (this.filteredProjects.length === 0) {
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td colspan="9" class="text-center" style="padding: 2rem; color: #666;">
+                <td colspan="30" class="text-center" style="padding: 2rem; color: #666;">
                     <i class="fas fa-search" style="font-size: 2rem; margin-bottom: 1rem; display: block;"></i>
                     No se encontraron proyectos con los filtros aplicados
                 </td>
@@ -300,14 +300,35 @@ class MainPage {
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>${project.id || 'N/A'}</td>
-                <td>${project.contrato || 'N/A'}</td>
-                <td>${project.cliente || 'N/A'}</td>
+                <td class="long-text">${project.contrato || 'N/A'}</td>
+                <td class="long-text">${project.cliente || 'N/A'}</td>
                 <td>${this.formatDate(project.fecha_inicio)}</td>
                 <td>${this.formatDate(project.fecha_termino)}</td>
                 <td>${project.region || 'N/A'}</td>
                 <td>${project.ciudad || 'N/A'}</td>
                 <td><span class="status-badge status-${(project.estado || 'pendiente').toLowerCase()}">${project.estado || 'Pendiente'}</span></td>
                 <td class="text-right">$${this.formatNumber(project.monto || 0)}</td>
+                <td>${project.rut_cliente || 'N/A'}</td>
+                <td>${project.tipo_cliente || 'N/A'}</td>
+                <td>${project.persona_contacto || 'N/A'}</td>
+                <td>${project.telefono_contacto || 'N/A'}</td>
+                <td>${project.correo_contacto || 'N/A'}</td>
+                <td>${project.superficie_terreno ? project.superficie_terreno.toLocaleString() + ' m²' : 'N/A'}</td>
+                <td>${project.superficie_construida ? project.superficie_construida.toLocaleString() + ' m²' : 'N/A'}</td>
+                <td>${project.tipo_obra_lista || 'N/A'}</td>
+                <td>${project.ems ? '✓' : '✗'}</td>
+                <td>${project.estudio_sismico ? '✓' : '✗'}</td>
+                <td>${project.estudio_geoelectrico ? '✓' : '✗'}</td>
+                <td>${project.topografia ? '✓' : '✗'}</td>
+                <td>${project.sondaje ? '✓' : '✗'}</td>
+                <td>${project.hidraulica_hidrologia ? '✓' : '✗'}</td>
+                <td class="description-cell">${project.descripcion || 'N/A'}</td>
+                <td>${project.certificado_experiencia ? '✓' : '✗'}</td>
+                <td>${project.orden_compra ? '✓' : '✗'}</td>
+                <td>${project.contrato_doc ? '✓' : '✗'}</td>
+                <td>${project.factura ? '✓' : '✗'}</td>
+                <td>${project.numero_factura || 'N/A'}</td>
+                <td>${project.numero_orden_compra || 'N/A'}</td>
             `;
             tableBody.appendChild(row);
         });

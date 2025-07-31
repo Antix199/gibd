@@ -572,8 +572,8 @@ class ModifyDatabasePage {
                     <input type="checkbox" class="checkbox" value="${record.id}">
                 </td>
                 <td>${record.id}</td>
-                <td>${record.contrato}</td>
-                <td>${record.cliente}</td>
+                <td class="long-text">${record.contrato}</td>
+                <td class="long-text">${record.cliente}</td>
                 <td>${record.fecha_inicio ? formatDate(record.fecha_inicio) : '-'}</td>
                 <td>${record.fecha_termino ? formatDate(record.fecha_termino) : '-'}</td>
                 <td>${record.region}</td>
@@ -598,7 +598,7 @@ class ModifyDatabasePage {
                 <td>${record.topografia ? '✓' : '✗'}</td>
                 <td>${record.sondaje ? '✓' : '✗'}</td>
                 <td>${record.hidraulica_hidrologia ? '✓' : '✗'}</td>
-                <td>${record.descripcion || 'N/A'}</td>
+                <td class="description-cell">${record.descripcion || 'N/A'}</td>
                 <td>${record.certificado_experiencia ? '✓' : '✗'}</td>
                 <td>${record.orden_compra ? '✓' : '✗'}</td>
                 <td>${record.contrato_doc ? '✓' : '✗'}</td>
