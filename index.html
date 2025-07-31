@@ -59,16 +59,59 @@
                     </div>
                 </div>
 
-                <!-- Row 2: Location Filters -->
+                <!-- Row 2: Location and Client Filters -->
                 <div class="filter-row">
                     <div class="filter-group">
                         <label for="regionFilter">Región</label>
-                        <input type="text" id="regionFilter" class="filter-input" placeholder="Región">
+                        <select id="regionFilter" class="filter-select">
+                            <option value="">Todas las Regiones</option>
+                            <option value="Arica y Parinacota">Arica y Parinacota</option>
+                            <option value="Tarapacá">Tarapacá</option>
+                            <option value="Antofagasta">Antofagasta</option>
+                            <option value="Atacama">Atacama</option>
+                            <option value="Coquimbo">Coquimbo</option>
+                            <option value="Valparaíso">Valparaíso</option>
+                            <option value="Metropolitana">Metropolitana</option>
+                            <option value="O'Higgins">O'Higgins</option>
+                            <option value="Maule">Maule</option>
+                            <option value="Ñuble">Ñuble</option>
+                            <option value="Biobío">Biobío</option>
+                            <option value="La Araucanía">La Araucanía</option>
+                            <option value="Los Ríos">Los Ríos</option>
+                            <option value="Los Lagos">Los Lagos</option>
+                            <option value="Aysén">Aysén</option>
+                            <option value="Magallanes">Magallanes</option>
+                        </select>
                     </div>
                     <div class="filter-group">
                         <label for="ciudadFilter">Ciudad</label>
                         <input type="text" id="ciudadFilter" class="filter-input" placeholder="Ciudad">
                     </div>
+                    <div class="filter-group">
+                        <label for="tipoClienteFilter">Tipo Cliente</label>
+                        <select id="tipoClienteFilter" class="filter-select">
+                            <option value="">Todos los Tipos</option>
+                            <option value="Público">Público</option>
+                            <option value="Privado">Privado</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="tipoObraFilter">Tipo de Obra</label>
+                        <select id="tipoObraFilter" class="filter-select">
+                            <option value="">Todos los Tipos</option>
+                            <option value="VIVIENDAS">Viviendas</option>
+                            <option value="EDUCACIONAL">Educacional</option>
+                            <option value="SALUD">Salud</option>
+                            <option value="MUNICIPAL">Municipal</option>
+                            <option value="DEPORTIVO">Deportivo</option>
+                            <option value="INDUSTRIAL">Industrial</option>
+                            <option value="OTROS">Otros</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Row 3: Date Filters -->
+                <div class="filter-row">
                     <div class="filter-group">
                         <label for="fechaInicioDesde">Fecha Inicio Desde</label>
                         <input type="date" id="fechaInicioDesde" class="filter-input">
@@ -77,9 +120,17 @@
                         <label for="fechaInicioHasta">Fecha Inicio Hasta</label>
                         <input type="date" id="fechaInicioHasta" class="filter-input">
                     </div>
+                    <div class="filter-group">
+                        <label for="fechaTerminoDesde">Fecha Término Desde</label>
+                        <input type="date" id="fechaTerminoDesde" class="filter-input">
+                    </div>
+                    <div class="filter-group">
+                        <label for="fechaTerminoHasta">Fecha Término Hasta</label>
+                        <input type="date" id="fechaTerminoHasta" class="filter-input">
+                    </div>
                 </div>
 
-                <!-- Row 3: Amount and Date Filters -->
+                <!-- Row 4: Amount Filters -->
                 <div class="filter-row">
                     <div class="filter-group">
                         <label for="montoDesde">Monto Desde (CLP)</label>
@@ -90,12 +141,48 @@
                         <input type="number" id="montoHasta" class="filter-input" placeholder="999999999" min="0">
                     </div>
                     <div class="filter-group">
-                        <label for="fechaTerminoDesde">Fecha Término Desde</label>
-                        <input type="date" id="fechaTerminoDesde" class="filter-input">
+                        <label for="superficieTerrenoDesde">Superficie Terreno Desde (m²)</label>
+                        <input type="number" id="superficieTerrenoDesde" class="filter-input" placeholder="0" min="0">
                     </div>
                     <div class="filter-group">
-                        <label for="fechaTerminoHasta">Fecha Término Hasta</label>
-                        <input type="date" id="fechaTerminoHasta" class="filter-input">
+                        <label for="superficieTerrenoHasta">Superficie Terreno Hasta (m²)</label>
+                        <input type="number" id="superficieTerrenoHasta" class="filter-input" placeholder="999999" min="0">
+                    </div>
+                </div>
+
+                <!-- Row 5: Studies and Services Filters -->
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="emsFilter">EMS</label>
+                        <select id="emsFilter" class="filter-select">
+                            <option value="">Todos</option>
+                            <option value="true">Sí</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="topografiaFilter">Topografía</label>
+                        <select id="topografiaFilter" class="filter-select">
+                            <option value="">Todos</option>
+                            <option value="true">Sí</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="sondajeFilter">Sondaje</label>
+                        <select id="sondajeFilter" class="filter-select">
+                            <option value="">Todos</option>
+                            <option value="true">Sí</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="certificadoExperienciaFilter">Certificado Experiencia</label>
+                        <select id="certificadoExperienciaFilter" class="filter-select">
+                            <option value="">Todos</option>
+                            <option value="true">Sí</option>
+                            <option value="false">No</option>
+                        </select>
                     </div>
                 </div>
 

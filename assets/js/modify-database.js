@@ -7,7 +7,15 @@ class ModifyDatabasePage {
     constructor() {
         this.selectedRecords = [];
         this.currentEditId = null;
-        
+        this.allRecords = [];
+        this.filteredRecords = [];
+        this.currentFilters = {
+            search: '',
+            region: '',
+            estado: '',
+            tipoObra: ''
+        };
+
         this.init();
     }
 
@@ -59,6 +67,57 @@ class ModifyDatabasePage {
         if (recordFechaInicio && !recordFechaInicio.value) {
             recordFechaInicio.value = new Date().toISOString().split('T')[0];
             console.log('Fecha por defecto establecida para entrada manual');
+        }
+
+        // Filtros
+        this.setupFilters();
+    }
+
+    setupFilters() {
+        // Toggle filters visibility
+        const toggleFilters = document.getElementById('toggleFilters');
+        const filtersContainer = document.getElementById('filtersContainer');
+
+        if (toggleFilters && filtersContainer) {
+            toggleFilters.addEventListener('click', () => {
+                if (filtersContainer.style.display === 'none') {
+                    filtersContainer.style.display = 'block';
+                    toggleFilters.textContent = 'Ocultar';
+                } else {
+                    filtersContainer.style.display = 'none';
+                    toggleFilters.textContent = 'Mostrar';
+                }
+            });
+        }
+
+        // Quick search filter
+        const quickSearchFilter = document.getElementById('quickSearchFilter');
+        if (quickSearchFilter) {
+            quickSearchFilter.addEventListener('input', (e) => {
+                this.currentFilters.search = e.target.value.trim();
+                this.applyFilters();
+            });
+        }
+
+        // Select filters with auto-apply
+        const selectFilters = ['quickRegionFilter', 'quickEstadoFilter', 'quickTipoObraFilter'];
+        selectFilters.forEach(filterId => {
+            const filter = document.getElementById(filterId);
+            if (filter) {
+                filter.addEventListener('change', () => {
+                    const filterKey = filterId.replace('quick', '').replace('Filter', '').toLowerCase();
+                    this.currentFilters[filterKey === 'tipoobrafilter' ? 'tipoObra' : filterKey] = filter.value;
+                    this.applyFilters();
+                });
+            }
+        });
+
+        // Clear filters button
+        const clearQuickFiltersBtn = document.getElementById('clearQuickFiltersBtn');
+        if (clearQuickFiltersBtn) {
+            clearQuickFiltersBtn.addEventListener('click', () => {
+                this.clearFilters();
+            });
         }
     }
 
@@ -537,7 +596,9 @@ class ModifyDatabasePage {
     async loadExistingRecords() {
         try {
             const data = await dataManager.getAllRecords();
-            this.populateManageTable(data);
+            this.allRecords = data;
+            this.filteredRecords = [...data]; // Inicialmente mostrar todos
+            this.applyFilters(); // Aplicar filtros actuales
         } catch (error) {
             console.error('Error loading records:', error);
             UIComponents.showNotification('Error loading records', 'error');
@@ -789,6 +850,137 @@ class ModifyDatabasePage {
         } catch (error) {
             UIComponents.showNotification('Error updating record', 'error');
         }
+    }
+
+    applyFilters() {
+        this.filteredRecords = this.allRecords.filter(record => {
+            // Búsqueda general
+            if (this.currentFilters.search) {
+                const searchTerm = this.currentFilters.search.toLowerCase();
+                const searchMatch =
+                    (record.id && record.id.toString().toLowerCase().includes(searchTerm)) ||
+                    (record.contrato && record.contrato.toLowerCase().includes(searchTerm)) ||
+                    (record.cliente && record.cliente.toLowerCase().includes(searchTerm));
+
+                if (!searchMatch) return false;
+            }
+
+            // Filtro por región
+            if (this.currentFilters.region && record.region !== this.currentFilters.region) {
+                return false;
+            }
+
+            // Filtro por estado
+            if (this.currentFilters.estado && record.estado !== this.currentFilters.estado) {
+                return false;
+            }
+
+            // Filtro por tipo de obra
+            if (this.currentFilters.tipoObra && record.tipo_obra_lista !== this.currentFilters.tipoObra) {
+                return false;
+            }
+
+            return true;
+        });
+
+        this.displayFilteredRecords();
+    }
+
+    displayFilteredRecords() {
+        const tableBody = document.getElementById('manageTableBody');
+        if (!tableBody) return;
+
+        tableBody.innerHTML = '';
+
+        if (this.filteredRecords.length === 0) {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td colspan="32" class="text-center" style="padding: 2rem; color: #666;">
+                    <i class="fas fa-search" style="font-size: 2rem; margin-bottom: 1rem; display: block;"></i>
+                    No se encontraron registros con los filtros aplicados
+                </td>
+            `;
+            tableBody.appendChild(row);
+            return;
+        }
+
+        this.filteredRecords.forEach(record => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>
+                    <input type="checkbox" class="checkbox" value="${record.id}">
+                </td>
+                <td>${record.id}</td>
+                <td class="long-text">${record.contrato}</td>
+                <td class="long-text">${record.cliente}</td>
+                <td>${record.fecha_inicio ? formatDate(record.fecha_inicio) : '-'}</td>
+                <td>${record.fecha_termino ? formatDate(record.fecha_termino) : '-'}</td>
+                <td>${record.region}</td>
+                <td>${record.ciudad}</td>
+                <td>
+                    <span class="status-badge status-${record.estado.toLowerCase()}">
+                        ${record.estado}
+                    </span>
+                </td>
+                <td>${formatCurrency(record.monto)}</td>
+                <td>${record.rut_cliente || 'N/A'}</td>
+                <td>${record.tipo_cliente || 'N/A'}</td>
+                <td>${record.persona_contacto || 'N/A'}</td>
+                <td>${record.telefono_contacto || 'N/A'}</td>
+                <td>${record.correo_contacto || 'N/A'}</td>
+                <td>${record.superficie_terreno ? record.superficie_terreno.toLocaleString() + ' m²' : 'N/A'}</td>
+                <td>${record.superficie_construida ? record.superficie_construida.toLocaleString() + ' m²' : 'N/A'}</td>
+                <td>${record.tipo_obra_lista || 'N/A'}</td>
+                <td>${record.ems ? '✓' : '✗'}</td>
+                <td>${record.estudio_sismico ? '✓' : '✗'}</td>
+                <td>${record.estudio_geoelectrico ? '✓' : '✗'}</td>
+                <td>${record.topografia ? '✓' : '✗'}</td>
+                <td>${record.sondaje ? '✓' : '✗'}</td>
+                <td>${record.hidraulica_hidrologia ? '✓' : '✗'}</td>
+                <td class="description-cell">${record.descripcion || 'N/A'}</td>
+                <td>${record.certificado_experiencia ? '✓' : '✗'}</td>
+                <td>${record.orden_compra ? '✓' : '✗'}</td>
+                <td>${record.contrato_doc ? '✓' : '✗'}</td>
+                <td>${record.factura ? '✓' : '✗'}</td>
+                <td>${record.numero_factura || 'N/A'}</td>
+                <td>${record.numero_orden_compra || 'N/A'}</td>
+                <td>
+                    <button class="btn btn-small btn-warning" onclick="modifyPage.editRecord(${record.id})">
+                        Editar
+                    </button>
+                    <button class="btn btn-small btn-danger" onclick="modifyPage.deleteRecord(${record.id})">
+                        Eliminar
+                    </button>
+                </td>
+            `;
+            tableBody.appendChild(row);
+        });
+
+        // Reconfigurar checkboxes después de actualizar la tabla
+        this.setupCheckboxSelection();
+    }
+
+    clearFilters() {
+        // Limpiar filtros
+        this.currentFilters = {
+            search: '',
+            region: '',
+            estado: '',
+            tipoObra: ''
+        };
+
+        // Limpiar campos de filtro
+        const filterInputs = ['quickSearchFilter', 'quickRegionFilter', 'quickEstadoFilter', 'quickTipoObraFilter'];
+        filterInputs.forEach(inputId => {
+            const input = document.getElementById(inputId);
+            if (input) {
+                input.value = '';
+            }
+        });
+
+        // Aplicar filtros (mostrar todos)
+        this.applyFilters();
+        UIComponents.showNotification('Filtros limpiados', 'info');
     }
 
 

@@ -84,9 +84,9 @@ class MainPage {
 
         // Enter key on filter inputs for quick apply
         const filterInputs = [
-            'idFilter', 'contratoFilter', 'clienteFilter', 'regionFilter', 'ciudadFilter',
+            'idFilter', 'contratoFilter', 'clienteFilter', 'ciudadFilter',
             'fechaInicioDesde', 'fechaInicioHasta', 'fechaTerminoDesde', 'fechaTerminoHasta',
-            'montoDesde', 'montoHasta'
+            'montoDesde', 'montoHasta', 'superficieTerrenoDesde', 'superficieTerrenoHasta'
         ];
 
         filterInputs.forEach(inputId => {
@@ -101,12 +101,19 @@ class MainPage {
         });
 
         // Auto-apply on select change
-        const estadoFilter = document.getElementById('estadoFilter');
-        if (estadoFilter) {
-            estadoFilter.addEventListener('change', () => {
-                this.collectFiltersAndApply();
-            });
-        }
+        const selectFilters = [
+            'estadoFilter', 'regionFilter', 'tipoClienteFilter', 'tipoObraFilter',
+            'emsFilter', 'topografiaFilter', 'sondajeFilter', 'certificadoExperienciaFilter'
+        ];
+
+        selectFilters.forEach(selectId => {
+            const select = document.getElementById(selectId);
+            if (select) {
+                select.addEventListener('change', () => {
+                    this.collectFiltersAndApply();
+                });
+            }
+        });
     }
 
     async loadAllProjects() {
@@ -133,19 +140,35 @@ class MainPage {
     }
 
     collectFiltersAndApply() {
-        // Recopilar todos los valores de filtros
+        // Recopilar todos los valores de filtros básicos
         this.currentFilters.id = document.getElementById('idFilter')?.value.trim() || '';
         this.currentFilters.contrato = document.getElementById('contratoFilter')?.value.trim() || '';
         this.currentFilters.cliente = document.getElementById('clienteFilter')?.value.trim() || '';
         this.currentFilters.estado = document.getElementById('estadoFilter')?.value || '';
-        this.currentFilters.region = document.getElementById('regionFilter')?.value.trim() || '';
+
+        // Filtros de ubicación y cliente
+        this.currentFilters.region = document.getElementById('regionFilter')?.value || '';
         this.currentFilters.ciudad = document.getElementById('ciudadFilter')?.value.trim() || '';
+        this.currentFilters.tipoCliente = document.getElementById('tipoClienteFilter')?.value || '';
+        this.currentFilters.tipoObra = document.getElementById('tipoObraFilter')?.value || '';
+
+        // Filtros de fechas
         this.currentFilters.fechaInicioDesde = document.getElementById('fechaInicioDesde')?.value || '';
         this.currentFilters.fechaInicioHasta = document.getElementById('fechaInicioHasta')?.value || '';
         this.currentFilters.fechaTerminoDesde = document.getElementById('fechaTerminoDesde')?.value || '';
         this.currentFilters.fechaTerminoHasta = document.getElementById('fechaTerminoHasta')?.value || '';
+
+        // Filtros de montos y superficies
         this.currentFilters.montoDesde = document.getElementById('montoDesde')?.value || '';
         this.currentFilters.montoHasta = document.getElementById('montoHasta')?.value || '';
+        this.currentFilters.superficieTerrenoDesde = document.getElementById('superficieTerrenoDesde')?.value || '';
+        this.currentFilters.superficieTerrenoHasta = document.getElementById('superficieTerrenoHasta')?.value || '';
+
+        // Filtros de estudios y servicios
+        this.currentFilters.ems = document.getElementById('emsFilter')?.value || '';
+        this.currentFilters.topografia = document.getElementById('topografiaFilter')?.value || '';
+        this.currentFilters.sondaje = document.getElementById('sondajeFilter')?.value || '';
+        this.currentFilters.certificadoExperiencia = document.getElementById('certificadoExperienciaFilter')?.value || '';
 
         console.log('🔍 Filtros aplicados:', this.currentFilters);
         this.applyFiltersAndDisplay();
@@ -200,11 +223,9 @@ class MainPage {
             return false;
         }
 
-        // Filtro por región
-        if (this.currentFilters.region && project.region) {
-            if (!project.region.toLowerCase().includes(this.currentFilters.region.toLowerCase())) {
-                return false;
-            }
+        // Filtro por región (exacto para el selector)
+        if (this.currentFilters.region && project.region !== this.currentFilters.region) {
+            return false;
         }
 
         // Filtro por ciudad
@@ -268,6 +289,67 @@ class MainPage {
                 if (monto > montoHasta) {
                     return false;
                 }
+            }
+        }
+
+        // Filtro por tipo de cliente
+        if (this.currentFilters.tipoCliente && project.tipo_cliente !== this.currentFilters.tipoCliente) {
+            return false;
+        }
+
+        // Filtro por tipo de obra
+        if (this.currentFilters.tipoObra && project.tipo_obra_lista !== this.currentFilters.tipoObra) {
+            return false;
+        }
+
+        // Filtros de superficie de terreno
+        if (this.currentFilters.superficieTerrenoDesde || this.currentFilters.superficieTerrenoHasta) {
+            const superficie = parseFloat(project.superficie_terreno) || 0;
+
+            if (this.currentFilters.superficieTerrenoDesde) {
+                const superficieDesde = parseFloat(this.currentFilters.superficieTerrenoDesde);
+                if (superficie < superficieDesde) {
+                    return false;
+                }
+            }
+
+            if (this.currentFilters.superficieTerrenoHasta) {
+                const superficieHasta = parseFloat(this.currentFilters.superficieTerrenoHasta);
+                if (superficie > superficieHasta) {
+                    return false;
+                }
+            }
+        }
+
+        // Filtro por EMS
+        if (this.currentFilters.ems) {
+            const emsValue = this.currentFilters.ems === 'true';
+            if (project.ems !== emsValue) {
+                return false;
+            }
+        }
+
+        // Filtro por Topografía
+        if (this.currentFilters.topografia) {
+            const topografiaValue = this.currentFilters.topografia === 'true';
+            if (project.topografia !== topografiaValue) {
+                return false;
+            }
+        }
+
+        // Filtro por Sondaje
+        if (this.currentFilters.sondaje) {
+            const sondajeValue = this.currentFilters.sondaje === 'true';
+            if (project.sondaje !== sondajeValue) {
+                return false;
+            }
+        }
+
+        // Filtro por Certificado de Experiencia
+        if (this.currentFilters.certificadoExperiencia) {
+            const certificadoValue = this.currentFilters.certificadoExperiencia === 'true';
+            if (project.certificado_experiencia !== certificadoValue) {
+                return false;
             }
         }
 
@@ -418,8 +500,10 @@ class MainPage {
         // Limpiar todos los campos de filtro
         const filterInputs = [
             'searchInput', 'idFilter', 'contratoFilter', 'clienteFilter', 'estadoFilter',
-            'regionFilter', 'ciudadFilter', 'fechaInicioDesde', 'fechaInicioHasta',
-            'fechaTerminoDesde', 'fechaTerminoHasta', 'montoDesde', 'montoHasta'
+            'regionFilter', 'ciudadFilter', 'tipoClienteFilter', 'tipoObraFilter',
+            'fechaInicioDesde', 'fechaInicioHasta', 'fechaTerminoDesde', 'fechaTerminoHasta',
+            'montoDesde', 'montoHasta', 'superficieTerrenoDesde', 'superficieTerrenoHasta',
+            'emsFilter', 'topografiaFilter', 'sondajeFilter', 'certificadoExperienciaFilter'
         ];
 
         filterInputs.forEach(inputId => {

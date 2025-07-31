@@ -26,7 +26,70 @@
     <!-- Main Content -->
     <main class="container">
         <h1 class="page-title">Modify Database</h1>
-        
+
+        <!-- Quick Filters Section -->
+        <section class="filters-section">
+            <div class="filters-header">
+                <h3>Filtros Rápidos</h3>
+                <button class="btn btn-small btn-secondary" id="toggleFilters">Mostrar/Ocultar</button>
+            </div>
+            <div class="filters-container" id="filtersContainer" style="display: none;">
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="quickSearchFilter">Búsqueda Rápida</label>
+                        <input type="text" id="quickSearchFilter" class="filter-input" placeholder="ID, Contrato, Cliente...">
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickRegionFilter">Región</label>
+                        <select id="quickRegionFilter" class="filter-select">
+                            <option value="">Todas las Regiones</option>
+                            <option value="Arica y Parinacota">Arica y Parinacota</option>
+                            <option value="Tarapacá">Tarapacá</option>
+                            <option value="Antofagasta">Antofagasta</option>
+                            <option value="Atacama">Atacama</option>
+                            <option value="Coquimbo">Coquimbo</option>
+                            <option value="Valparaíso">Valparaíso</option>
+                            <option value="Metropolitana">Metropolitana</option>
+                            <option value="O'Higgins">O'Higgins</option>
+                            <option value="Maule">Maule</option>
+                            <option value="Ñuble">Ñuble</option>
+                            <option value="Biobío">Biobío</option>
+                            <option value="La Araucanía">La Araucanía</option>
+                            <option value="Los Ríos">Los Ríos</option>
+                            <option value="Los Lagos">Los Lagos</option>
+                            <option value="Aysén">Aysén</option>
+                            <option value="Magallanes">Magallanes</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickEstadoFilter">Estado</label>
+                        <select id="quickEstadoFilter" class="filter-select">
+                            <option value="">Todos los Estados</option>
+                            <option value="Activo">Activo</option>
+                            <option value="Completado">Completado</option>
+                            <option value="Pendiente">Pendiente</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickTipoObraFilter">Tipo de Obra</label>
+                        <select id="quickTipoObraFilter" class="filter-select">
+                            <option value="">Todos los Tipos</option>
+                            <option value="VIVIENDAS">Viviendas</option>
+                            <option value="EDUCACIONAL">Educacional</option>
+                            <option value="SALUD">Salud</option>
+                            <option value="MUNICIPAL">Municipal</option>
+                            <option value="DEPORTIVO">Deportivo</option>
+                            <option value="INDUSTRIAL">Industrial</option>
+                            <option value="OTROS">Otros</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-actions">
+                    <button class="btn btn-secondary" id="clearQuickFiltersBtn">Limpiar Filtros</button>
+                </div>
+            </div>
+        </section>
+
         <!-- Add New Record Section -->
         <section class="section">
             <h2 class="section-title">Add New Record</h2>
