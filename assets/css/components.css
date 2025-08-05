@@ -2,6 +2,22 @@
 .search-container {
     display: flex;
     align-items: center;
+    gap: 10px;
+    position: relative;
+}
+
+.search-icon {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    opacity: 0.8;
+}
+
+.search-icon:hover {
+    transform: scale(1.1);
+    opacity: 1;
 }
 
 .search-box {

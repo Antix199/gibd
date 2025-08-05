@@ -109,6 +109,19 @@ class MainPage {
             });
         }
 
+        // Search icon functionality
+        const searchIcon = document.querySelector('.search-icon');
+        if (searchIcon && searchInput) {
+            searchIcon.addEventListener('click', () => {
+                searchInput.focus();
+                // Trigger search if there's text
+                if (searchInput.value.trim()) {
+                    this.currentFilters.search = searchInput.value.trim();
+                    this.applyFiltersAndDisplay();
+                }
+            });
+        }
+
         // Enter key on filter inputs for quick apply
         const filterInputs = [
             'idFilter', 'contratoFilter', 'clienteFilter', 'ciudadFilter',
