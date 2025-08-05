@@ -13,6 +13,7 @@
             align-items: center;
             min-height: 100vh;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
         }
         
         .login-card {
@@ -22,6 +23,7 @@
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
             width: 100%;
             max-width: 400px;
+            position: relative;
         }
         
         .login-header {
@@ -139,11 +141,92 @@
             margin: 0.25rem 0;
             color: #6c757d;
         }
+
+        /* Invalid Credentials Overlay */
+        .invalid-credentials-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        .invalid-credentials-content {
+            position: relative;
+            background: transparent;
+            border-radius: 20px;
+            padding: 10px;
+            animation: bounceIn 0.4s ease-out;
+            pointer-events: auto;
+        }
+
+        .invalid-credentials-gif {
+            width: 200px;
+            height: 200px;
+            object-fit: contain;
+            border-radius: 15px;
+            display: block;
+            filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.3));
+        }
+
+
+
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.3);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+            70% {
+                transform: scale(0.9);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes fadeOut {
+            0% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+        }
+
+        .invalid-credentials-content.fade-out {
+            animation: fadeOut 0.3s ease-in forwards;
+        }
+
+        /* Responsive for overlay */
+        @media (max-width: 768px) {
+            .invalid-credentials-gif {
+                width: 120px;
+                height: 120px;
+            }
+
+            .invalid-credentials-content {
+                padding: 5px;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="login-container">
         <div class="login-card">
+            <!-- Invalid Credentials GIF Overlay -->
+            <div class="invalid-credentials-overlay" id="invalidCredentialsOverlay" style="display: none;">
+                <div class="invalid-credentials-content">
+                    <img src="assets/images/notCredentials.gif" alt="Credenciales inválidas" class="invalid-credentials-gif">
+                </div>
+            </div>
             <div class="login-header">
                 <h1 class="login-title">GlaciarIng</h1>
                 <p class="login-subtitle">Ingresa tus credenciales para acceder</p>
@@ -211,8 +294,12 @@
                         window.location.href = '/reader';
                     }
                 } else {
+                    // Mostrar mensaje de error
                     errorMessage.textContent = data.error || 'Credenciales inválidas';
                     errorMessage.style.display = 'block';
+
+                    // Mostrar gif de credenciales inválidas
+                    showInvalidCredentialsGif();
                 }
             } catch (error) {
                 errorMessage.textContent = 'Error de conexión. Intenta nuevamente.';
@@ -222,7 +309,35 @@
                 loading.style.display = 'none';
             }
         });
-        
+
+        // Función para mostrar el gif de credenciales inválidas
+        function showInvalidCredentialsGif() {
+            const overlay = document.getElementById('invalidCredentialsOverlay');
+            overlay.style.display = 'flex';
+
+            // Auto-ocultar después de 1.5 segundos (momento breve)
+            setTimeout(() => {
+                hideInvalidCredentialsGif();
+            }, 1500);
+        }
+
+        // Función para ocultar el gif con animación
+        function hideInvalidCredentialsGif() {
+            const overlay = document.getElementById('invalidCredentialsOverlay');
+            const content = overlay.querySelector('.invalid-credentials-content');
+
+            // Agregar clase de fade out
+            content.classList.add('fade-out');
+
+            // Ocultar después de la animación
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                content.classList.remove('fade-out');
+            }, 300);
+        }
+
+
+
         // Auto-completar credenciales para pruebas (solo en desarrollo)
         document.addEventListener('DOMContentLoaded', function() {
             // Verificar si ya hay una sesión activa
