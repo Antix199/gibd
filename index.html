@@ -11,7 +11,7 @@
     <!-- Header Component -->
     <header class="header">
         <div class="search-container">
-            <input type="text" class="search-box" placeholder="Buscar por ID, contrato o cliente..." id="searchInput">
+            <input type="text" class="search-box" placeholder="Buscar en todos los campos..." id="searchInput">
         </div>
         <div class="user-info">
             <button class="btn btn-primary" id="modifyDbBtn" onclick="window.location.href='modify-database.html'">Modify Database</button>
@@ -183,6 +183,109 @@
                             <option value="true">Sí</option>
                             <option value="false">No</option>
                         </select>
+                    </div>
+                </div>
+
+                <!-- Row 6: Additional Studies and Services -->
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="estudioSismicoFilter">Estudio Sísmico</label>
+                        <select id="estudioSismicoFilter" class="filter-select">
+                            <option value="">Todos</option>
+                            <option value="true">Sí</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="estudioGeoelectricoFilter">Estudio Geoeléctrico</label>
+                        <select id="estudioGeoelectricoFilter" class="filter-select">
+                            <option value="">Todos</option>
+                            <option value="true">Sí</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="hidraulicaHidrologiaFilter">Hidráulica/Hidrología</label>
+                        <select id="hidraulicaHidrologiaFilter" class="filter-select">
+                            <option value="">Todos</option>
+                            <option value="true">Sí</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="superficieConstruidaDesde">Superficie Construida Desde (m²)</label>
+                        <input type="number" id="superficieConstruidaDesde" class="filter-input" placeholder="0" min="0">
+                    </div>
+                </div>
+
+                <!-- Row 7: Documents and Additional Fields -->
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="superficieConstruidaHasta">Superficie Construida Hasta (m²)</label>
+                        <input type="number" id="superficieConstruidaHasta" class="filter-input" placeholder="999999" min="0">
+                    </div>
+                    <div class="filter-group">
+                        <label for="ordenCompraFilter">Orden de Compra</label>
+                        <select id="ordenCompraFilter" class="filter-select">
+                            <option value="">Todos</option>
+                            <option value="true">Sí</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="contratoDocFilter">Contrato Documento</label>
+                        <select id="contratoDocFilter" class="filter-select">
+                            <option value="">Todos</option>
+                            <option value="true">Sí</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="facturaFilter">Factura</label>
+                        <select id="facturaFilter" class="filter-select">
+                            <option value="">Todos</option>
+                            <option value="true">Sí</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Row 8: Client Information -->
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="rutClienteFilter">RUT Cliente</label>
+                        <input type="text" id="rutClienteFilter" class="filter-input" placeholder="RUT del cliente">
+                    </div>
+                    <div class="filter-group">
+                        <label for="personaContactoFilter">Persona de Contacto</label>
+                        <input type="text" id="personaContactoFilter" class="filter-input" placeholder="Nombre de contacto">
+                    </div>
+                    <div class="filter-group">
+                        <label for="telefonoContactoFilter">Teléfono de Contacto</label>
+                        <input type="text" id="telefonoContactoFilter" class="filter-input" placeholder="Teléfono">
+                    </div>
+                    <div class="filter-group">
+                        <label for="correoContactoFilter">Correo de Contacto</label>
+                        <input type="email" id="correoContactoFilter" class="filter-input" placeholder="correo@ejemplo.com">
+                    </div>
+                </div>
+
+                <!-- Row 9: Additional Text Fields -->
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="descripcionFilter">Descripción</label>
+                        <input type="text" id="descripcionFilter" class="filter-input" placeholder="Buscar en descripción">
+                    </div>
+                    <div class="filter-group">
+                        <label for="numeroFacturaFilter">Número de Factura</label>
+                        <input type="text" id="numeroFacturaFilter" class="filter-input" placeholder="Número de factura">
+                    </div>
+                    <div class="filter-group">
+                        <label for="numeroOrdenCompraFilter">Número Orden de Compra</label>
+                        <input type="text" id="numeroOrdenCompraFilter" class="filter-input" placeholder="Número de orden">
+                    </div>
+                    <div class="filter-group">
+                        <!-- Empty space for alignment -->
                     </div>
                 </div>
 

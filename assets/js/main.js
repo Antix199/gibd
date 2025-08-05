@@ -23,7 +23,34 @@ class MainPage {
             fechaTerminoDesde: '',
             fechaTerminoHasta: '',
             montoDesde: '',
-            montoHasta: ''
+            montoHasta: '',
+            // Información del cliente
+            rutCliente: '',
+            tipoCliente: '',
+            personaContacto: '',
+            telefonoContacto: '',
+            correoContacto: '',
+            // Información técnica
+            superficieTerrenoDesde: '',
+            superficieTerrenoHasta: '',
+            superficieConstruidaDesde: '',
+            superficieConstruidaHasta: '',
+            tipoObra: '',
+            // Estudios y servicios
+            ems: '',
+            estudioSismico: '',
+            estudioGeoelectrico: '',
+            topografia: '',
+            sondaje: '',
+            hidraulicaHidrologia: '',
+            descripcion: '',
+            certificadoExperiencia: '',
+            // Documentos
+            ordenCompra: '',
+            contratoDoc: '',
+            factura: '',
+            numeroFactura: '',
+            numeroOrdenCompra: ''
         };
         
         this.init();
@@ -86,7 +113,10 @@ class MainPage {
         const filterInputs = [
             'idFilter', 'contratoFilter', 'clienteFilter', 'ciudadFilter',
             'fechaInicioDesde', 'fechaInicioHasta', 'fechaTerminoDesde', 'fechaTerminoHasta',
-            'montoDesde', 'montoHasta', 'superficieTerrenoDesde', 'superficieTerrenoHasta'
+            'montoDesde', 'montoHasta', 'superficieTerrenoDesde', 'superficieTerrenoHasta',
+            'superficieConstruidaDesde', 'superficieConstruidaHasta',
+            'rutClienteFilter', 'personaContactoFilter', 'telefonoContactoFilter',
+            'correoContactoFilter', 'descripcionFilter', 'numeroFacturaFilter', 'numeroOrdenCompraFilter'
         ];
 
         filterInputs.forEach(inputId => {
@@ -103,7 +133,9 @@ class MainPage {
         // Auto-apply on select change
         const selectFilters = [
             'estadoFilter', 'regionFilter', 'tipoClienteFilter', 'tipoObraFilter',
-            'emsFilter', 'topografiaFilter', 'sondajeFilter', 'certificadoExperienciaFilter'
+            'emsFilter', 'estudioSismicoFilter', 'estudioGeoelectricoFilter',
+            'topografiaFilter', 'sondajeFilter', 'hidraulicaHidrologiaFilter',
+            'certificadoExperienciaFilter', 'ordenCompraFilter', 'contratoDocFilter', 'facturaFilter'
         ];
 
         selectFilters.forEach(selectId => {
@@ -164,11 +196,34 @@ class MainPage {
         this.currentFilters.superficieTerrenoDesde = document.getElementById('superficieTerrenoDesde')?.value || '';
         this.currentFilters.superficieTerrenoHasta = document.getElementById('superficieTerrenoHasta')?.value || '';
 
+        // Filtros de información del cliente
+        this.currentFilters.rutCliente = document.getElementById('rutClienteFilter')?.value.trim() || '';
+        this.currentFilters.personaContacto = document.getElementById('personaContactoFilter')?.value.trim() || '';
+        this.currentFilters.telefonoContacto = document.getElementById('telefonoContactoFilter')?.value.trim() || '';
+        this.currentFilters.correoContacto = document.getElementById('correoContactoFilter')?.value.trim() || '';
+
+        // Filtros de superficie construida
+        this.currentFilters.superficieConstruidaDesde = document.getElementById('superficieConstruidaDesde')?.value || '';
+        this.currentFilters.superficieConstruidaHasta = document.getElementById('superficieConstruidaHasta')?.value || '';
+
         // Filtros de estudios y servicios
         this.currentFilters.ems = document.getElementById('emsFilter')?.value || '';
+        this.currentFilters.estudioSismico = document.getElementById('estudioSismicoFilter')?.value || '';
+        this.currentFilters.estudioGeoelectrico = document.getElementById('estudioGeoelectricoFilter')?.value || '';
         this.currentFilters.topografia = document.getElementById('topografiaFilter')?.value || '';
         this.currentFilters.sondaje = document.getElementById('sondajeFilter')?.value || '';
+        this.currentFilters.hidraulicaHidrologia = document.getElementById('hidraulicaHidrologiaFilter')?.value || '';
         this.currentFilters.certificadoExperiencia = document.getElementById('certificadoExperienciaFilter')?.value || '';
+
+        // Filtros de documentos
+        this.currentFilters.ordenCompra = document.getElementById('ordenCompraFilter')?.value || '';
+        this.currentFilters.contratoDoc = document.getElementById('contratoDocFilter')?.value || '';
+        this.currentFilters.factura = document.getElementById('facturaFilter')?.value || '';
+
+        // Filtros de texto adicionales
+        this.currentFilters.descripcion = document.getElementById('descripcionFilter')?.value.trim() || '';
+        this.currentFilters.numeroFactura = document.getElementById('numeroFacturaFilter')?.value.trim() || '';
+        this.currentFilters.numeroOrdenCompra = document.getElementById('numeroOrdenCompraFilter')?.value.trim() || '';
 
         console.log('🔍 Filtros aplicados:', this.currentFilters);
         this.applyFiltersAndDisplay();
@@ -186,14 +241,43 @@ class MainPage {
     }
 
     matchesAllFilters(project) {
-        // Búsqueda general (ID, contrato, cliente)
+        // Búsqueda general en todos los campos
         if (this.currentFilters.search) {
             const searchTerm = this.currentFilters.search.toLowerCase();
-            const searchMatch = 
+            const searchMatch =
+                // Campos básicos
                 (project.id && project.id.toString().toLowerCase().includes(searchTerm)) ||
                 (project.contrato && project.contrato.toLowerCase().includes(searchTerm)) ||
-                (project.cliente && project.cliente.toLowerCase().includes(searchTerm));
-            
+                (project.cliente && project.cliente.toLowerCase().includes(searchTerm)) ||
+                (project.region && project.region.toLowerCase().includes(searchTerm)) ||
+                (project.ciudad && project.ciudad.toLowerCase().includes(searchTerm)) ||
+                (project.estado && project.estado.toLowerCase().includes(searchTerm)) ||
+                (project.monto && project.monto.toString().toLowerCase().includes(searchTerm)) ||
+
+                // Información del cliente
+                (project.rut_cliente && project.rut_cliente.toLowerCase().includes(searchTerm)) ||
+                (project.tipo_cliente && project.tipo_cliente.toLowerCase().includes(searchTerm)) ||
+                (project.persona_contacto && project.persona_contacto.toLowerCase().includes(searchTerm)) ||
+                (project.telefono_contacto && project.telefono_contacto.toLowerCase().includes(searchTerm)) ||
+                (project.correo_contacto && project.correo_contacto.toLowerCase().includes(searchTerm)) ||
+
+                // Información técnica
+                (project.superficie_terreno && project.superficie_terreno.toString().toLowerCase().includes(searchTerm)) ||
+                (project.superficie_construida && project.superficie_construida.toString().toLowerCase().includes(searchTerm)) ||
+                (project.tipo_obra_lista && project.tipo_obra_lista.toLowerCase().includes(searchTerm)) ||
+
+                // Descripción y documentos
+                (project.descripcion && project.descripcion.toLowerCase().includes(searchTerm)) ||
+                (project.numero_factura && project.numero_factura.toLowerCase().includes(searchTerm)) ||
+                (project.numero_orden_compra && project.numero_orden_compra.toLowerCase().includes(searchTerm)) ||
+
+                // Fechas (convertidas a string)
+                (project.fecha_inicio && new Date(project.fecha_inicio).toLocaleDateString().includes(searchTerm)) ||
+                (project.fecha_termino && new Date(project.fecha_termino).toLocaleDateString().includes(searchTerm)) ||
+
+                // Campos booleanos (búsqueda por "sí", "no", "true", "false")
+                this.searchBooleanFields(project, searchTerm);
+
             if (!searchMatch) return false;
         }
 
@@ -353,7 +437,144 @@ class MainPage {
             }
         }
 
+        // Filtros de información del cliente
+        if (this.currentFilters.rutCliente && project.rut_cliente) {
+            if (!project.rut_cliente.toLowerCase().includes(this.currentFilters.rutCliente.toLowerCase())) {
+                return false;
+            }
+        }
+
+        if (this.currentFilters.personaContacto && project.persona_contacto) {
+            if (!project.persona_contacto.toLowerCase().includes(this.currentFilters.personaContacto.toLowerCase())) {
+                return false;
+            }
+        }
+
+        if (this.currentFilters.telefonoContacto && project.telefono_contacto) {
+            if (!project.telefono_contacto.toLowerCase().includes(this.currentFilters.telefonoContacto.toLowerCase())) {
+                return false;
+            }
+        }
+
+        if (this.currentFilters.correoContacto && project.correo_contacto) {
+            if (!project.correo_contacto.toLowerCase().includes(this.currentFilters.correoContacto.toLowerCase())) {
+                return false;
+            }
+        }
+
+        // Filtros de superficie construida
+        if (this.currentFilters.superficieConstruidaDesde || this.currentFilters.superficieConstruidaHasta) {
+            const superficie = parseFloat(project.superficie_construida) || 0;
+
+            if (this.currentFilters.superficieConstruidaDesde) {
+                const superficieDesde = parseFloat(this.currentFilters.superficieConstruidaDesde);
+                if (superficie < superficieDesde) {
+                    return false;
+                }
+            }
+
+            if (this.currentFilters.superficieConstruidaHasta) {
+                const superficieHasta = parseFloat(this.currentFilters.superficieConstruidaHasta);
+                if (superficie > superficieHasta) {
+                    return false;
+                }
+            }
+        }
+
+        // Filtros de estudios adicionales
+        if (this.currentFilters.estudioSismico) {
+            const estudioValue = this.currentFilters.estudioSismico === 'true';
+            if (project.estudio_sismico !== estudioValue) {
+                return false;
+            }
+        }
+
+        if (this.currentFilters.estudioGeoelectrico) {
+            const estudioValue = this.currentFilters.estudioGeoelectrico === 'true';
+            if (project.estudio_geoelectrico !== estudioValue) {
+                return false;
+            }
+        }
+
+        if (this.currentFilters.hidraulicaHidrologia) {
+            const hidraulicaValue = this.currentFilters.hidraulicaHidrologia === 'true';
+            if (project.hidraulica_hidrologia !== hidraulicaValue) {
+                return false;
+            }
+        }
+
+        // Filtros de documentos
+        if (this.currentFilters.ordenCompra) {
+            const ordenValue = this.currentFilters.ordenCompra === 'true';
+            if (project.orden_compra !== ordenValue) {
+                return false;
+            }
+        }
+
+        if (this.currentFilters.contratoDoc) {
+            const contratoValue = this.currentFilters.contratoDoc === 'true';
+            if (project.contrato_doc !== contratoValue) {
+                return false;
+            }
+        }
+
+        if (this.currentFilters.factura) {
+            const facturaValue = this.currentFilters.factura === 'true';
+            if (project.factura !== facturaValue) {
+                return false;
+            }
+        }
+
+        // Filtros de texto adicionales
+        if (this.currentFilters.descripcion && project.descripcion) {
+            if (!project.descripcion.toLowerCase().includes(this.currentFilters.descripcion.toLowerCase())) {
+                return false;
+            }
+        }
+
+        if (this.currentFilters.numeroFactura && project.numero_factura) {
+            if (!project.numero_factura.toLowerCase().includes(this.currentFilters.numeroFactura.toLowerCase())) {
+                return false;
+            }
+        }
+
+        if (this.currentFilters.numeroOrdenCompra && project.numero_orden_compra) {
+            if (!project.numero_orden_compra.toLowerCase().includes(this.currentFilters.numeroOrdenCompra.toLowerCase())) {
+                return false;
+            }
+        }
+
         return true;
+    }
+
+    searchBooleanFields(project, searchTerm) {
+        // Mapear términos de búsqueda a valores booleanos
+        const booleanTerms = {
+            'sí': true,
+            'si': true,
+            'yes': true,
+            'true': true,
+            'verdadero': true,
+            'activo': true,
+            'no': false,
+            'false': false,
+            'falso': false,
+            'inactivo': false
+        };
+
+        const booleanValue = booleanTerms[searchTerm];
+        if (booleanValue !== undefined) {
+            // Lista de campos booleanos para buscar
+            const booleanFields = [
+                'ems', 'estudio_sismico', 'estudio_geoelectrico', 'topografia',
+                'sondaje', 'hidraulica_hidrologia', 'certificado_experiencia',
+                'orden_compra', 'contrato_doc', 'factura'
+            ];
+
+            return booleanFields.some(field => project[field] === booleanValue);
+        }
+
+        return false;
     }
 
     displayProjects() {
@@ -503,7 +724,12 @@ class MainPage {
             'regionFilter', 'ciudadFilter', 'tipoClienteFilter', 'tipoObraFilter',
             'fechaInicioDesde', 'fechaInicioHasta', 'fechaTerminoDesde', 'fechaTerminoHasta',
             'montoDesde', 'montoHasta', 'superficieTerrenoDesde', 'superficieTerrenoHasta',
-            'emsFilter', 'topografiaFilter', 'sondajeFilter', 'certificadoExperienciaFilter'
+            'superficieConstruidaDesde', 'superficieConstruidaHasta',
+            'rutClienteFilter', 'personaContactoFilter', 'telefonoContactoFilter', 'correoContactoFilter',
+            'emsFilter', 'estudioSismicoFilter', 'estudioGeoelectricoFilter',
+            'topografiaFilter', 'sondajeFilter', 'hidraulicaHidrologiaFilter',
+            'certificadoExperienciaFilter', 'ordenCompraFilter', 'contratoDocFilter', 'facturaFilter',
+            'descripcionFilter', 'numeroFacturaFilter', 'numeroOrdenCompraFilter'
         ];
 
         filterInputs.forEach(inputId => {

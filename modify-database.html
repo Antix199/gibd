@@ -11,7 +11,7 @@
     <!-- Header Component -->
     <header class="header">
         <div class="search-container">
-            <input type="text" class="search-box" placeholder="Search..." id="searchInput">
+            <input type="text" class="search-box" placeholder="Buscar en todos los campos..." id="searchInput">
         </div>
         <div class="user-info">
             <button class="btn btn-primary" id="backToMainBtn">Back to Main</button>
@@ -34,10 +34,36 @@
                 <button class="btn btn-small btn-secondary" id="toggleFilters">Mostrar/Ocultar</button>
             </div>
             <div class="filters-container" id="filtersContainer" style="display: none;">
+                <!-- Row 1: Basic Filters -->
                 <div class="filter-row">
                     <div class="filter-group">
                         <label for="quickSearchFilter">Búsqueda Rápida</label>
-                        <input type="text" id="quickSearchFilter" class="filter-input" placeholder="ID, Contrato, Cliente...">
+                        <input type="text" id="quickSearchFilter" class="filter-input" placeholder="Buscar en todos los campos...">
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickIdFilter">ID</label>
+                        <input type="text" id="quickIdFilter" class="filter-input" placeholder="ID del proyecto">
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickContratoFilter">Contrato</label>
+                        <input type="text" id="quickContratoFilter" class="filter-input" placeholder="Nombre del contrato">
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickClienteFilter">Cliente</label>
+                        <input type="text" id="quickClienteFilter" class="filter-input" placeholder="Nombre del cliente">
+                    </div>
+                </div>
+
+                <!-- Row 2: Location and Status -->
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="quickEstadoFilter">Estado</label>
+                        <select id="quickEstadoFilter" class="filter-select">
+                            <option value="">Todos los Estados</option>
+                            <option value="Activo">Activo</option>
+                            <option value="Completado">Completado</option>
+                            <option value="Pendiente">Pendiente</option>
+                        </select>
                     </div>
                     <div class="filter-group">
                         <label for="quickRegionFilter">Región</label>
@@ -62,14 +88,21 @@
                         </select>
                     </div>
                     <div class="filter-group">
-                        <label for="quickEstadoFilter">Estado</label>
-                        <select id="quickEstadoFilter" class="filter-select">
-                            <option value="">Todos los Estados</option>
-                            <option value="Activo">Activo</option>
-                            <option value="Completado">Completado</option>
-                            <option value="Pendiente">Pendiente</option>
+                        <label for="quickCiudadFilter">Ciudad</label>
+                        <input type="text" id="quickCiudadFilter" class="filter-input" placeholder="Ciudad">
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickTipoClienteFilter">Tipo Cliente</label>
+                        <select id="quickTipoClienteFilter" class="filter-select">
+                            <option value="">Todos los Tipos</option>
+                            <option value="Público">Público</option>
+                            <option value="Privado">Privado</option>
                         </select>
                     </div>
+                </div>
+
+                <!-- Row 3: Work Type and Dates -->
+                <div class="filter-row">
                     <div class="filter-group">
                         <label for="quickTipoObraFilter">Tipo de Obra</label>
                         <select id="quickTipoObraFilter" class="filter-select">
@@ -83,7 +116,180 @@
                             <option value="OTROS">Otros</option>
                         </select>
                     </div>
+                    <div class="filter-group">
+                        <label for="quickFechaInicioDesde">Fecha Inicio Desde</label>
+                        <input type="date" id="quickFechaInicioDesde" class="filter-input">
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickFechaInicioHasta">Fecha Inicio Hasta</label>
+                        <input type="date" id="quickFechaInicioHasta" class="filter-input">
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickFechaTerminoDesde">Fecha Término Desde</label>
+                        <input type="date" id="quickFechaTerminoDesde" class="filter-input">
+                    </div>
                 </div>
+
+                <!-- Row 4: Amount and Surface Filters -->
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="quickFechaTerminoHasta">Fecha Término Hasta</label>
+                        <input type="date" id="quickFechaTerminoHasta" class="filter-input">
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickMontoDesde">Monto Desde (CLP)</label>
+                        <input type="number" id="quickMontoDesde" class="filter-input" placeholder="0" min="0">
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickMontoHasta">Monto Hasta (CLP)</label>
+                        <input type="number" id="quickMontoHasta" class="filter-input" placeholder="999999999" min="0">
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickSuperficieTerrenoDesde">Superficie Terreno Desde (m²)</label>
+                        <input type="number" id="quickSuperficieTerrenoDesde" class="filter-input" placeholder="0" min="0">
+                    </div>
+                </div>
+
+                <!-- Row 5: Surface and Client Info -->
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="quickSuperficieTerrenoHasta">Superficie Terreno Hasta (m²)</label>
+                        <input type="number" id="quickSuperficieTerrenoHasta" class="filter-input" placeholder="999999" min="0">
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickSuperficieConstruidaDesde">Superficie Construida Desde (m²)</label>
+                        <input type="number" id="quickSuperficieConstruidaDesde" class="filter-input" placeholder="0" min="0">
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickSuperficieConstruidaHasta">Superficie Construida Hasta (m²)</label>
+                        <input type="number" id="quickSuperficieConstruidaHasta" class="filter-input" placeholder="999999" min="0">
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickRutClienteFilter">RUT Cliente</label>
+                        <input type="text" id="quickRutClienteFilter" class="filter-input" placeholder="RUT del cliente">
+                    </div>
+                </div>
+
+                <!-- Row 6: Contact Information -->
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="quickPersonaContactoFilter">Persona de Contacto</label>
+                        <input type="text" id="quickPersonaContactoFilter" class="filter-input" placeholder="Nombre de contacto">
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickTelefonoContactoFilter">Teléfono de Contacto</label>
+                        <input type="text" id="quickTelefonoContactoFilter" class="filter-input" placeholder="Teléfono">
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickCorreoContactoFilter">Correo de Contacto</label>
+                        <input type="email" id="quickCorreoContactoFilter" class="filter-input" placeholder="correo@ejemplo.com">
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickDescripcionFilter">Descripción</label>
+                        <input type="text" id="quickDescripcionFilter" class="filter-input" placeholder="Buscar en descripción">
+                    </div>
+                </div>
+
+                <!-- Row 7: Studies and Services -->
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="quickEmsFilter">EMS</label>
+                        <select id="quickEmsFilter" class="filter-select">
+                            <option value="">Todos</option>
+                            <option value="true">Sí</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickEstudioSismicoFilter">Estudio Sísmico</label>
+                        <select id="quickEstudioSismicoFilter" class="filter-select">
+                            <option value="">Todos</option>
+                            <option value="true">Sí</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickEstudioGeoelectricoFilter">Estudio Geoeléctrico</label>
+                        <select id="quickEstudioGeoelectricoFilter" class="filter-select">
+                            <option value="">Todos</option>
+                            <option value="true">Sí</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickTopografiaFilter">Topografía</label>
+                        <select id="quickTopografiaFilter" class="filter-select">
+                            <option value="">Todos</option>
+                            <option value="true">Sí</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Row 8: More Studies and Documents -->
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="quickSondajeFilter">Sondaje</label>
+                        <select id="quickSondajeFilter" class="filter-select">
+                            <option value="">Todos</option>
+                            <option value="true">Sí</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickHidraulicaHidrologiaFilter">Hidráulica/Hidrología</label>
+                        <select id="quickHidraulicaHidrologiaFilter" class="filter-select">
+                            <option value="">Todos</option>
+                            <option value="true">Sí</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickCertificadoExperienciaFilter">Certificado Experiencia</label>
+                        <select id="quickCertificadoExperienciaFilter" class="filter-select">
+                            <option value="">Todos</option>
+                            <option value="true">Sí</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickOrdenCompraFilter">Orden de Compra</label>
+                        <select id="quickOrdenCompraFilter" class="filter-select">
+                            <option value="">Todos</option>
+                            <option value="true">Sí</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Row 9: Documents and Numbers -->
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="quickContratoDocFilter">Contrato Documento</label>
+                        <select id="quickContratoDocFilter" class="filter-select">
+                            <option value="">Todos</option>
+                            <option value="true">Sí</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickFacturaFilter">Factura</label>
+                        <select id="quickFacturaFilter" class="filter-select">
+                            <option value="">Todos</option>
+                            <option value="true">Sí</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickNumeroFacturaFilter">Número de Factura</label>
+                        <input type="text" id="quickNumeroFacturaFilter" class="filter-input" placeholder="Número de factura">
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickNumeroOrdenCompraFilter">Número Orden de Compra</label>
+                        <input type="text" id="quickNumeroOrdenCompraFilter" class="filter-input" placeholder="Número de orden">
+                    </div>
+                </div>
+
                 <div class="filter-actions">
                     <button class="btn btn-secondary" id="clearQuickFiltersBtn">Limpiar Filtros</button>
                 </div>
