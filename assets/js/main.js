@@ -579,6 +579,9 @@ class MainPage {
 
     displayProjects() {
         const tableBody = document.getElementById('tableBody');
+        const tableContainer = document.querySelector('.table-container');
+        const noResults = document.getElementById('noResults') || document.getElementById('noResultsReader');
+
         if (!tableBody) {
             console.error('❌ Elemento tableBody no encontrado');
             return;
@@ -587,15 +590,14 @@ class MainPage {
         tableBody.innerHTML = '';
 
         if (this.filteredProjects.length === 0) {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td colspan="30" class="text-center" style="padding: 2rem; color: #666;">
-                    <i class="fas fa-search" style="font-size: 2rem; margin-bottom: 1rem; display: block;"></i>
-                    No se encontraron proyectos con los filtros aplicados
-                </td>
-            `;
-            tableBody.appendChild(row);
+            // Ocultar tabla y mostrar imagen de no encontrado
+            if (tableContainer) tableContainer.style.display = 'none';
+            if (noResults) noResults.style.display = 'flex';
             return;
+        } else {
+            // Mostrar tabla y ocultar imagen de no encontrado
+            if (tableContainer) tableContainer.style.display = 'block';
+            if (noResults) noResults.style.display = 'none';
         }
 
         // Mostrar todos los proyectos filtrados (sin paginación)
