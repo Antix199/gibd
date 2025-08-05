@@ -108,6 +108,9 @@ class ModifyDatabasePage {
 
         // Filtros
         this.setupFilters();
+
+        // Toggles y modals
+        this.setupToggles();
     }
 
     setupFilters() {
@@ -294,15 +297,51 @@ class ModifyDatabasePage {
 
             // Add record
             const newRecord = await dataManager.addRecord({
+                // Campos obligatorios
                 id: data.recordId ? parseInt(data.recordId) : null,
                 contrato: data.recordContrato,
                 cliente: data.recordCliente,
-                fecha_inicio: data.recordFechaInicio,
-                fecha_termino: data.recordFechaTermino || null,
                 region: data.recordRegion,
                 ciudad: data.recordCiudad,
                 estado: data.recordEstado,
-                monto: parseFloat(data.recordMonto) || 0
+                monto: parseFloat(data.recordMonto) || 0,
+
+                // Fechas (opcional)
+                fecha_inicio: data.recordFechaInicio || null,
+                fecha_termino: data.recordFechaTermino || null,
+
+                // Información del cliente (opcional)
+                rut_cliente: data.recordRutCliente || null,
+                tipo_cliente: data.recordTipoCliente || null,
+                persona_contacto: data.recordPersonaContacto || null,
+                telefono_contacto: data.recordTelefonoContacto || null,
+                correo_contacto: data.recordCorreoContacto || null,
+
+                // Información técnica (opcional)
+                superficie_terreno: data.recordSuperficieTerreno ? parseFloat(data.recordSuperficieTerreno) : null,
+                superficie_construida: data.recordSuperficieConstruida ? parseFloat(data.recordSuperficieConstruida) : null,
+                tipo_obra_lista: data.recordTipoObraLista || null,
+
+                // Estudios y servicios (opcional - checkboxes)
+                ems: data.recordEms === 'on' || false,
+                estudio_sismico: data.recordEstudioSismico === 'on' || false,
+                estudio_geoelectrico: data.recordEstudioGeoelectrico === 'on' || false,
+                topografia: data.recordTopografia === 'on' || false,
+                sondaje: data.recordSondaje === 'on' || false,
+                hidraulica_hidrologia: data.recordHidraulicaHidrologia === 'on' || false,
+                certificado_experiencia: data.recordCertificadoExperiencia === 'on' || false,
+
+                // Documentos (opcional - checkboxes)
+                orden_compra: data.recordOrdenCompra === 'on' || false,
+                contrato_doc: data.recordContratoDoc === 'on' || false,
+                factura: data.recordFactura === 'on' || false,
+
+                // Números de documentos (opcional)
+                numero_orden_compra: data.recordNumeroOrdenCompra || null,
+                numero_factura: data.recordNumeroFactura || null,
+
+                // Descripción (opcional)
+                descripcion: data.recordDescripcion || null
             });
 
             // Refresh table
@@ -1424,6 +1463,65 @@ class ModifyDatabasePage {
         // Aplicar filtros (mostrar todos)
         this.applyFilters();
         UIComponents.showNotification('Filtros limpiados', 'info');
+    }
+
+    setupToggles() {
+        // Toggle para mostrar/ocultar formulario de agregar
+        const toggleAddForm = document.getElementById('toggleAddForm');
+        const addFormContainer = document.getElementById('addFormContainer');
+
+        if (toggleAddForm && addFormContainer) {
+            toggleAddForm.addEventListener('click', () => {
+                if (addFormContainer.style.display === 'none') {
+                    addFormContainer.style.display = 'block';
+                    toggleAddForm.textContent = 'Ocultar Formulario';
+                    toggleAddForm.classList.remove('btn-secondary');
+                    toggleAddForm.classList.add('btn-warning');
+                } else {
+                    addFormContainer.style.display = 'none';
+                    toggleAddForm.textContent = 'Mostrar Formulario';
+                    toggleAddForm.classList.remove('btn-warning');
+                    toggleAddForm.classList.add('btn-secondary');
+                }
+            });
+        }
+
+        // Modal de información CSV
+        const csvInfoBtn = document.getElementById('csvInfoBtn');
+        const csvInfoModal = document.getElementById('csvInfoModal');
+        const closeCsvInfoModal = document.getElementById('closeCsvInfoModal');
+        const closeCsvInfoBtn = document.getElementById('closeCsvInfoBtn');
+
+        if (csvInfoBtn && csvInfoModal) {
+            csvInfoBtn.addEventListener('click', () => {
+                csvInfoModal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        }
+
+        if (closeCsvInfoModal && csvInfoModal) {
+            closeCsvInfoModal.addEventListener('click', () => {
+                csvInfoModal.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+        }
+
+        if (closeCsvInfoBtn && csvInfoModal) {
+            closeCsvInfoBtn.addEventListener('click', () => {
+                csvInfoModal.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+        }
+
+        // Cerrar modal al hacer clic fuera
+        if (csvInfoModal) {
+            csvInfoModal.addEventListener('click', (e) => {
+                if (e.target === csvInfoModal) {
+                    csvInfoModal.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+        }
     }
 
 

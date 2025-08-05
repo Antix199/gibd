@@ -461,48 +461,48 @@ window.formatDate = function(dateString) {
 window.validateRecord = function(record) {
     const errors = [];
 
-    // Normalizar nombres de campos
+    // Normalizar nombres de campos (solo campos obligatorios)
+    const id = record.id || record.recordId;
     const contrato = record.contrato || record.recordContrato;
     const cliente = record.cliente || record.recordCliente;
-    const fecha_inicio = record.fecha_inicio || record.recordFechaInicio;
     const region = record.region || record.recordRegion;
     const ciudad = record.ciudad || record.recordCiudad;
     const estado = record.estado || record.recordEstado;
     const monto = record.monto || record.recordMonto;
 
-    // Validar contrato
+    // Validar ID (obligatorio)
+    if (!id || id === '' || isNaN(id) || parseInt(id) <= 0) {
+        errors.push('El ID es obligatorio y debe ser un número positivo');
+    }
+
+    // Validar contrato (obligatorio)
     if (!contrato || contrato.trim().length < 2) {
-        errors.push('El contrato debe tener al menos 2 caracteres');
+        errors.push('El contrato es obligatorio y debe tener al menos 2 caracteres');
     }
 
-    // Validar cliente
+    // Validar cliente (obligatorio)
     if (!cliente || cliente.trim().length < 2) {
-        errors.push('El cliente debe tener al menos 2 caracteres');
+        errors.push('El cliente es obligatorio y debe tener al menos 2 caracteres');
     }
 
-    // Validar región
+    // Validar región (obligatorio)
     if (!region || region.trim().length < 2) {
-        errors.push('La región debe tener al menos 2 caracteres');
+        errors.push('La región es obligatoria');
     }
 
-    // Validar ciudad
+    // Validar ciudad (obligatorio)
     if (!ciudad || ciudad.trim().length < 2) {
-        errors.push('La ciudad debe tener al menos 2 caracteres');
+        errors.push('La ciudad es obligatoria y debe tener al menos 2 caracteres');
     }
 
-    // Validar estado
+    // Validar estado (obligatorio)
     if (!estado || !['Activo', 'Completado', 'Pendiente'].includes(estado)) {
-        errors.push('Por favor selecciona un estado válido');
+        errors.push('El estado es obligatorio. Selecciona: Activo, Completado o Pendiente');
     }
 
-    // Validar monto (opcional, pero si se proporciona debe ser válido)
-    if (monto !== undefined && monto !== '' && (isNaN(monto) || parseFloat(monto) < 0)) {
-        errors.push('El monto debe ser un número positivo');
-    }
-
-    // Validar fecha de inicio
-    if (!fecha_inicio || fecha_inicio.trim() === '') {
-        errors.push('La fecha de inicio es requerida');
+    // Validar monto (obligatorio)
+    if (monto === undefined || monto === '' || isNaN(monto) || parseFloat(monto) < 0) {
+        errors.push('El monto es obligatorio y debe ser un número positivo');
     }
 
     return errors;

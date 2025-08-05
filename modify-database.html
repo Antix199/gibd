@@ -298,88 +298,225 @@
 
         <!-- Add New Record Section -->
         <section class="section">
-            <h2 class="section-title">Add New Record</h2>
-            <form class="add-record-form" id="addRecordForm">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="recordId">ID</label>
-                        <input type="number" id="recordId" name="recordId" class="form-input" placeholder="Auto-generado">
+            <div class="section-header">
+                <h2 class="section-title">Add New Record</h2>
+                <button class="btn btn-small btn-secondary" id="toggleAddForm">Mostrar Formulario</button>
+            </div>
+            <div class="form-container" id="addFormContainer" style="display: none;">
+                <form class="add-record-form" id="addRecordForm">
+                <!-- Información Básica (Campos Obligatorios) -->
+                <div class="form-section">
+                    <h4>Información Básica <span style="color: red;">*Obligatorios</span></h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="recordId">ID <span style="color: red;">*</span></label>
+                            <input type="number" id="recordId" name="recordId" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="recordContrato">Contrato <span style="color: red;">*</span></label>
+                            <input type="text" id="recordContrato" name="recordContrato" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="recordCliente">Cliente <span style="color: red;">*</span></label>
+                            <input type="text" id="recordCliente" name="recordCliente" class="form-input" required>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="recordContrato">Contrato</label>
-                        <input type="text" id="recordContrato" name="recordContrato" class="form-input" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="recordCliente">Cliente</label>
-                        <input type="text" id="recordCliente" name="recordCliente" class="form-input" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="recordFechaInicio">Fecha Inicio</label>
-                        <input type="date" id="recordFechaInicio" name="recordFechaInicio" class="form-input" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="recordFechaTermino">Fecha Término</label>
-                        <input type="date" id="recordFechaTermino" name="recordFechaTermino" class="form-input">
-                    </div>
-                    <div class="form-group">
-                        <label for="recordRegion">Región</label>
-                        <input type="text" id="recordRegion" name="recordRegion" class="form-input" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="recordCiudad">Ciudad</label>
-                        <input type="text" id="recordCiudad" name="recordCiudad" class="form-input" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="recordEstado">Estado</label>
-                        <select id="recordEstado" name="recordEstado" class="form-select" required>
-                            <option value="">Seleccionar Estado</option>
-                            <option value="Activo">Activo</option>
-                            <option value="Completado">Completado</option>
-                            <option value="Pendiente">Pendiente</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="recordMonto">Monto (CLP)</label>
-                        <input type="number" id="recordMonto" name="recordMonto" class="form-input" step="1" min="0" required>
-                    </div>
-                    <div class="form-actions">
-                        <button type="submit" class="btn btn-primary">Agregar Proyecto</button>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="recordRegion">Región <span style="color: red;">*</span></label>
+                            <select id="recordRegion" name="recordRegion" class="form-select" required>
+                                <option value="">Seleccionar Región</option>
+                                <option value="Arica y Parinacota">Arica y Parinacota</option>
+                                <option value="Tarapacá">Tarapacá</option>
+                                <option value="Antofagasta">Antofagasta</option>
+                                <option value="Atacama">Atacama</option>
+                                <option value="Coquimbo">Coquimbo</option>
+                                <option value="Valparaíso">Valparaíso</option>
+                                <option value="Metropolitana">Metropolitana</option>
+                                <option value="O'Higgins">O'Higgins</option>
+                                <option value="Maule">Maule</option>
+                                <option value="Ñuble">Ñuble</option>
+                                <option value="Biobío">Biobío</option>
+                                <option value="La Araucanía">La Araucanía</option>
+                                <option value="Los Ríos">Los Ríos</option>
+                                <option value="Los Lagos">Los Lagos</option>
+                                <option value="Aysén">Aysén</option>
+                                <option value="Magallanes">Magallanes</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="recordCiudad">Ciudad <span style="color: red;">*</span></label>
+                            <input type="text" id="recordCiudad" name="recordCiudad" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="recordEstado">Estado <span style="color: red;">*</span></label>
+                            <select id="recordEstado" name="recordEstado" class="form-select" required>
+                                <option value="">Seleccionar Estado</option>
+                                <option value="Activo">Activo</option>
+                                <option value="Completado">Completado</option>
+                                <option value="Pendiente">Pendiente</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="recordMonto">Monto (CLP) <span style="color: red;">*</span></label>
+                            <input type="number" id="recordMonto" name="recordMonto" class="form-input" step="1" min="0" required>
+                        </div>
                     </div>
                 </div>
+
+                <!-- Información Opcional -->
+                <div class="form-section">
+                    <h4>Fechas (Opcional)</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="recordFechaInicio">Fecha Inicio</label>
+                            <input type="date" id="recordFechaInicio" name="recordFechaInicio" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="recordFechaTermino">Fecha Término</label>
+                            <input type="date" id="recordFechaTermino" name="recordFechaTermino" class="form-input">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Información del Cliente -->
+                <div class="form-section">
+                    <h4>Información del Cliente (Opcional)</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="recordRutCliente">RUT Cliente</label>
+                            <input type="text" id="recordRutCliente" name="recordRutCliente" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="recordTipoCliente">Tipo Cliente</label>
+                            <select id="recordTipoCliente" name="recordTipoCliente" class="form-select">
+                                <option value="">Seleccionar...</option>
+                                <option value="Público">Público</option>
+                                <option value="Privado">Privado</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="recordPersonaContacto">Persona de Contacto</label>
+                            <input type="text" id="recordPersonaContacto" name="recordPersonaContacto" class="form-input">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="recordTelefonoContacto">Teléfono</label>
+                            <input type="text" id="recordTelefonoContacto" name="recordTelefonoContacto" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="recordCorreoContacto">Email</label>
+                            <input type="email" id="recordCorreoContacto" name="recordCorreoContacto" class="form-input">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Información Técnica -->
+                <div class="form-section">
+                    <h4>Información Técnica (Opcional)</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="recordSuperficieTerreno">Superficie Terreno (m²)</label>
+                            <input type="number" id="recordSuperficieTerreno" name="recordSuperficieTerreno" class="form-input" step="0.01" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="recordSuperficieConstruida">Superficie Construida (m²)</label>
+                            <input type="number" id="recordSuperficieConstruida" name="recordSuperficieConstruida" class="form-input" step="0.01" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="recordTipoObraLista">Tipo de Obra</label>
+                            <select id="recordTipoObraLista" name="recordTipoObraLista" class="form-select">
+                                <option value="">Seleccionar...</option>
+                                <option value="VIVIENDAS">Viviendas</option>
+                                <option value="EDUCACIONAL">Educacional</option>
+                                <option value="SALUD">Salud</option>
+                                <option value="MUNICIPAL">Municipal</option>
+                                <option value="DEPORTIVO">Deportivo</option>
+                                <option value="INDUSTRIAL">Industrial</option>
+                                <option value="OTROS">Otros</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Estudios y Servicios -->
+                <div class="form-section">
+                    <h4>Estudios y Servicios (Opcional)</h4>
+                    <div class="form-row">
+                        <div class="form-group checkbox-group">
+                            <label><input type="checkbox" id="recordEms" name="recordEms"> EMS</label>
+                            <label><input type="checkbox" id="recordEstudioSismico" name="recordEstudioSismico"> Estudio Sísmico</label>
+                            <label><input type="checkbox" id="recordEstudioGeoelectrico" name="recordEstudioGeoelectrico"> Estudio Geoeléctrico</label>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group checkbox-group">
+                            <label><input type="checkbox" id="recordTopografia" name="recordTopografia"> Topografía</label>
+                            <label><input type="checkbox" id="recordSondaje" name="recordSondaje"> Sondaje</label>
+                            <label><input type="checkbox" id="recordHidraulicaHidrologia" name="recordHidraulicaHidrologia"> Hidráulica/Hidrología</label>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group checkbox-group">
+                            <label><input type="checkbox" id="recordCertificadoExperiencia" name="recordCertificadoExperiencia"> Certificado de Experiencia</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Documentos -->
+                <div class="form-section">
+                    <h4>Documentos (Opcional)</h4>
+                    <div class="form-row">
+                        <div class="form-group checkbox-group">
+                            <label><input type="checkbox" id="recordOrdenCompra" name="recordOrdenCompra"> Orden de Compra</label>
+                            <label><input type="checkbox" id="recordContratoDoc" name="recordContratoDoc"> Contrato</label>
+                            <label><input type="checkbox" id="recordFactura" name="recordFactura"> Factura</label>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="recordNumeroOrdenCompra">Número Orden de Compra</label>
+                            <input type="text" id="recordNumeroOrdenCompra" name="recordNumeroOrdenCompra" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="recordNumeroFactura">Número de Factura</label>
+                            <input type="text" id="recordNumeroFactura" name="recordNumeroFactura" class="form-input">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Descripción -->
+                <div class="form-section">
+                    <h4>Descripción (Opcional)</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="recordDescripcion">Descripción del Proyecto</label>
+                            <textarea id="recordDescripcion" name="recordDescripcion" class="form-input" rows="3" placeholder="Descripción detallada del proyecto..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botón de Envío -->
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Agregar Proyecto</button>
+                    <button type="button" class="btn btn-secondary" onclick="document.getElementById('addRecordForm').reset()">Limpiar Formulario</button>
+                </div>
             </form>
+            </div>
         </section>
 
 
 
         <!-- Load Data from Archive Section -->
         <section class="section">
-            <h2 class="section-title">Cargar Datos desde CSV</h2>
+            <div class="section-header">
+                <h2 class="section-title">Cargar Datos desde CSV</h2>
+                <button class="btn btn-small btn-info" id="csvInfoBtn" title="Ver formato CSV">
+                    <i class="fas fa-question-circle"></i> Formato CSV
+                </button>
+            </div>
             <div class="file-upload-container">
-                <div class="csv-format-info">
-                    <h4>Formato CSV Esperado:</h4>
-                    <p>El archivo CSV debe contener las siguientes columnas (en cualquier orden):</p>
-                    <ul>
-                        <li><strong>ID:</strong> Identificador único del proyecto (opcional - se genera automáticamente si no se proporciona)</li>
-                        <li><strong>Contrato:</strong> Nombre del contrato</li>
-                        <li><strong>Cliente:</strong> Nombre del cliente</li>
-                        <li><strong>Fecha_Inicio:</strong> Fecha de inicio (YYYY-MM-DD, DD/MM/YYYY, o DD-MM-YYYY)</li>
-                        <li><strong>Fecha_Termino:</strong> Fecha de término (opcional)</li>
-                        <li><strong>Region:</strong> Región del proyecto</li>
-                        <li><strong>Ciudad:</strong> Ciudad del proyecto</li>
-                        <li><strong>Estado:</strong> Activo, Completado, o Pendiente</li>
-                        <li><strong>Monto:</strong> Monto del proyecto (números)</li>
-                    </ul>
-                    <p><em>Ejemplos de primera línea aceptados:</em><br>
-                    <code>ID,Contrato,Cliente,Fecha_Inicio,Fecha_Termino,Region,Ciudad,Estado,Monto</code><br>
-                    <code>Id,Contrato,Cliente,fecha_inicio,fecha_término,Región,Ciudad,Estado,Monto</code></p>
-                    <p><em>Notas importantes:</em></p>
-                    <ul>
-                        <li>Solo el campo <strong>Contrato</strong> es obligatorio</li>
-                        <li>Los valores <code>NULL</code> se tratan como campos vacíos</li>
-                        <li>Las fechas pueden estar en formato DD-MM-YYYY o YYYY-MM-DD</li>
-                        <li>Los campos vacíos se llenan con valores por defecto</li>
-                    </ul>
-                </div>
                 <div class="file-upload">
                     <input type="file" id="fileInput" class="file-input" accept=".csv" hidden>
                     <button type="button" class="btn btn-secondary" id="selectFileBtn">Seleccionar Archivo CSV</button>
@@ -636,6 +773,101 @@
     <div class="loading-overlay" id="loadingOverlay">
         <div class="loading-spinner"></div>
         <p>Processing...</p>
+    </div>
+
+    <!-- CSV Info Modal -->
+    <div class="modal-overlay" id="csvInfoModal">
+        <div class="modal" style="max-width: 800px;">
+            <div class="modal-header">
+                <h3>Formato CSV Esperado</h3>
+                <button class="modal-close" id="closeCsvInfoModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="csv-format-info">
+                    <h4>📋 Campos Obligatorios:</h4>
+                    <ul style="color: #d32f2f; font-weight: bold;">
+                        <li><strong>ID:</strong> Identificador único del proyecto</li>
+                        <li><strong>Contrato:</strong> Nombre del contrato</li>
+                        <li><strong>Cliente:</strong> Nombre del cliente</li>
+                        <li><strong>Region:</strong> Región del proyecto (ej: Metropolitana, Valparaíso)</li>
+                        <li><strong>Ciudad:</strong> Ciudad del proyecto</li>
+                        <li><strong>Estado:</strong> Activo, Completado, o Pendiente</li>
+                        <li><strong>Monto:</strong> Monto del proyecto (números)</li>
+                    </ul>
+
+                    <h4>📝 Campos Opcionales:</h4>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div>
+                            <h5>🗓️ Fechas:</h5>
+                            <ul>
+                                <li>Fecha_Inicio</li>
+                                <li>Fecha_Termino</li>
+                            </ul>
+
+                            <h5>👤 Cliente:</h5>
+                            <ul>
+                                <li>RUT_Cliente</li>
+                                <li>Tipo_Cliente</li>
+                                <li>Persona_Contacto</li>
+                                <li>Telefono_Contacto</li>
+                                <li>Correo_Contacto</li>
+                            </ul>
+
+                            <h5>🏗️ Técnicos:</h5>
+                            <ul>
+                                <li>Superficie_Terreno</li>
+                                <li>Superficie_Construida</li>
+                                <li>Tipo_Obra_Lista</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h5>🔬 Estudios (true/false):</h5>
+                            <ul>
+                                <li>EMS</li>
+                                <li>Estudio_Sismico</li>
+                                <li>Estudio_Geoelectrico</li>
+                                <li>Topografia</li>
+                                <li>Sondaje</li>
+                                <li>Hidraulica_Hidrologia</li>
+                                <li>Certificado_Experiencia</li>
+                            </ul>
+
+                            <h5>📄 Documentos (true/false):</h5>
+                            <ul>
+                                <li>Orden_Compra</li>
+                                <li>Contrato_Doc</li>
+                                <li>Factura</li>
+                                <li>Numero_Orden_Compra</li>
+                                <li>Numero_Factura</li>
+                            </ul>
+
+                            <h5>📝 Otros:</h5>
+                            <ul>
+                                <li>Descripcion</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <h4>💡 Ejemplos de Encabezados CSV:</h4>
+                    <div style="background: #f5f5f5; padding: 10px; border-radius: 5px; margin: 10px 0;">
+                        <code style="font-size: 12px;">ID,Contrato,Cliente,Region,Ciudad,Estado,Monto,Fecha_Inicio,RUT_Cliente,Tipo_Cliente,EMS,Topografia</code>
+                    </div>
+
+                    <h4>⚠️ Notas Importantes:</h4>
+                    <ul>
+                        <li><strong>Campos obligatorios:</strong> Deben tener valores válidos</li>
+                        <li><strong>Campos opcionales:</strong> Pueden estar vacíos o contener NULL</li>
+                        <li><strong>Fechas:</strong> Formato DD-MM-YYYY o YYYY-MM-DD</li>
+                        <li><strong>Booleanos:</strong> true/false, 1/0, sí/no, ✓/✗</li>
+                        <li><strong>Números:</strong> Sin puntos de miles, usar punto decimal</li>
+                        <li><strong>Regiones:</strong> Usar nombres completos (ej: "Arica y Parinacota")</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="closeCsvInfoBtn">Cerrar</button>
+            </div>
+        </div>
     </div>
 
     <!-- Scripts -->
