@@ -6,6 +6,7 @@
     <title>GlaciarIng - Data Filtering and Display (Lector)</title>
     <link rel="stylesheet" href="assets/css/styles.css">
     <link rel="stylesheet" href="assets/css/components.css">
+    <link rel="stylesheet" href="assets/css/custom-export.css">
 </head>
 <body>
     <!-- Header Component -->
@@ -30,9 +31,9 @@
         <section class="filters-section">
             <div class="filters-header">
                 <h3>Filtros Avanzados</h3>
-                <button class="btn btn-small btn-secondary" id="toggleFilters">Mostrar/Ocultar</button>
+                <button class="btn btn-small btn-secondary" id="toggleFilters">Mostrar Filtros</button>
             </div>
-            <div class="filters-container" id="filtersContainer">
+            <div class="filters-container" id="filtersContainer" style="display: none;">
                 <!-- Row 1: Basic Filters -->
                 <div class="filter-row">
                     <div class="filter-group">
@@ -58,7 +59,7 @@
                     </div>
                 </div>
 
-                <!-- Row 2: Location Filters -->
+                <!-- Row 2: Location and Client Filters -->
                 <div class="filter-row">
                     <div class="filter-group">
                         <label for="regionFilter">Región</label>
@@ -106,6 +107,236 @@
                             <option value="INDUSTRIAL">Industrial</option>
                             <option value="OTROS">Otros</option>
                         </select>
+                    </div>
+                </div>
+
+                <!-- Row 2: Location and Client Filters -->
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="regionFilter">Región</label>
+                        <select id="regionFilter" class="filter-select">
+                            <option value="">Todas las Regiones</option>
+                            <option value="Arica y Parinacota">Arica y Parinacota</option>
+                            <option value="Tarapacá">Tarapacá</option>
+                            <option value="Antofagasta">Antofagasta</option>
+                            <option value="Atacama">Atacama</option>
+                            <option value="Coquimbo">Coquimbo</option>
+                            <option value="Valparaíso">Valparaíso</option>
+                            <option value="Metropolitana">Metropolitana</option>
+                            <option value="O'Higgins">O'Higgins</option>
+                            <option value="Maule">Maule</option>
+                            <option value="Ñuble">Ñuble</option>
+                            <option value="Biobío">Biobío</option>
+                            <option value="La Araucanía">La Araucanía</option>
+                            <option value="Los Ríos">Los Ríos</option>
+                            <option value="Los Lagos">Los Lagos</option>
+                            <option value="Aysén">Aysén</option>
+                            <option value="Magallanes">Magallanes</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="ciudadFilter">Ciudad</label>
+                        <input type="text" id="ciudadFilter" class="filter-input" placeholder="Ciudad">
+                    </div>
+                    <div class="filter-group">
+                        <label for="tipoClienteFilter">Tipo Cliente</label>
+                        <select id="tipoClienteFilter" class="filter-select">
+                            <option value="">Todos los Tipos</option>
+                            <option value="Público">Público</option>
+                            <option value="Privado">Privado</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="tipoObraFilter">Tipo de Obra</label>
+                        <select id="tipoObraFilter" class="filter-select">
+                            <option value="">Todos los Tipos</option>
+                            <option value="VIVIENDAS">Viviendas</option>
+                            <option value="EDUCACIONAL">Educacional</option>
+                            <option value="SALUD">Salud</option>
+                            <option value="MUNICIPAL">Municipal</option>
+                            <option value="DEPORTIVO">Deportivo</option>
+                            <option value="INDUSTRIAL">Industrial</option>
+                            <option value="OTROS">Otros</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Row 3: Date Filters -->
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="fechaInicioDesde">Fecha Inicio Desde</label>
+                        <input type="date" id="fechaInicioDesde" class="filter-input">
+                    </div>
+                    <div class="filter-group">
+                        <label for="fechaInicioHasta">Fecha Inicio Hasta</label>
+                        <input type="date" id="fechaInicioHasta" class="filter-input">
+                    </div>
+                    <div class="filter-group">
+                        <label for="fechaTerminoDesde">Fecha Término Desde</label>
+                        <input type="date" id="fechaTerminoDesde" class="filter-input">
+                    </div>
+                    <div class="filter-group">
+                        <label for="fechaTerminoHasta">Fecha Término Hasta</label>
+                        <input type="date" id="fechaTerminoHasta" class="filter-input">
+                    </div>
+                </div>
+
+                <!-- Row 4: Amount Filters -->
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="montoDesde">Monto Desde (CLP)</label>
+                        <input type="number" id="montoDesde" class="filter-input" placeholder="0" min="0">
+                    </div>
+                    <div class="filter-group">
+                        <label for="montoHasta">Monto Hasta (CLP)</label>
+                        <input type="number" id="montoHasta" class="filter-input" placeholder="999999999" min="0">
+                    </div>
+                    <div class="filter-group">
+                        <label for="superficieTerrenoDesde">Superficie Terreno Desde (m²)</label>
+                        <input type="number" id="superficieTerrenoDesde" class="filter-input" placeholder="0" min="0">
+                    </div>
+                    <div class="filter-group">
+                        <label for="superficieTerrenoHasta">Superficie Terreno Hasta (m²)</label>
+                        <input type="number" id="superficieTerrenoHasta" class="filter-input" placeholder="999999" min="0">
+                    </div>
+                </div>
+
+                <!-- Row 5: Studies and Services Filters -->
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="emsFilter">EMS</label>
+                        <select id="emsFilter" class="filter-select">
+                            <option value="">Todos</option>
+                            <option value="true">Sí</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="topografiaFilter">Topografía</label>
+                        <select id="topografiaFilter" class="filter-select">
+                            <option value="">Todos</option>
+                            <option value="true">Sí</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="sondajeFilter">Sondaje</label>
+                        <select id="sondajeFilter" class="filter-select">
+                            <option value="">Todos</option>
+                            <option value="true">Sí</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="certificadoExperienciaFilter">Certificado Experiencia</label>
+                        <select id="certificadoExperienciaFilter" class="filter-select">
+                            <option value="">Todos</option>
+                            <option value="true">Sí</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Row 6: Additional Studies and Services -->
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="estudioSismicoFilter">Estudio Sísmico</label>
+                        <select id="estudioSismicoFilter" class="filter-select">
+                            <option value="">Todos</option>
+                            <option value="true">Sí</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="estudioGeoelectricoFilter">Estudio Geoeléctrico</label>
+                        <select id="estudioGeoelectricoFilter" class="filter-select">
+                            <option value="">Todos</option>
+                            <option value="true">Sí</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="hidraulicaHidrologiaFilter">Hidráulica/Hidrología</label>
+                        <select id="hidraulicaHidrologiaFilter" class="filter-select">
+                            <option value="">Todos</option>
+                            <option value="true">Sí</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="superficieConstruidaDesde">Superficie Construida Desde (m²)</label>
+                        <input type="number" id="superficieConstruidaDesde" class="filter-input" placeholder="0" min="0">
+                    </div>
+                </div>
+
+                <!-- Row 7: Documents and Additional Fields -->
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="superficieConstruidaHasta">Superficie Construida Hasta (m²)</label>
+                        <input type="number" id="superficieConstruidaHasta" class="filter-input" placeholder="999999" min="0">
+                    </div>
+                    <div class="filter-group">
+                        <label for="ordenCompraFilter">Orden de Compra</label>
+                        <select id="ordenCompraFilter" class="filter-select">
+                            <option value="">Todos</option>
+                            <option value="true">Sí</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="contratoDocFilter">Contrato Documento</label>
+                        <select id="contratoDocFilter" class="filter-select">
+                            <option value="">Todos</option>
+                            <option value="true">Sí</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="facturaFilter">Factura</label>
+                        <select id="facturaFilter" class="filter-select">
+                            <option value="">Todos</option>
+                            <option value="true">Sí</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Row 8: Client Information -->
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="rutClienteFilter">RUT Cliente</label>
+                        <input type="text" id="rutClienteFilter" class="filter-input" placeholder="RUT del cliente">
+                    </div>
+                    <div class="filter-group">
+                        <label for="personaContactoFilter">Persona de Contacto</label>
+                        <input type="text" id="personaContactoFilter" class="filter-input" placeholder="Nombre de contacto">
+                    </div>
+                    <div class="filter-group">
+                        <label for="telefonoContactoFilter">Teléfono de Contacto</label>
+                        <input type="text" id="telefonoContactoFilter" class="filter-input" placeholder="Teléfono">
+                    </div>
+                    <div class="filter-group">
+                        <label for="correoContactoFilter">Correo de Contacto</label>
+                        <input type="email" id="correoContactoFilter" class="filter-input" placeholder="correo@ejemplo.com">
+                    </div>
+                </div>
+
+                <!-- Row 9: Additional Text Fields -->
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="descripcionFilter">Descripción</label>
+                        <input type="text" id="descripcionFilter" class="filter-input" placeholder="Buscar en descripción">
+                    </div>
+                    <div class="filter-group">
+                        <label for="numeroFacturaFilter">Número de Factura</label>
+                        <input type="text" id="numeroFacturaFilter" class="filter-input" placeholder="Número de factura">
+                    </div>
+                    <div class="filter-group">
+                        <label for="numeroOrdenCompraFilter">Número Orden de Compra</label>
+                        <input type="text" id="numeroOrdenCompraFilter" class="filter-input" placeholder="Número de orden">
+                    </div>
+                    <div class="filter-group">
+                        <!-- Empty space for alignment -->
                     </div>
                 </div>
 
@@ -292,7 +523,23 @@
                 <div class="filter-actions">
                     <button class="btn btn-primary" id="applyFiltersBtn">Aplicar Filtros</button>
                     <button class="btn btn-secondary" id="clearFiltersBtn">Limpiar Todo</button>
-                    <button class="btn btn-info" id="exportFilteredBtn">Exportar Filtrados</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Export Actions Section -->
+        <section class="export-actions-section">
+            <div class="export-actions-container">
+                <h3>Exportar Datos</h3>
+                <div class="export-buttons">
+                    <button class="btn btn-info" id="exportCsvBtn">
+                        <span class="btn-icon">📄</span>
+                        Descargar CSV
+                    </button>
+                    <button class="btn btn-warning" id="customExportBtn">
+                        <span class="btn-icon">⚙️</span>
+                        Personalizar Salida
+                    </button>
                 </div>
             </div>
         </section>
@@ -361,12 +608,6 @@
             </div>
         </section>
 
-        <!-- Actions Section -->
-        <section class="actions-section">
-            <button class="btn btn-primary btn-large" id="generatePdfBtn">
-                📄 Generate PDF
-            </button>
-        </section>
 
         <!-- Pagination Section -->
         <section class="pagination-section" id="paginationSection" style="display: none;">
@@ -387,6 +628,133 @@
     <div class="loading-overlay" id="loadingOverlay">
         <div class="loading-spinner"></div>
         <p>Loading...</p>
+    </div>
+
+    <!-- Custom Export Modal -->
+    <div class="modal-overlay" id="customExportModal">
+        <div class="modal-content custom-export-modal">
+            <div class="modal-header">
+                <h2>Personalizar Exportación</h2>
+                <button class="modal-close" id="closeCustomExportModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="export-config-container">
+                    <!-- Left Panel: Available Fields -->
+                    <div class="available-fields-panel">
+                        <h3>Campos Disponibles</h3>
+                        <div class="search-fields">
+                            <input type="text" id="fieldSearch" placeholder="Buscar campos..." class="field-search-input">
+                        </div>
+                        <div class="available-fields-list" id="availableFieldsList">
+                            <!-- Fields will be populated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Right Panel: Selected Fields -->
+                    <div class="selected-fields-panel">
+                        <h3>Campos Seleccionados</h3>
+                        <div class="selected-fields-actions">
+                            <button class="btn btn-small btn-secondary" id="clearSelectedFields">Limpiar Todo</button>
+                            <button class="btn btn-small btn-info" id="addCombinedColumn">+ Columna Combinada</button>
+                        </div>
+                        <div class="selected-fields-list" id="selectedFieldsList">
+                            <div class="empty-selection">
+                                <p>Arrastra campos aquí o haz clic en "Agregar" para seleccionar campos</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Export Options -->
+                <div class="export-options">
+                    <div class="option-group">
+                        <h4>Orientación de Proyectos</h4>
+                        <label class="radio-option">
+                            <input type="radio" name="dataOrientation" value="columns" checked>
+                            <span>Por Filas</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="dataOrientation" value="rows">
+                            <span>Por Columnas </span>
+                        </label>
+                    </div>
+
+                    <div class="option-group">
+                        <h4>Formato de Campos Booleanos</h4>
+                        <select id="booleanFormat" class="form-select">
+                            <option value="si-no">Sí/No</option>
+                            <option value="check-x">✓/✗</option>
+                            <option value="true-false">true/false</option>
+                            <option value="1-0">1/0</option>
+                        </select>
+                    </div>
+
+                    <div class="option-group">
+                        <h4>Formato de Fechas</h4>
+                        <select id="dateFormat" class="form-select">
+                            <option value="dd-mm-yyyy">DD-MM-YYYY</option>
+                            <option value="mm-dd-yyyy">MM-DD-YYYY</option>
+                            <option value="yyyy-mm-dd">YYYY-MM-DD</option>
+                            <option value="dd/mm/yyyy">DD/MM/YYYY</option>
+                            <option value="mm/dd/yyyy">MM/DD/YYYY</option>
+                        </select>
+                    </div>
+
+                    <div class="option-group">
+                        <h4>Nombre del Archivo</h4>
+                        <input type="text" id="fileName" class="form-input" placeholder="proyectos_filtrados" value="proyectos_filtrados">
+                        <small>Se agregará automáticamente la fecha y extensión .csv</small>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelCustomExport">Cancelar</button>
+                <button class="btn btn-primary" id="executeCustomExport">Exportar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Combined Column Modal -->
+    <div class="modal-overlay" id="combinedColumnModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Crear Columna Combinada</h3>
+                <button class="modal-close" id="closeCombinedColumnModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="combinedColumnName">Nombre de la Columna</label>
+                    <input type="text" id="combinedColumnName" class="form-input" placeholder="Ej: Cliente Completo">
+                </div>
+                <div class="form-group">
+                    <label for="combinedColumnSeparator">Separador</label>
+                    <select id="combinedColumnSeparator" class="form-select">
+                        <option value=" - "> - (guión con espacios)</option>
+                        <option value="-">- (guión)</option>
+                        <option value=" | "> | (pipe con espacios)</option>
+                        <option value="|">| (pipe)</option>
+                        <option value=" ">(espacio)</option>
+                        <option value=", ">, (coma con espacio)</option>
+                        <option value=",">, (coma)</option>
+                        <option value="custom">Personalizado...</option>
+                    </select>
+                </div>
+                <div class="form-group" id="customSeparatorGroup" style="display: none;">
+                    <label for="customSeparator">Separador Personalizado</label>
+                    <input type="text" id="customSeparator" class="form-input" placeholder="Ingresa tu separador">
+                </div>
+                <div class="form-group">
+                    <label>Campos a Combinar</label>
+                    <div class="combined-fields-selection" id="combinedFieldsSelection">
+                        <!-- Fields will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelCombinedColumn">Cancelar</button>
+                <button class="btn btn-primary" id="createCombinedColumn">Crear Columna</button>
+            </div>
+        </div>
     </div>
 
     <!-- Scripts -->
@@ -416,24 +784,6 @@
             }
         }
 
-        // Toggle filters functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            const toggleFilters = document.getElementById('toggleFilters');
-            const filtersContainer = document.getElementById('filtersContainer');
-
-            if (toggleFilters && filtersContainer) {
-                toggleFilters.addEventListener('click', () => {
-                    if (filtersContainer.style.display === 'none') {
-                        filtersContainer.style.display = 'block';
-                        toggleFilters.textContent = 'Ocultar';
-                    } else {
-                        filtersContainer.style.display = 'none';
-                        toggleFilters.textContent = 'Mostrar';
-                    }
-                });
-            }
-        });
-
         // Verificar autenticación al cargar la página
         document.addEventListener('DOMContentLoaded', function() {
             fetch('/api/check-session')
@@ -451,5 +801,12 @@
                 });
         });
     </script>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <script src="assets/js/data.js?v=10"></script>
+    <script src="assets/js/components.js?v=10"></script>
+    <script src="assets/js/main.js?v=10"></script>
+    <script src="assets/js/custom-export.js?v=10"></script>
 </body>
 </html>

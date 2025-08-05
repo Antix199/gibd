@@ -6,6 +6,7 @@
     <title>GlaciarIng - Data Filtering and Display</title>
     <link rel="stylesheet" href="assets/css/styles.css">
     <link rel="stylesheet" href="assets/css/components.css">
+    <link rel="stylesheet" href="assets/css/custom-export.css">
 </head>
 <body>
     <!-- Header Component -->
@@ -31,9 +32,9 @@
         <section class="filters-section">
             <div class="filters-header">
                 <h3>Filtros Avanzados</h3>
-                <button class="btn btn-small btn-secondary" id="toggleFilters">Mostrar/Ocultar</button>
+                <button class="btn btn-small btn-secondary" id="toggleFilters">Mostrar Filtros</button>
             </div>
-            <div class="filters-container" id="filtersContainer">
+            <div class="filters-container" id="filtersContainer" style="display: none;">
                 <!-- Row 1: Basic Filters -->
                 <div class="filter-row">
                     <div class="filter-group">
@@ -293,7 +294,23 @@
                 <div class="filter-actions">
                     <button class="btn btn-primary" id="applyFiltersBtn">Aplicar Filtros</button>
                     <button class="btn btn-secondary" id="clearFiltersBtn">Limpiar Todo</button>
-                    <button class="btn btn-info" id="exportFilteredBtn">Exportar Filtrados</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Export Actions Section -->
+        <section class="export-actions-section">
+            <div class="export-actions-container">
+                <h3>Exportar Datos</h3>
+                <div class="export-buttons">
+                    <button class="btn btn-info" id="exportCsvBtn">
+                        <span class="btn-icon">📄</span>
+                        Descargar CSV
+                    </button>
+                    <button class="btn btn-warning" id="customExportBtn">
+                        <span class="btn-icon">⚙️</span>
+                        Personalizar Salida
+                    </button>
                 </div>
             </div>
         </section>
@@ -361,13 +378,6 @@
                 </table>
             </div>
         </section>
-        
-        <!-- Actions Section -->
-        <section class="actions-section">
-            <button class="btn btn-primary btn-large" id="generatePdfBtn">
-                📄 Generate PDF
-            </button>
-        </section>
     </main>
 
     <!-- Loading Overlay -->
@@ -376,10 +386,139 @@
         <p>Loading...</p>
     </div>
 
+    <!-- Custom Export Modal -->
+    <div class="modal-overlay" id="customExportModal">
+        <div class="modal-content custom-export-modal">
+            <div class="modal-header">
+                <h2>Personalizar Exportación</h2>
+                <button class="modal-close" id="closeCustomExportModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="export-config-container">
+                    <!-- Left Panel: Available Fields -->
+                    <div class="available-fields-panel">
+                        <h3>Campos Disponibles</h3>
+                        <div class="search-fields">
+                            <input type="text" id="fieldSearch" placeholder="Buscar campos..." class="field-search-input">
+                        </div>
+                        <div class="available-fields-list" id="availableFieldsList">
+                            <!-- Fields will be populated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Right Panel: Selected Fields -->
+                    <div class="selected-fields-panel">
+                        <h3>Campos Seleccionados</h3>
+                        <div class="selected-fields-actions">
+                            <button class="btn btn-small btn-secondary" id="clearSelectedFields">Limpiar Todo</button>
+                            <button class="btn btn-small btn-info" id="addCombinedColumn">+ Columna Combinada</button>
+                        </div>
+                        <div class="selected-fields-list" id="selectedFieldsList">
+                            <div class="empty-selection">
+                                <p>Arrastra campos aquí o haz clic en "Agregar" para seleccionar campos</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Export Options -->
+                <div class="export-options">
+                    <div class="option-group">
+                        <h4>Orientación de Proyectos</h4>
+                        <label class="radio-option">
+                            <input type="radio" name="dataOrientation" value="columns" checked>
+                            <span>Por Filas </span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="dataOrientation" value="rows">
+                            <span>Por Columnas </span>
+                        </label>
+                    </div>
+
+                    <div class="option-group">
+                        <h4>Formato de Campos Booleanos</h4>
+                        <select id="booleanFormat" class="form-select">
+                            <option value="si-no">Sí/No</option>
+                            <option value="check-x">✓/✗</option>
+                            <option value="true-false">true/false</option>
+                            <option value="1-0">1/0</option>
+                        </select>
+                    </div>
+
+                    <div class="option-group">
+                        <h4>Formato de Fechas</h4>
+                        <select id="dateFormat" class="form-select">
+                            <option value="dd-mm-yyyy">DD-MM-YYYY</option>
+                            <option value="mm-dd-yyyy">MM-DD-YYYY</option>
+                            <option value="yyyy-mm-dd">YYYY-MM-DD</option>
+                            <option value="dd/mm/yyyy">DD/MM/YYYY</option>
+                            <option value="mm/dd/yyyy">MM/DD/YYYY</option>
+                        </select>
+                    </div>
+
+                    <div class="option-group">
+                        <h4>Nombre del Archivo</h4>
+                        <input type="text" id="fileName" class="form-input" placeholder="proyectos_filtrados" value="proyectos_filtrados">
+                        <small>Se agregará automáticamente la fecha y extensión .csv</small>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelCustomExport">Cancelar</button>
+                <button class="btn btn-primary" id="executeCustomExport">Exportar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Combined Column Modal -->
+    <div class="modal-overlay" id="combinedColumnModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Crear Columna Combinada</h3>
+                <button class="modal-close" id="closeCombinedColumnModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="combinedColumnName">Nombre de la Columna</label>
+                    <input type="text" id="combinedColumnName" class="form-input" placeholder="Ej: Cliente Completo">
+                </div>
+                <div class="form-group">
+                    <label for="combinedColumnSeparator">Separador</label>
+                    <select id="combinedColumnSeparator" class="form-select">
+                        <option value=" - "> - (guión con espacios)</option>
+                        <option value="-">- (guión)</option>
+                        <option value=" | "> | (pipe con espacios)</option>
+                        <option value="|">| (pipe)</option>
+                        <option value=" ">(espacio)</option>
+                        <option value=", ">, (coma con espacio)</option>
+                        <option value=",">, (coma)</option>
+                        <option value="custom">Personalizado...</option>
+                    </select>
+                </div>
+                <div class="form-group" id="customSeparatorGroup" style="display: none;">
+                    <label for="customSeparator">Separador Personalizado</label>
+                    <input type="text" id="customSeparator" class="form-input" placeholder="Ingresa tu separador">
+                </div>
+                <div class="form-group">
+                    <label>Campos a Combinar</label>
+                    <div class="combined-fields-selection" id="combinedFieldsSelection">
+                        <!-- Fields will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelCombinedColumn">Cancelar</button>
+                <button class="btn btn-primary" id="createCombinedColumn">Crear Columna</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <script src="assets/js/data.js?v=10"></script>
     <script src="assets/js/components.js?v=10"></script>
     <script src="assets/js/main.js?v=10"></script>
+    <script src="assets/js/custom-export.js?v=10"></script>
     <script>
         // Función para cerrar sesión
         async function logout() {

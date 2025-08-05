@@ -71,7 +71,13 @@ class MainPage {
             toggleFilters.addEventListener('click', () => {
                 const filtersContainer = document.getElementById('filtersContainer');
                 if (filtersContainer) {
-                    filtersContainer.classList.toggle('hidden');
+                    if (filtersContainer.style.display === 'none') {
+                        filtersContainer.style.display = 'block';
+                        toggleFilters.textContent = 'Ocultar Filtros';
+                    } else {
+                        filtersContainer.style.display = 'none';
+                        toggleFilters.textContent = 'Mostrar Filtros';
+                    }
                 }
             });
         }
@@ -92,13 +98,7 @@ class MainPage {
             });
         }
 
-        // Export filtered button
-        const exportFilteredBtn = document.getElementById('exportFilteredBtn');
-        if (exportFilteredBtn) {
-            exportFilteredBtn.addEventListener('click', () => {
-                this.exportFilteredData();
-            });
-        }
+        // Export buttons are now handled by CustomExportManager
 
         // Real-time search on main search box
         const searchInput = document.getElementById('searchInput');
