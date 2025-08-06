@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GlaciarIng - Modify Database</title>
+    <title>GlaciarIng - Modificar Base de Datos</title>
     <link rel="stylesheet" href="assets/css/styles.css">
     <link rel="stylesheet" href="assets/css/components.css">
 </head>
@@ -15,7 +15,7 @@
             <img src="assets/images/busqueda.png" alt="Buscar" class="search-icon">
         </div>
         <div class="user-info">
-            <button class="btn btn-primary" id="backToMainBtn">Back to Main</button>
+            <button class="btn btn-primary" id="backToMainBtn">Volver al Inicio</button>
             <button class="btn btn-secondary" id="logoutBtn" onclick="logout()">Cerrar Sesión</button>
             <div class="user-profile">
                 <img src="assets/images/admin.png" alt="Admin" class="user-avatar-img">
@@ -26,7 +26,7 @@
 
     <!-- Main Content -->
     <main class="container">
-        <h1 class="page-title">Modify Database</h1>
+        <h1 class="page-title">Modificar Base de Datos</h1>
 
         <!-- Quick Filters Section -->
         <section class="filters-section">
@@ -300,7 +300,7 @@
         <!-- Add New Record Section -->
         <section class="section">
             <div class="section-header">
-                <h2 class="section-title">Add New Record</h2>
+                <h2 class="section-title">Agregar Proyecto</h2>
                 <button class="btn btn-small btn-secondary" id="toggleAddForm">Mostrar Formulario</button>
             </div>
             <div class="form-container" id="addFormContainer" style="display: none;">
@@ -540,7 +540,7 @@
         
         <!-- Manage Existing Records Section -->
         <section class="section">
-            <h2 class="section-title">Manage Existing Records</h2>
+            <h2 class="section-title">Administrar Proyectos Existentes</h2>
             <div class="table-container manage-table" style="overflow-x: auto; overflow-y: auto; max-height: 600px;">
                 <table class="data-table" id="manageTable" style="min-width: 4200px;">
                     <thead>
@@ -599,8 +599,8 @@
                 </div>
             </div>
             <div class="action-buttons">
-                <button class="btn btn-danger" id="deleteSelectedBtn" disabled>Delete Selected</button>
-                <button class="btn btn-warning" id="editSelectedBtn" disabled>Edit Selected</button>
+                <button class="btn btn-danger" id="deleteSelectedBtn" disabled>Eliminar Seleccionados</button>
+                <button class="btn btn-warning" id="editSelectedBtn" disabled>Editar Seleccionado</button>
             </div>
         </section>
     </main>
@@ -609,7 +609,7 @@
     <div class="modal-overlay" id="editModal">
         <div class="modal">
             <div class="modal-header">
-                <h3>Edit Record</h3>
+                <h3>Editar Proyecto</h3>
                 <button class="modal-close" id="closeEditModal">&times;</button>
             </div>
             <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
@@ -798,8 +798,8 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" id="cancelEditBtn">Cancel</button>
-                <button class="btn btn-primary" id="saveEditBtn">Save Changes</button>
+                <button class="btn btn-secondary" id="cancelEditBtn">Cancelar</button>
+                <button class="btn btn-primary" id="saveEditBtn">Guardar Cambios</button>
             </div>
         </div>
     </div>
@@ -807,7 +807,7 @@
     <!-- Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="loading-spinner"></div>
-        <p>Processing...</p>
+        <p>Procesando...</p>
     </div>
 
     <!-- CSV Info Modal -->
@@ -854,6 +854,11 @@
                                 <li>Superficie_Construida</li>
                                 <li>Tipo_Obra_Lista</li>
                             </ul>
+                            <h5>📝 Otros:</h5>
+                            <ul>
+                                <li>Descripcion</li>
+                                <li>Link Documentos</li>
+                            </ul>
                         </div>
                         <div>
                             <h5>🔬 Estudios (true/false):</h5>
@@ -875,17 +880,16 @@
                                 <li>Numero_Orden_Compra</li>
                                 <li>Numero_Factura</li>
                             </ul>
-
-                            <h5>📝 Otros:</h5>
-                            <ul>
-                                <li>Descripcion</li>
-                            </ul>
                         </div>
                     </div>
 
-                    <h4>💡 Ejemplos de Encabezados CSV:</h4>
+                    <h4>💡 Formato esperado CSV:</h4>
                     <div style="background: #f5f5f5; padding: 10px; border-radius: 5px; margin: 10px 0;">
-                        <code style="font-size: 12px;">ID,Contrato,Cliente,Region,Ciudad,Estado,Monto,Fecha_Inicio,RUT_Cliente,Tipo_Cliente,EMS,Topografia</code>
+                        <code style="font-size: 11px;">Id,Contrato,Cliente,fecha_inicio,fecha_término,Región,Ciudad,Estado,Monto,RUT_cliente,Tipo_cliente,
+                            Persona_contacto,Telefono_contacto,Correo_contacto,Superficie_terreno,Superficie_construida,
+                            Tipo_obra_lista,EMS,Estudio_sismico,Estudio_Geoeléctrico,Topografía,Sondaje,Hidráulica/Hidrología,
+                            Descripción,Certificado_experiencia,Orden_compra,Contrato_existe,Factura,Numero_factura,
+                            Numero_orden_compra,Link_documentos</code>
                     </div>
 
                     <h4>⚠️ Notas Importantes:</h4>
