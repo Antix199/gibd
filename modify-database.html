@@ -819,7 +819,7 @@
             </div>
             <div class="modal-body">
                 <div class="csv-format-info">
-                    <h4>📋 Campos Obligatorios:</h4>
+                        <h4>📋 Campos Obligatorios:</h4>
                     <ul style="color: #d32f2f; font-weight: bold;">
                         <li><strong>ID:</strong> Identificador único del proyecto</li>
                         <li><strong>Contrato:</strong> Nombre del contrato</li>
@@ -829,6 +829,7 @@
                         <li><strong>Estado:</strong> Activo, Completado, o Pendiente</li>
                         <li><strong>Monto:</strong> Monto del proyecto (números)</li>
                     </ul>
+
 
                     <h4>📝 Campos Opcionales:</h4>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
@@ -891,17 +892,25 @@
                             Descripción,Certificado_experiencia,Orden_compra,Contrato_existe,Factura,Numero_factura,
                             Numero_orden_compra,Link_documentos</code>
                     </div>
+                <h4>⚠️ Notas Importantes:</h4>
+<div style="display: flex; align-items: flex-start; gap: 20px;">
+    <!-- Lista de notas -->
+    <ul style="flex: 1;">
+        <li><strong>Campos obligatorios:</strong> Deben tener valores válidos</li>
+        <li><strong>Campos opcionales:</strong> Pueden estar vacíos o contener NULL</li>
+        <li><strong>Fechas:</strong> Formato DD-MM-YYYY o YYYY-MM-DD</li>
+        <li><strong>Booleanos:</strong> true/false, 1/0, sí/no, ✓/✗</li>
+        <li><strong>Números:</strong> Sin puntos de miles, usar punto decimal</li>
+        <li><strong>Regiones:</strong> Usar nombres completos (ej: "Arica y Parinacota")</li>
+    </ul>
 
-                    <h4>⚠️ Notas Importantes:</h4>
-                    <ul>
-                        <li><strong>Campos obligatorios:</strong> Deben tener valores válidos</li>
-                        <li><strong>Campos opcionales:</strong> Pueden estar vacíos o contener NULL</li>
-                        <li><strong>Fechas:</strong> Formato DD-MM-YYYY o YYYY-MM-DD</li>
-                        <li><strong>Booleanos:</strong> true/false, 1/0, sí/no, ✓/✗</li>
-                        <li><strong>Números:</strong> Sin puntos de miles, usar punto decimal</li>
-                        <li><strong>Regiones:</strong> Usar nombres completos (ej: "Arica y Parinacota")</li>
-                    </ul>
-                </div>
+    <!-- Imagen del gatito sabio -->
+    <div style="flex-shrink: 0;">
+        <img src="assets/images/sabio.png" alt="Gatito Sabio" style="width: 150px; height: 150px; object-fit: contain; filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.3));">
+    </div>
+</div>
+
+                    </div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" id="closeCsvInfoBtn">Cerrar</button>
