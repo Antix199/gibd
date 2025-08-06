@@ -534,3 +534,49 @@ window.validateRecord = function(record) {
 
     return errors;
 };
+
+// Función de validación específica para edición (más permisiva)
+window.validateRecordForEdit = function(record) {
+    const errors = [];
+
+    // Para edición, solo validamos que los campos que se proporcionan sean válidos
+    // No requerimos que todos los campos obligatorios estén presentes
+
+    // Validar contrato si se proporciona
+    const contrato = record.contrato || record.recordContrato;
+    if (contrato && contrato.trim().length < 2) {
+        errors.push('El contrato debe tener al menos 2 caracteres');
+    }
+
+    // Validar cliente si se proporciona
+    const cliente = record.cliente || record.recordCliente;
+    if (cliente && cliente.trim().length < 2) {
+        errors.push('El cliente debe tener al menos 2 caracteres');
+    }
+
+    // Validar región si se proporciona
+    const region = record.region || record.recordRegion;
+    if (region && region.trim().length < 2) {
+        errors.push('La región debe ser válida');
+    }
+
+    // Validar ciudad si se proporciona
+    const ciudad = record.ciudad || record.recordCiudad;
+    if (ciudad && ciudad.trim().length < 2) {
+        errors.push('La ciudad debe tener al menos 2 caracteres');
+    }
+
+    // Validar estado si se proporciona
+    const estado = record.estado || record.recordEstado;
+    if (estado && !['Activo', 'Completado', 'Pendiente'].includes(estado)) {
+        errors.push('El estado debe ser: Activo, Completado o Pendiente');
+    }
+
+    // Validar monto si se proporciona
+    const monto = record.monto || record.recordMonto;
+    if (monto !== undefined && monto !== '' && (isNaN(monto) || parseFloat(monto) < 0)) {
+        errors.push('El monto debe ser un número positivo');
+    }
+
+    return errors;
+};

@@ -1018,8 +1018,8 @@ class ModifyDatabasePage {
                 descripcion: document.getElementById('editDescripcion').value
             };
 
-            // Validate
-            const errors = validateRecord(data);
+            // Validate for edit (more permissive than create)
+            const errors = validateRecordForEdit(data);
             if (errors.length > 0) {
                 UIComponents.showNotification(errors.join('\n'), 'error');
                 return;
