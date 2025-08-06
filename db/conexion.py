@@ -9,13 +9,13 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class DatabaseConnection:
-    """Clase para manejar la conexión a MongoDB Atlas"""
+    """Clase para manejar la conexión a MongoDB Atlas :)"""
 
     def __init__(self, username=None, password=None):
         # Credenciales de MongoDB Atlas - usar las proporcionadas o las por defecto
         self.username = username or "Admin"
         self.password = password or "Admin123"
-        self.cluster_url = "glaciaring.dz4x4cs.mongodb.net"
+        self.cluster_url = "proyectosdb.v5zsbpp.mongodb.net"
         self.database_name = "glaciaring_db"
 
         # Construir URI de conexión
@@ -25,7 +25,7 @@ class DatabaseConnection:
         self.db = None
 
     def _build_connection_string(self):
-        """Construye la cadena de conexión de MongoDB Atlas"""
+        """Construye la cadena de conexión de MongoDB Atlas completita"""
         # Escapar caracteres especiales en la contraseña
         escaped_password = quote_plus(self.password)
 
