@@ -50,7 +50,8 @@ class CustomExportManager {
             { key: 'contrato_doc', label: 'Contrato Documento', type: 'boolean' },
             { key: 'factura', label: 'Factura', type: 'boolean' },
             { key: 'numero_factura', label: 'Número de Factura', type: 'text' },
-            { key: 'numero_orden_compra', label: 'Número de Orden de Compra', type: 'text' }
+            { key: 'numero_orden_compra', label: 'Número de Orden de Compra', type: 'text' },
+            { key: 'link_documentos', label: 'Link de Documentos', type: 'text' }
         ];
     }
 

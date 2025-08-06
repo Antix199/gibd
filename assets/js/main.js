@@ -283,6 +283,7 @@ class MainPage {
                 (project.descripcion && project.descripcion.toLowerCase().includes(searchTerm)) ||
                 (project.numero_factura && project.numero_factura.toLowerCase().includes(searchTerm)) ||
                 (project.numero_orden_compra && project.numero_orden_compra.toLowerCase().includes(searchTerm)) ||
+                (project.link_documentos && project.link_documentos.toLowerCase().includes(searchTerm)) ||
 
                 // Fechas (convertidas a string)
                 (project.fecha_inicio && new Date(project.fecha_inicio).toLocaleDateString().includes(searchTerm)) ||
@@ -647,6 +648,7 @@ class MainPage {
                 <td>${project.factura ? '✓' : '✗'}</td>
                 <td>${project.numero_factura || 'N/A'}</td>
                 <td>${project.numero_orden_compra || 'N/A'}</td>
+                <td>${project.link_documentos && project.link_documentos.trim() !== '' ? `<a href="${project.link_documentos}" target="_blank" rel="noopener noreferrer">Ver Documentos</a>` : 'N/A'}</td>
             `;
             tableBody.appendChild(row);
         });

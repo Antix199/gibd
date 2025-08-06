@@ -353,7 +353,8 @@ def create_proyecto():
             contrato_doc=data.get('contrato_doc', False),
             factura=data.get('factura', False),
             numero_factura=data.get('numero_factura', ''),
-            numero_orden_compra=data.get('numero_orden_compra', '')
+            numero_orden_compra=data.get('numero_orden_compra', ''),
+            link_documentos=data.get('link_documentos', '')
         )
 
         logger.info(f"📋 Proyecto creado: {proyecto}")
@@ -448,6 +449,7 @@ def update_proyecto(proyecto_id):
         proyecto.factura = data.get('factura', proyecto.factura)
         proyecto.numero_factura = data.get('numero_factura', proyecto.numero_factura)
         proyecto.numero_orden_compra = data.get('numero_orden_compra', proyecto.numero_orden_compra)
+        proyecto.link_documentos = data.get('link_documentos', proyecto.link_documentos)
 
         # Actualizar fechas
         if data.get('fecha_inicio'):
@@ -627,7 +629,8 @@ def bulk_import_proyectos():
                 contrato_doc=item.get('contrato_doc', False),
                 factura=item.get('factura', False),
                 numero_factura=item.get('numero_factura', ''),
-                numero_orden_compra=item.get('numero_orden_compra', '')
+                numero_orden_compra=item.get('numero_orden_compra', ''),
+                link_documentos=item.get('link_documentos', '')
             )
             logger.info(f"✅ Proyecto creado: ID={proyecto.id}, Contrato={proyecto.contrato}")
             proyectos.append(proyecto)

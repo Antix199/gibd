@@ -350,11 +350,14 @@ class ModifyDatabasePage {
                 factura: data.recordFactura === 'on' || false,
 
                 // Números de documentos (opcional)
-                numero_orden_compra: data.recordNumeroOrdenCompra || null,
-                numero_factura: data.recordNumeroFactura || null,
+                numero_orden_compra: data.recordNumeroOrdenCompra || '',
+                numero_factura: data.recordNumeroFactura || '',
+
+                // Link de documentos (opcional)
+                link_documentos: data.recordLinkDocumentos || '',
 
                 // Descripción (opcional)
-                descripcion: data.recordDescripcion || null
+                descripcion: data.recordDescripcion || ''
             });
 
             // Refresh table
@@ -577,7 +580,8 @@ class ModifyDatabasePage {
                     contrato_doc: this.parseBoolean(this.getCSVValue(row, ['Contrato_existe', 'contrato_existe', 'Contrato Existe', 'Contrato'])),
                     factura: this.parseBoolean(this.getCSVValue(row, ['Factura', 'factura'])),
                     numero_factura: this.getCSVValue(row, ['Numero_factura', 'numero_factura', 'Número Factura']),
-                    numero_orden_compra: this.getCSVValue(row, ['Numero_orden_compra', 'numero_orden_compra', 'Número Orden Compra'])
+                    numero_orden_compra: this.getCSVValue(row, ['Numero_orden_compra', 'numero_orden_compra', 'Número Orden Compra']),
+                    link_documentos: this.getCSVValue(row, ['Link_documentos', 'link_documentos', 'Link Documentos'])
                 };
 
                 console.log(`Proyecto ID ${idValue}: fecha_inicio parseada = "${proyecto.fecha_inicio}", fecha_termino parseada = "${proyecto.fecha_termino}"`);
@@ -845,6 +849,7 @@ class ModifyDatabasePage {
                 <td>${record.factura ? '✓' : '✗'}</td>
                 <td>${record.numero_factura || 'N/A'}</td>
                 <td>${record.numero_orden_compra || 'N/A'}</td>
+                <td>${record.link_documentos && record.link_documentos.trim() !== '' ? `<a href="${record.link_documentos}" target="_blank" rel="noopener noreferrer">Ver Documentos</a>` : 'N/A'}</td>
                 <td>
                     <button class="btn btn-small btn-warning" onclick="modifyPage.editRecord(${record.id})">
                         Editar
@@ -933,6 +938,9 @@ class ModifyDatabasePage {
             document.getElementById('editNumeroOrdenCompra').value = record.numero_orden_compra || '';
             document.getElementById('editNumeroFactura').value = record.numero_factura || '';
 
+            // Link de documentos
+            document.getElementById('editLinkDocumentos').value = record.link_documentos || '';
+
             // Descripción
             document.getElementById('editDescripcion').value = record.descripcion || '';
 
@@ -1003,6 +1011,9 @@ class ModifyDatabasePage {
                 numero_orden_compra: document.getElementById('editNumeroOrdenCompra').value,
                 numero_factura: document.getElementById('editNumeroFactura').value,
 
+                // Link de documentos
+                link_documentos: document.getElementById('editLinkDocumentos').value,
+
                 // Descripción
                 descripcion: document.getElementById('editDescripcion').value
             };
@@ -1069,6 +1080,7 @@ class ModifyDatabasePage {
                 (record.descripcion && record.descripcion.toLowerCase().includes(searchTerm)) ||
                 (record.numero_factura && record.numero_factura.toLowerCase().includes(searchTerm)) ||
                 (record.numero_orden_compra && record.numero_orden_compra.toLowerCase().includes(searchTerm)) ||
+                (record.link_documentos && record.link_documentos.toLowerCase().includes(searchTerm)) ||
 
                 // Fechas (convertidas a string)
                 (record.fecha_inicio && new Date(record.fecha_inicio).toLocaleDateString().includes(searchTerm)) ||
@@ -1432,6 +1444,7 @@ class ModifyDatabasePage {
                 <td>${record.factura ? '✓' : '✗'}</td>
                 <td>${record.numero_factura || 'N/A'}</td>
                 <td>${record.numero_orden_compra || 'N/A'}</td>
+                <td>${record.link_documentos && record.link_documentos.trim() !== '' ? `<a href="${record.link_documentos}" target="_blank" rel="noopener noreferrer">Ver Documentos</a>` : 'N/A'}</td>
                 <td>
                     <button class="btn btn-small btn-warning" onclick="modifyPage.editRecord(${record.id})">
                         Editar

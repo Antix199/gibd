@@ -42,6 +42,7 @@ class Proyecto:
                  factura: bool = False,
                  numero_factura: str = "",
                  numero_orden_compra: str = "",
+                 link_documentos: str = "",
                  _id: Optional[ObjectId] = None,
                  created_at: Optional[datetime] = None,
                  updated_at: Optional[datetime] = None):
@@ -78,6 +79,7 @@ class Proyecto:
         self.factura = factura
         self.numero_factura = numero_factura
         self.numero_orden_compra = numero_orden_compra
+        self.link_documentos = link_documentos
         self._id = _id  # MongoDB ObjectId
         self.created_at = created_at if created_at else datetime.now()
         self.updated_at = updated_at if updated_at else datetime.now()
@@ -118,6 +120,7 @@ class Proyecto:
             'factura': self.factura,
             'numero_factura': self.numero_factura,
             'numero_orden_compra': self.numero_orden_compra,
+            'link_documentos': self.link_documentos,
             'created_at': self.created_at,
             'updated_at': datetime.now()  # Siempre actualizar timestamp
         }
@@ -165,6 +168,7 @@ class Proyecto:
             factura=data.get('factura', False),
             numero_factura=data.get('numero_factura', ''),
             numero_orden_compra=data.get('numero_orden_compra', ''),
+            link_documentos=data.get('link_documentos', ''),
             _id=data.get('_id'),
             created_at=data.get('created_at'),
             updated_at=data.get('updated_at')

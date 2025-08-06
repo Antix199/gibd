@@ -233,7 +233,32 @@ class DataManager {
                     region: recordData.region,
                     ciudad: recordData.ciudad,
                     estado: recordData.estado,
-                    monto: parseFloat(recordData.monto) || 0
+                    monto: parseFloat(recordData.monto) || 0,
+                    // Información del cliente
+                    rut_cliente: recordData.rut_cliente || '',
+                    tipo_cliente: recordData.tipo_cliente || '',
+                    persona_contacto: recordData.persona_contacto || '',
+                    telefono_contacto: recordData.telefono_contacto || '',
+                    correo_contacto: recordData.correo_contacto || '',
+                    // Información técnica
+                    superficie_terreno: recordData.superficie_terreno ? parseFloat(recordData.superficie_terreno) : null,
+                    superficie_construida: recordData.superficie_construida ? parseFloat(recordData.superficie_construida) : null,
+                    tipo_obra_lista: recordData.tipo_obra_lista || '',
+                    // Estudios y servicios
+                    ems: recordData.ems || false,
+                    estudio_sismico: recordData.estudio_sismico || false,
+                    estudio_geoelectrico: recordData.estudio_geoelectrico || false,
+                    topografia: recordData.topografia || false,
+                    sondaje: recordData.sondaje || false,
+                    hidraulica_hidrologia: recordData.hidraulica_hidrologia || false,
+                    descripcion: recordData.descripcion || '',
+                    certificado_experiencia: recordData.certificado_experiencia || false,
+                    orden_compra: recordData.orden_compra || false,
+                    contrato_doc: recordData.contrato_doc || false,
+                    factura: recordData.factura || false,
+                    numero_factura: recordData.numero_factura || '',
+                    numero_orden_compra: recordData.numero_orden_compra || '',
+                    link_documentos: recordData.link_documentos || ''
                 })
             });
             return response.data;
@@ -282,7 +307,8 @@ class DataManager {
                     contrato_doc: recordData.contrato_doc || false,
                     factura: recordData.factura || false,
                     numero_factura: recordData.numero_factura || '',
-                    numero_orden_compra: recordData.numero_orden_compra || ''
+                    numero_orden_compra: recordData.numero_orden_compra || '',
+                    link_documentos: recordData.link_documentos || ''
                 })
             });
             return response.data;
@@ -367,7 +393,8 @@ class DataManager {
                 contrato_doc: record.contrato_doc || false,
                 factura: record.factura || false,
                 numero_factura: record.numero_factura || '',
-                numero_orden_compra: record.numero_orden_compra || ''
+                numero_orden_compra: record.numero_orden_compra || '',
+                link_documentos: record.link_documentos || ''
             }));
 
             console.log('=== DATOS ENVIADOS AL SERVIDOR ===');
