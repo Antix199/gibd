@@ -2,11 +2,41 @@ from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure, ServerSelectionTimeoutError
 import logging
 import os
+import sys
+import ssl
+import platform
 from urllib.parse import quote_plus
 
 # Configurar logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+def get_ssl_context():
+    """Configura el contexto SSL para ejecutables"""
+    if getattr(sys, 'frozen', False):
+        # Estamos en un ejecutable
+        if platform.system() == 'Darwin':  # macOS
+            # En macOS, usar contexto SSL sin verificación de certificados
+            context = ssl.create_default_context()
+            context.check_hostname = False
+            context.verify_mode = ssl.CERT_NONE
+            logger.info("🔒 Configuración SSL para ejecutable macOS: verificación deshabilitada")
+            return context
+        elif platform.system() == 'Windows':
+            # En Windows, intentar usar certificados del sistema
+            try:
+                context = ssl.create_default_context()
+                logger.info("🔒 Configuración SSL para ejecutable Windows: certificados del sistema")
+                return context
+            except Exception as e:
+                logger.warning(f"⚠️ Error configurando SSL en Windows: {e}")
+                context = ssl.create_default_context()
+                context.check_hostname = False
+                context.verify_mode = ssl.CERT_NONE
+                return context
+
+    # Desarrollo: usar configuración por defecto
+    return None
 
 class DatabaseConnection:
     """Clase para manejar la conexión a MongoDB Atlas :)"""
@@ -56,14 +86,22 @@ class DatabaseConnection:
             logger.info("Intentando conectar a MongoDB Atlas...")
 
             # Crear cliente con configuración optimizada
-            self.client = MongoClient(
-                self.connection_string,
-                serverSelectionTimeoutMS=5000,  # 5 segundos timeout
-                connectTimeoutMS=10000,         # 10 segundos para conectar
-                socketTimeoutMS=20000,          # 20 segundos para operaciones
-                maxPoolSize=50,                 # Máximo 50 conexiones
-                retryWrites=True
-            )
+            ssl_context = get_ssl_context()
+
+            client_kwargs = {
+                'serverSelectionTimeoutMS': 5000,  # 5 segundos timeout
+                'connectTimeoutMS': 10000,         # 10 segundos para conectar
+                'socketTimeoutMS': 20000,          # 20 segundos para operaciones
+                'maxPoolSize': 50,                 # Máximo 50 conexiones
+                'retryWrites': True
+            }
+
+            # Agregar configuración SSL si es necesaria
+            if ssl_context:
+                client_kwargs['ssl_context'] = ssl_context
+                logger.info("🔒 Usando configuración SSL personalizada")
+
+            self.client = MongoClient(self.connection_string, **client_kwargs)
 
             # Verificar la conexión
             self.client.admin.command('ping')
@@ -76,12 +114,59 @@ class DatabaseConnection:
 
         except ServerSelectionTimeoutError as e:
             logger.error(f"❌ Error de timeout al conectar con MongoDB Atlas: {e}")
+
+            # Intentar conexión alternativa para ejecutables con problemas SSL
+            if getattr(sys, 'frozen', False) and 'SSL' in str(e):
+                logger.info("🔄 Intentando conexión alternativa sin SSL...")
+                return self._try_alternative_connection()
+
             return False
         except ConnectionFailure as e:
             logger.error(f"❌ Error de conexión con MongoDB Atlas: {e}")
+
+            # Intentar conexión alternativa para ejecutables con problemas SSL
+            if getattr(sys, 'frozen', False) and 'SSL' in str(e):
+                logger.info("🔄 Intentando conexión alternativa sin SSL...")
+                return self._try_alternative_connection()
+
             return False
         except Exception as e:
             logger.error(f"❌ Error inesperado al conectar: {e}")
+            return False
+
+    def _try_alternative_connection(self):
+        """Intenta conexión alternativa para ejecutables con problemas SSL"""
+        try:
+            logger.info("🔄 Intentando conexión con SSL deshabilitado...")
+
+            # Crear contexto SSL completamente permisivo
+            context = ssl.create_default_context()
+            context.check_hostname = False
+            context.verify_mode = ssl.CERT_NONE
+
+            # Configuración alternativa más permisiva
+            alternative_kwargs = {
+                'serverSelectionTimeoutMS': 10000,  # Más tiempo
+                'connectTimeoutMS': 20000,
+                'socketTimeoutMS': 30000,
+                'ssl_context': context,
+                'retryWrites': True,
+                'w': 'majority'
+            }
+
+            self.client = MongoClient(self.connection_string, **alternative_kwargs)
+
+            # Verificar la conexión
+            self.client.admin.command('ping')
+
+            # Obtener la base de datos
+            self.db = self.client[self.database_name]
+
+            logger.info("✅ Conexión alternativa exitosa (SSL deshabilitado)")
+            return True
+
+        except Exception as e:
+            logger.error(f"❌ Conexión alternativa también falló: {e}")
             return False
 
     def get_database(self):

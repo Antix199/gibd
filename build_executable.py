@@ -36,6 +36,13 @@ def install_dependencies():
     except subprocess.CalledProcessError:
         print("No se pudo instalar Pillow, usando icono PNG")
 
+    # Instalar certifi para certificados SSL (especialmente macOS)
+    try:
+        subprocess.run([sys.executable, '-m', 'pip', 'install', 'certifi'], check=True)
+        print("Certifi instalado para certificados SSL")
+    except subprocess.CalledProcessError:
+        print("No se pudo instalar certifi")
+
 def create_icon_for_platform(platform_name):
     """Crea el icono apropiado para cada plataforma"""
     icon_path = 'assets/images/gibd.png'
@@ -105,6 +112,9 @@ def build_executable(target_platform=None):
         '--hidden-import=werkzeug.security',
         '--hidden-import=flask',
         '--hidden-import=sqlite3',
+        '--hidden-import=ssl',
+        '--hidden-import=certifi',
+        '--hidden-import=pymongo',
         'api_server.py'
     ]
 
