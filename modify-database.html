@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GlaciarIng - Modificar Base de Datos</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="assets/css/components.css">
+</head>
+<body>
+    <!-- Header Component -->
+    <header class="header">
+        <div class="search-container">
+            <input type="text" class="search-box" placeholder="Buscar en todos los campos..." id="searchInput">
+            <img src="assets/images/busqueda.png" alt="Buscar" class="search-icon">
+        </div>
+        <div class="user-info">
+            <button class="btn btn-primary" id="backToMainBtn">Volver al Inicio</button>
+            <button class="btn btn-secondary" id="logoutBtn" onclick="logout()">Cerrar Sesión</button>
+            <div class="user-profile">
+                <img src="assets/images/admin.png" alt="Admin" class="user-avatar-img">
+                <span class="user-name">Administrador</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <h1 class="page-title">Modificar Base de Datos</h1>
+
+        <!-- Quick Filters Section -->
+        <section class="filters-section">
+            <div class="filters-header">
+                <h3>Filtros Rápidos</h3>
+                <button class="btn btn-small btn-secondary" id="toggleFilters">Mostrar/Ocultar</button>
+            </div>
+            <div class="filters-container" id="filtersContainer" style="display: none;">
+                <!-- Row 1: Basic Filters -->
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="quickSearchFilter">Búsqueda Rápida</label>
+                        <input type="text" id="quickSearchFilter" class="filter-input" placeholder="Buscar en todos los campos...">
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickIdFilter">ID</label>
+                        <input type="text" id="quickIdFilter" class="filter-input" placeholder="ID del proyecto">
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickContratoFilter">Contrato</label>
+                        <input type="text" id="quickContratoFilter" class="filter-input" placeholder="Nombre del contrato">
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickClienteFilter">Cliente</label>
+                        <input type="text" id="quickClienteFilter" class="filter-input" placeholder="Nombre del cliente">
+                    </div>
+                </div>
+
+                <!-- Row 2: Location and Status -->
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="quickEstadoFilter">Estado</label>
+                        <select id="quickEstadoFilter" class="filter-select">
+                            <option value="">Todos los Estados</option>
+                            <option value="Activo">Activo</option>
+                            <option value="Completado">Completado</option>
+                            <option value="Pendiente">Pendiente</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickRegionFilter">Región</label>
+                        <select id="quickRegionFilter" class="filter-select">
+                            <option value="">Todas las Regiones</option>
+                            <option value="Arica y Parinacota">Arica y Parinacota</option>
+                            <option value="Tarapacá">Tarapacá</option>
+                            <option value="Antofagasta">Antofagasta</option>
+                            <option value="Atacama">Atacama</option>
+                            <option value="Coquimbo">Coquimbo</option>
+                            <option value="Valparaíso">Valparaíso</option>
+                            <option value="Metropolitana">Metropolitana</option>
+                            <option value="O'Higgins">O'Higgins</option>
+                            <option value="Maule">Maule</option>
+                            <option value="Ñuble">Ñuble</option>
+                            <option value="Biobío">Biobío</option>
+                            <option value="La Araucanía">La Araucanía</option>
+                            <option value="Los Ríos">Los Ríos</option>
+                            <option value="Los Lagos">Los Lagos</option>
+                            <option value="Aysén">Aysén</option>
+                            <option value="Magallanes">Magallanes</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickCiudadFilter">Ciudad</label>
+                        <input type="text" id="quickCiudadFilter" class="filter-input" placeholder="Ciudad">
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickTipoClienteFilter">Tipo Cliente</label>
+                        <select id="quickTipoClienteFilter" class="filter-select">
+                            <option value="">Todos los Tipos</option>
+                            <option value="Público">Público</option>
+                            <option value="Privado">Privado</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Row 3: Work Type and Dates -->
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="quickTipoObraFilter">Tipo de Obra</label>
+                        <select id="quickTipoObraFilter" class="filter-select">
+                            <option value="">Todos los Tipos</option>
+                            <option value="VIVIENDAS">Viviendas</option>
+                            <option value="EDUCACIONAL">Educacional</option>
+                            <option value="SALUD">Salud</option>
+                            <option value="MUNICIPAL">Municipal</option>
+                            <option value="DEPORTIVO">Deportivo</option>
+                            <option value="INDUSTRIAL">Industrial</option>
+                            <option value="OTROS">Otros</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickFechaInicioDesde">Fecha Inicio Desde</label>
+                        <input type="date" id="quickFechaInicioDesde" class="filter-input">
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickFechaInicioHasta">Fecha Inicio Hasta</label>
+                        <input type="date" id="quickFechaInicioHasta" class="filter-input">
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickFechaTerminoDesde">Fecha Término Desde</label>
+                        <input type="date" id="quickFechaTerminoDesde" class="filter-input">
+                    </div>
+                </div>
+
+                <!-- Row 4: Amount and Surface Filters -->
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="quickFechaTerminoHasta">Fecha Término Hasta</label>
+                        <input type="date" id="quickFechaTerminoHasta" class="filter-input">
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickMontoDesde">Monto Desde (CLP)</label>
+                        <input type="number" id="quickMontoDesde" class="filter-input" placeholder="0" min="0">
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickMontoHasta">Monto Hasta (CLP)</label>
+                        <input type="number" id="quickMontoHasta" class="filter-input" placeholder="999999999" min="0">
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickSuperficieTerrenoDesde">Superficie Terreno Desde (m²)</label>
+                        <input type="number" id="quickSuperficieTerrenoDesde" class="filter-input" placeholder="0" min="0">
+                    </div>
+                </div>
+
+                <!-- Row 5: Surface and Client Info -->
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="quickSuperficieTerrenoHasta">Superficie Terreno Hasta (m²)</label>
+                        <input type="number" id="quickSuperficieTerrenoHasta" class="filter-input" placeholder="999999" min="0">
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickSuperficieConstruidaDesde">Superficie Construida Desde (m²)</label>
+                        <input type="number" id="quickSuperficieConstruidaDesde" class="filter-input" placeholder="0" min="0">
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickSuperficieConstruidaHasta">Superficie Construida Hasta (m²)</label>
+                        <input type="number" id="quickSuperficieConstruidaHasta" class="filter-input" placeholder="999999" min="0">
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickRutClienteFilter">RUT Cliente</label>
+                        <input type="text" id="quickRutClienteFilter" class="filter-input" placeholder="RUT del cliente">
+                    </div>
+                </div>
+
+                <!-- Row 6: Contact Information -->
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="quickPersonaContactoFilter">Persona de Contacto</label>
+                        <input type="text" id="quickPersonaContactoFilter" class="filter-input" placeholder="Nombre de contacto">
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickTelefonoContactoFilter">Teléfono de Contacto</label>
+                        <input type="text" id="quickTelefonoContactoFilter" class="filter-input" placeholder="Teléfono">
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickCorreoContactoFilter">Correo de Contacto</label>
+                        <input type="email" id="quickCorreoContactoFilter" class="filter-input" placeholder="correo@ejemplo.com">
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickDescripcionFilter">Descripción</label>
+                        <input type="text" id="quickDescripcionFilter" class="filter-input" placeholder="Buscar en descripción">
+                    </div>
+                </div>
+
+                <!-- Row 7: Studies and Services -->
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="quickEmsFilter">EMS</label>
+                        <select id="quickEmsFilter" class="filter-select">
+                            <option value="">Todos</option>
+                            <option value="true">Sí</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickEstudioSismicoFilter">Estudio Sísmico</label>
+                        <select id="quickEstudioSismicoFilter" class="filter-select">
+                            <option value="">Todos</option>
+                            <option value="true">Sí</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickEstudioGeoelectricoFilter">Estudio Geoeléctrico</label>
+                        <select id="quickEstudioGeoelectricoFilter" class="filter-select">
+                            <option value="">Todos</option>
+                            <option value="true">Sí</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickTopografiaFilter">Topografía</label>
+                        <select id="quickTopografiaFilter" class="filter-select">
+                            <option value="">Todos</option>
+                            <option value="true">Sí</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Row 8: More Studies and Documents -->
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="quickSondajeFilter">Sondaje</label>
+                        <select id="quickSondajeFilter" class="filter-select">
+                            <option value="">Todos</option>
+                            <option value="true">Sí</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickHidraulicaHidrologiaFilter">Hidráulica/Hidrología</label>
+                        <select id="quickHidraulicaHidrologiaFilter" class="filter-select">
+                            <option value="">Todos</option>
+                            <option value="true">Sí</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickCertificadoExperienciaFilter">Certificado Experiencia</label>
+                        <select id="quickCertificadoExperienciaFilter" class="filter-select">
+                            <option value="">Todos</option>
+                            <option value="true">Sí</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickOrdenCompraFilter">Orden de Compra</label>
+                        <select id="quickOrdenCompraFilter" class="filter-select">
+                            <option value="">Todos</option>
+                            <option value="true">Sí</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Row 9: Documents and Numbers -->
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="quickContratoDocFilter">Contrato Documento</label>
+                        <select id="quickContratoDocFilter" class="filter-select">
+                            <option value="">Todos</option>
+                            <option value="true">Sí</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickFacturaFilter">Factura</label>
+                        <select id="quickFacturaFilter" class="filter-select">
+                            <option value="">Todos</option>
+                            <option value="true">Sí</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickNumeroFacturaFilter">Número de Factura</label>
+                        <input type="text" id="quickNumeroFacturaFilter" class="filter-input" placeholder="Número de factura">
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickNumeroOrdenCompraFilter">Número Orden de Compra</label>
+                        <input type="text" id="quickNumeroOrdenCompraFilter" class="filter-input" placeholder="Número de orden">
+                    </div>
+                </div>
+
+                <div class="filter-actions">
+                    <button class="btn btn-secondary" id="clearQuickFiltersBtn">Limpiar Filtros</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Add New Record Section -->
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">Agregar Proyecto</h2>
+                <button class="btn btn-small btn-secondary" id="toggleAddForm">Mostrar Formulario</button>
+            </div>
+            <div class="form-container" id="addFormContainer" style="display: none;">
+                <form class="add-record-form" id="addRecordForm">
+                <!-- Información Básica (Campos Obligatorios) -->
+                <div class="form-section">
+                    <h4>Información Básica <span style="color: red;">*Obligatorios</span></h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="recordId">ID <span style="color: red;">*</span></label>
+                            <input type="number" id="recordId" name="recordId" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="recordContrato">Contrato <span style="color: red;">*</span></label>
+                            <input type="text" id="recordContrato" name="recordContrato" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="recordCliente">Cliente <span style="color: red;">*</span></label>
+                            <input type="text" id="recordCliente" name="recordCliente" class="form-input" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="recordRegion">Región <span style="color: red;">*</span></label>
+                            <select id="recordRegion" name="recordRegion" class="form-select" required>
+                                <option value="">Seleccionar Región</option>
+                                <option value="Arica y Parinacota">Arica y Parinacota</option>
+                                <option value="Tarapacá">Tarapacá</option>
+                                <option value="Antofagasta">Antofagasta</option>
+                                <option value="Atacama">Atacama</option>
+                                <option value="Coquimbo">Coquimbo</option>
+                                <option value="Valparaíso">Valparaíso</option>
+                                <option value="Metropolitana">Metropolitana</option>
+                                <option value="O'Higgins">O'Higgins</option>
+                                <option value="Maule">Maule</option>
+                                <option value="Ñuble">Ñuble</option>
+                                <option value="Biobío">Biobío</option>
+                                <option value="La Araucanía">La Araucanía</option>
+                                <option value="Los Ríos">Los Ríos</option>
+                                <option value="Los Lagos">Los Lagos</option>
+                                <option value="Aysén">Aysén</option>
+                                <option value="Magallanes">Magallanes</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="recordCiudad">Ciudad <span style="color: red;">*</span></label>
+                            <input type="text" id="recordCiudad" name="recordCiudad" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="recordEstado">Estado <span style="color: red;">*</span></label>
+                            <select id="recordEstado" name="recordEstado" class="form-select" required>
+                                <option value="">Seleccionar Estado</option>
+                                <option value="Activo">Activo</option>
+                                <option value="Completado">Completado</option>
+                                <option value="Pendiente">Pendiente</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="recordMonto">Monto (CLP) <span style="color: red;">*</span></label>
+                            <input type="number" id="recordMonto" name="recordMonto" class="form-input" step="1" min="0" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Información Opcional -->
+                <div class="form-section">
+                    <h4>Fechas (Opcional)</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="recordFechaInicio">Fecha Inicio</label>
+                            <input type="date" id="recordFechaInicio" name="recordFechaInicio" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="recordFechaTermino">Fecha Término</label>
+                            <input type="date" id="recordFechaTermino" name="recordFechaTermino" class="form-input">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Información del Cliente -->
+                <div class="form-section">
+                    <h4>Información del Cliente (Opcional)</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="recordRutCliente">RUT Cliente</label>
+                            <input type="text" id="recordRutCliente" name="recordRutCliente" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="recordTipoCliente">Tipo Cliente</label>
+                            <select id="recordTipoCliente" name="recordTipoCliente" class="form-select">
+                                <option value="">Seleccionar...</option>
+                                <option value="Público">Público</option>
+                                <option value="Privado">Privado</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="recordPersonaContacto">Persona de Contacto</label>
+                            <input type="text" id="recordPersonaContacto" name="recordPersonaContacto" class="form-input">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="recordTelefonoContacto">Teléfono</label>
+                            <input type="text" id="recordTelefonoContacto" name="recordTelefonoContacto" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="recordCorreoContacto">Email</label>
+                            <input type="email" id="recordCorreoContacto" name="recordCorreoContacto" class="form-input">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Información Técnica -->
+                <div class="form-section">
+                    <h4>Información Técnica (Opcional)</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="recordSuperficieTerreno">Superficie Terreno (m²)</label>
+                            <input type="number" id="recordSuperficieTerreno" name="recordSuperficieTerreno" class="form-input" step="0.01" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="recordSuperficieConstruida">Superficie Construida (m²)</label>
+                            <input type="number" id="recordSuperficieConstruida" name="recordSuperficieConstruida" class="form-input" step="0.01" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="recordTipoObraLista">Tipo de Obra</label>
+                            <select id="recordTipoObraLista" name="recordTipoObraLista" class="form-select">
+                                <option value="">Seleccionar...</option>
+                                <option value="VIVIENDAS">Viviendas</option>
+                                <option value="EDUCACIONAL">Educacional</option>
+                                <option value="SALUD">Salud</option>
+                                <option value="MUNICIPAL">Municipal</option>
+                                <option value="DEPORTIVO">Deportivo</option>
+                                <option value="INDUSTRIAL">Industrial</option>
+                                <option value="OTROS">Otros</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Estudios y Servicios -->
+                <div class="form-section">
+                    <h4>Estudios y Servicios (Opcional)</h4>
+                    <div class="form-row">
+                        <div class="form-group checkbox-group">
+                            <label><input type="checkbox" id="recordEms" name="recordEms"> EMS</label>
+                            <label><input type="checkbox" id="recordEstudioSismico" name="recordEstudioSismico"> Estudio Sísmico</label>
+                            <label><input type="checkbox" id="recordEstudioGeoelectrico" name="recordEstudioGeoelectrico"> Estudio Geoeléctrico</label>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group checkbox-group">
+                            <label><input type="checkbox" id="recordTopografia" name="recordTopografia"> Topografía</label>
+                            <label><input type="checkbox" id="recordSondaje" name="recordSondaje"> Sondaje</label>
+                            <label><input type="checkbox" id="recordHidraulicaHidrologia" name="recordHidraulicaHidrologia"> Hidráulica/Hidrología</label>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group checkbox-group">
+                            <label><input type="checkbox" id="recordCertificadoExperiencia" name="recordCertificadoExperiencia"> Certificado de Experiencia</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Documentos -->
+                <div class="form-section">
+                    <h4>Documentos (Opcional)</h4>
+                    <div class="form-row">
+                        <div class="form-group checkbox-group">
+                            <label><input type="checkbox" id="recordOrdenCompra" name="recordOrdenCompra"> Orden de Compra</label>
+                            <label><input type="checkbox" id="recordContratoDoc" name="recordContratoDoc"> Contrato</label>
+                            <label><input type="checkbox" id="recordFactura" name="recordFactura"> Factura</label>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="recordNumeroOrdenCompra">Número Orden de Compra</label>
+                            <input type="text" id="recordNumeroOrdenCompra" name="recordNumeroOrdenCompra" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="recordNumeroFactura">Número de Factura</label>
+                            <input type="text" id="recordNumeroFactura" name="recordNumeroFactura" class="form-input">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Link de Documentos -->
+                <div class="form-section">
+                    <h4>Link de Documentos</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="recordLinkDocumentos">Link de Documentos</label>
+                            <input type="url" id="recordLinkDocumentos" name="recordLinkDocumentos" class="form-input" placeholder="https://drive.google.com/...">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Descripción -->
+                <div class="form-section">
+                    <h4>Descripción (Opcional)</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="recordDescripcion">Descripción del Proyecto</label>
+                            <textarea id="recordDescripcion" name="recordDescripcion" class="form-input" rows="3" placeholder="Descripción detallada del proyecto..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botón de Envío -->
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Agregar Proyecto</button>
+                    <button type="button" class="btn btn-secondary" onclick="document.getElementById('addRecordForm').reset()">Limpiar Formulario</button>
+                </div>
+            </form>
+            </div>
+        </section>
+
+
+
+        <!-- Load Data from Archive Section -->
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">Cargar Datos desde CSV</h2>
+                <button class="btn btn-small btn-info" id="csvInfoBtn" title="Ver formato CSV">
+                    <i class="fas fa-question-circle"></i> Formato CSV
+                </button>
+            </div>
+            <div class="file-upload-container">
+                <div class="file-upload">
+                    <input type="file" id="fileInput" class="file-input" accept=".csv" hidden>
+                    <button type="button" class="btn btn-secondary" id="selectFileBtn">Seleccionar Archivo CSV</button>
+                    <span class="file-info" id="fileInfo">Ningún archivo seleccionado</span>
+                    <button type="button" class="btn btn-primary" id="uploadBtn" disabled>Cargar Datos</button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Manage Existing Records Section -->
+        <section class="section">
+            <h2 class="section-title">Administrar Proyectos Existentes</h2>
+            <div class="table-container manage-table" style="overflow-x: auto; overflow-y: auto; max-height: 600px;">
+                <table class="data-table" id="manageTable" style="min-width: 4200px;">
+                    <thead>
+                        <tr>
+                            <th style="min-width: 60px;">
+                                <input type="checkbox" id="selectAll" class="checkbox">
+                            </th>
+                            <th style="min-width: 80px;">ID</th>
+                            <th style="min-width: 350px;">Contrato</th>
+                            <th style="min-width: 250px;">Cliente</th>
+                            <th style="min-width: 120px;">Fecha Inicio</th>
+                            <th style="min-width: 120px;">Fecha Término</th>
+                            <th style="min-width: 150px;">Región</th>
+                            <th style="min-width: 120px;">Ciudad</th>
+                            <th style="min-width: 100px;">Estado</th>
+                            <th style="min-width: 120px;">Monto</th>
+                            <th style="min-width: 140px;">RUT Cliente</th>
+                            <th style="min-width: 120px;">Tipo Cliente</th>
+                            <th style="min-width: 200px;">Persona Contacto</th>
+                            <th style="min-width: 140px;">Teléfono</th>
+                            <th style="min-width: 200px;">Email</th>
+                            <th style="min-width: 150px;">Superficie Terreno</th>
+                            <th style="min-width: 160px;">Superficie Construida</th>
+                            <th style="min-width: 140px;">Tipo Obra</th>
+                            <th style="min-width: 80px;">EMS</th>
+                            <th style="min-width: 130px;">Estudio Sísmico</th>
+                            <th style="min-width: 150px;">Estudio Geoeléctrico</th>
+                            <th style="min-width: 120px;">Topografía</th>
+                            <th style="min-width: 100px;">Sondaje</th>
+                            <th style="min-width: 160px;">Hidráulica/Hidrología</th>
+                            <th style="min-width: 300px;">Descripción</th>
+                            <th style="min-width: 160px;">Certificado Experiencia</th>
+                            <th style="min-width: 120px;">Orden Compra</th>
+                            <th style="min-width: 100px;">Contrato</th>
+                            <th style="min-width: 100px;">Factura</th>
+                            <th style="min-width: 150px;">Número Factura</th>
+                            <th style="min-width: 180px;">Número Orden Compra</th>
+                            <th style="min-width: 200px;">Link Documentos</th>
+                            <th style="min-width: 140px;">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="manageTableBody">
+                        <!-- Data will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- No Results Found -->
+            <div class="no-results" id="noResultsModify" style="display: none;">
+                <div class="no-results-content">
+                    <img src="assets/images/notFound.jpg" alt="No encontrado" class="no-results-image">
+                    <div class="no-results-text">
+                        <h3>No se encontró ningún proyecto</h3>
+                        <p>Intenta ajustar los filtros o realizar una nueva búsqueda</p>
+                    </div>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <button class="btn btn-danger" id="deleteSelectedBtn" disabled>Eliminar Seleccionados</button>
+                <button class="btn btn-warning" id="editSelectedBtn" disabled>Editar Seleccionado</button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Edit Modal -->
+    <div class="modal-overlay" id="editModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Editar Proyecto</h3>
+                <button class="modal-close" id="closeEditModal">&times;</button>
+            </div>
+            <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+                <form id="editRecordForm">
+                    <!-- Información Básica -->
+                    <div class="form-section">
+                        <h4>Información Básica</h4>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="editContrato">Contrato</label>
+                                <input type="text" id="editContrato" class="form-input" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="editCliente">Cliente</label>
+                                <input type="text" id="editCliente" class="form-input" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="editFechaInicio">Fecha Inicio</label>
+                                <input type="date" id="editFechaInicio" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label for="editFechaTermino">Fecha Término</label>
+                                <input type="date" id="editFechaTermino" class="form-input">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="editRegion">Región</label>
+                                <input type="text" id="editRegion" class="form-input" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="editCiudad">Ciudad</label>
+                                <input type="text" id="editCiudad" class="form-input" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="editEstado">Estado</label>
+                                <select id="editEstado" class="form-select" required>
+                                    <option value="Activo">Activo</option>
+                                    <option value="Completado">Completado</option>
+                                    <option value="Pendiente">Pendiente</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="editMonto">Monto (CLP)</label>
+                                <input type="number" id="editMonto" class="form-input" step="1" min="0">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Información del Cliente -->
+                    <div class="form-section">
+                        <h4>Información del Cliente</h4>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="editRutCliente">RUT Cliente</label>
+                                <input type="text" id="editRutCliente" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label for="editTipoCliente">Tipo Cliente</label>
+                                <select id="editTipoCliente" class="form-select">
+                                    <option value="">Seleccionar...</option>
+                                    <option value="Público">Público</option>
+                                    <option value="Privado">Privado</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="editPersonaContacto">Persona de Contacto</label>
+                                <input type="text" id="editPersonaContacto" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label for="editTelefonoContacto">Teléfono</label>
+                                <input type="text" id="editTelefonoContacto" class="form-input">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="editCorreoContacto">Email</label>
+                                <input type="email" id="editCorreoContacto" class="form-input">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Información Técnica -->
+                    <div class="form-section">
+                        <h4>Información Técnica</h4>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="editSuperficieTerreno">Superficie Terreno (m²)</label>
+                                <input type="number" id="editSuperficieTerreno" class="form-input" step="0.01" min="0">
+                            </div>
+                            <div class="form-group">
+                                <label for="editSuperficieConstruida">Superficie Construida (m²)</label>
+                                <input type="number" id="editSuperficieConstruida" class="form-input" step="0.01" min="0">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="editTipoObraLista">Tipo de Obra</label>
+                                <select id="editTipoObraLista" class="form-select">
+                                    <option value="">Seleccionar...</option>
+                                    <option value="VIVIENDAS">Viviendas</option>
+                                    <option value="EDUCACIONAL">Educacional</option>
+                                    <option value="SALUD">Salud</option>
+                                    <option value="MUNICIPAL">Municipal</option>
+                                    <option value="DEPORTIVO">Deportivo</option>
+                                    <option value="INDUSTRIAL">Industrial</option>
+                                    <option value="OTROS">Otros</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Estudios y Servicios -->
+                    <div class="form-section">
+                        <h4>Estudios y Servicios</h4>
+                        <div class="form-row">
+                            <div class="form-group checkbox-group">
+                                <label><input type="checkbox" id="editEms"> EMS</label>
+                                <label><input type="checkbox" id="editEstudioSismico"> Estudio Sísmico</label>
+                                <label><input type="checkbox" id="editEstudioGeoelectrico"> Estudio Geoeléctrico</label>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group checkbox-group">
+                                <label><input type="checkbox" id="editTopografia"> Topografía</label>
+                                <label><input type="checkbox" id="editSondaje"> Sondaje</label>
+                                <label><input type="checkbox" id="editHidraulicaHidrologia"> Hidráulica/Hidrología</label>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group checkbox-group">
+                                <label><input type="checkbox" id="editCertificadoExperiencia"> Certificado de Experiencia</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Documentos -->
+                    <div class="form-section">
+                        <h4>Documentos</h4>
+                        <div class="form-row">
+                            <div class="form-group checkbox-group">
+                                <label><input type="checkbox" id="editOrdenCompra"> Orden de Compra</label>
+                                <label><input type="checkbox" id="editContratoDoc"> Contrato</label>
+                                <label><input type="checkbox" id="editFactura"> Factura</label>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="editNumeroOrdenCompra">Número Orden de Compra</label>
+                                <input type="text" id="editNumeroOrdenCompra" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label for="editNumeroFactura">Número de Factura</label>
+                                <input type="text" id="editNumeroFactura" class="form-input">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Link de Documentos -->
+                    <div class="form-section">
+                        <h4>Link de Documentos</h4>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="editLinkDocumentos">Link de Documentos</label>
+                                <input type="url" id="editLinkDocumentos" class="form-input" placeholder="https://drive.google.com/...">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Descripción -->
+                    <div class="form-section">
+                        <h4>Descripción</h4>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="editDescripcion">Descripción</label>
+                                <textarea id="editDescripcion" class="form-input" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelEditBtn">Cancelar</button>
+                <button class="btn btn-primary" id="saveEditBtn">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <p>Procesando...</p>
+    </div>
+
+    <!-- CSV Info Modal -->
+    <div class="modal-overlay" id="csvInfoModal">
+        <div class="modal" style="max-width: 800px;">
+            <div class="modal-header">
+                <h3>Formato CSV Esperado</h3>
+                <button class="modal-close" id="closeCsvInfoModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="csv-format-info">
+                        <h4>📋 Campos Obligatorios:</h4>
+                    <ul style="color: #d32f2f; font-weight: bold;">
+                        <li><strong>ID:</strong> Identificador único del proyecto</li>
+                        <li><strong>Contrato:</strong> Nombre del contrato</li>
+                        <li><strong>Cliente:</strong> Nombre del cliente</li>
+                        <li><strong>Region:</strong> Región del proyecto (ej: Metropolitana, Valparaíso)</li>
+                        <li><strong>Ciudad:</strong> Ciudad del proyecto</li>
+                        <li><strong>Estado:</strong> Activo, Completado, o Pendiente</li>
+                        <li><strong>Monto:</strong> Monto del proyecto (números)</li>
+                    </ul>
+
+
+                    <h4>📝 Campos Opcionales:</h4>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div>
+                            <h5>🗓️ Fechas:</h5>
+                            <ul>
+                                <li>Fecha_Inicio</li>
+                                <li>Fecha_Termino</li>
+                            </ul>
+
+                            <h5>👤 Cliente:</h5>
+                            <ul>
+                                <li>RUT_Cliente</li>
+                                <li>Tipo_Cliente</li>
+                                <li>Persona_Contacto</li>
+                                <li>Telefono_Contacto</li>
+                                <li>Correo_Contacto</li>
+                            </ul>
+
+                            <h5>🏗️ Técnicos:</h5>
+                            <ul>
+                                <li>Superficie_Terreno</li>
+                                <li>Superficie_Construida</li>
+                                <li>Tipo_Obra_Lista</li>
+                            </ul>
+                            <h5>📝 Otros:</h5>
+                            <ul>
+                                <li>Descripcion</li>
+                                <li>Link Documentos</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h5>🔬 Estudios (true/false):</h5>
+                            <ul>
+                                <li>EMS</li>
+                                <li>Estudio_Sismico</li>
+                                <li>Estudio_Geoelectrico</li>
+                                <li>Topografia</li>
+                                <li>Sondaje</li>
+                                <li>Hidraulica_Hidrologia</li>
+                                <li>Certificado_Experiencia</li>
+                            </ul>
+
+                            <h5>📄 Documentos (true/false):</h5>
+                            <ul>
+                                <li>Orden_Compra</li>
+                                <li>Contrato_Doc</li>
+                                <li>Factura</li>
+                                <li>Numero_Orden_Compra</li>
+                                <li>Numero_Factura</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <h4>💡 Formato esperado CSV:</h4>
+                    <div style="background: #f5f5f5; padding: 10px; border-radius: 5px; margin: 10px 0;">
+                        <code style="font-size: 11px;">Id,Contrato,Cliente,fecha_inicio,fecha_término,Región,Ciudad,Estado,Monto,RUT_cliente,Tipo_cliente,
+                            Persona_contacto,Telefono_contacto,Correo_contacto,Superficie_terreno,Superficie_construida,
+                            Tipo_obra_lista,EMS,Estudio_sismico,Estudio_Geoeléctrico,Topografía,Sondaje,Hidráulica/Hidrología,
+                            Descripción,Certificado_experiencia,Orden_compra,Contrato_existe,Factura,Numero_factura,
+                            Numero_orden_compra,Link_documentos</code>
+                    </div>
+                <h4>⚠️ Notas Importantes:</h4>
+<div style="display: flex; align-items: flex-start; gap: 20px;">
+    <!-- Lista de notas -->
+    <ul style="flex: 1;">
+        <li><strong>Campos obligatorios:</strong> Deben tener valores válidos</li>
+        <li><strong>Campos opcionales:</strong> Pueden estar vacíos o contener NULL</li>
+        <li><strong>Fechas:</strong> Formato DD-MM-YYYY o YYYY-MM-DD</li>
+        <li><strong>Booleanos:</strong> true/false, 1/0, sí/no, ✓/✗</li>
+        <li><strong>Números:</strong> Sin puntos de miles, usar punto decimal</li>
+        <li><strong>Regiones:</strong> Usar nombres completos (ej: "Arica y Parinacota")</li>
+    </ul>
+
+    <!-- Imagen del gatito sabio -->
+    <div style="flex-shrink: 0;">
+        <img src="assets/images/sabio.png" alt="Gatito Sabio" style="width: 150px; height: 150px; object-fit: contain; filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.3));">
+    </div>
+</div>
+
+                    </div>
+            </div>
+
+                    <div style="text-align: center; margin: 20px 0;">
+                        <a href="assets/csv/FormatoCSV.csv" download="FormatoCSV.csv" class="btn btn-info" style="display: inline-flex; align-items: center; gap: 8px; text-decoration: none;">
+                            <i class="fas fa-download"></i>
+                            Descargar Formato CSV
+                        </a>
+                    </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="closeCsvInfoBtn">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="assets/js/data.js"></script>
+    <script src="assets/js/components.js"></script>
+    <script src="assets/js/modify-database.js"></script>
+    <script>
+        // Función para cerrar sesión
+        async function logout() {
+            try {
+                const response = await fetch('/api/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                if (response.ok) {
+                    window.location.href = '/login';
+                } else {
+                    console.error('Error al cerrar sesión');
+                }
+            } catch (error) {
+                console.error('Error de conexión al cerrar sesión:', error);
+                // Redirigir al login de todas formas
+                window.location.href = '/login';
+            }
+        }
+
+        // Verificar autenticación al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('/api/check-session')
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.authenticated) {
+                        window.location.href = '/login';
+                    } else if (data.user_type !== 'admin') {
+                        window.location.href = '/reader';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error verificando sesión:', error);
+                    window.location.href = '/login';
+                });
+        });
+    </script>
+</body>
+</html>

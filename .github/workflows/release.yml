@@ -1,0 +1,57 @@
+name: Release Executables
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version tag'
+        required: true
+        default: 'v1.0.0'
+
+jobs:
+  build-and-release:
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            platform: linux
+            artifact: GlaciarIng-linux.tar.gz
+          - os: macos-latest
+            platform: mac
+            artifact: GlaciarIng-mac.zip
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt pyinstaller
+
+    - name: Build executable
+      run: python build_executable.py
+
+    - name: Package executable
+      run: |
+        cd dist/${{ matrix.platform }}
+        if [ "${{ matrix.platform }}" = "mac" ]; then
+          zip -r ../../${{ matrix.artifact }} GlaciarIng
+        else
+          tar -czf ../../${{ matrix.artifact }} GlaciarIng
+        fi
+
+    - name: Upload to release
+      uses: softprops/action-gh-release@v2
+      with:
+        files: ${{ matrix.artifact }}
+        tag_name: ${{ github.event.inputs.version || github.ref_name }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
