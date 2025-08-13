@@ -82,7 +82,7 @@ start_server.bat
 # Ejecutar servidor de desarrollo
 .venv\Scripts\python.exe api_server.py
 
-# Abrir navegador en: http://localhost:5000
+# Abrir navegador en: http://localhost:5003
 ```
 
 ## 📱 Pantallas

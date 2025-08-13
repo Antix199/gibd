@@ -852,13 +852,13 @@ def main():
 
         # Iniciar servidor
         logger.info("🌐 Servidor disponible en:")
-        logger.info("   📱 Frontend: http://localhost:5000")
-        logger.info("   🔧 API: http://localhost:5000/api/")
-        logger.info("   📊 Health Check: http://localhost:5000/api/health")
+        logger.info("   📱 Frontend: http://localhost:5003")
+        logger.info("   🔧 API: http://localhost:5003/api/")
+        logger.info("   📊 Health Check: http://localhost:5003/api/health")
 
         app.run(
             host='0.0.0.0',
-            port=5000,
+            port=5003,
             debug=True,
             use_reloader=False  # Evitar problemas con imports
         )
