@@ -320,12 +320,31 @@ def create_proyecto():
             logger.error(f"❌ Error parseando fecha_termino: {e}")
             fecha_termino_value = None
 
+        # Parsear fecha_factura
+        fecha_factura_value = None
+        if data.get('fecha_factura') and str(data.get('fecha_factura')).strip() and str(data.get('fecha_factura')).lower() != 'null':
+            try:
+                fecha_factura_value = datetime.fromisoformat(data.get('fecha_factura'))
+            except ValueError as e:
+                logger.error(f"❌ Error parseando fecha_factura: {e}")
+                fecha_factura_value = None
+
+        # Parsear duración
+        duracion_value = None
+        if data.get('duracion') and str(data.get('duracion')).strip() and str(data.get('duracion')).lower() != 'null':
+            try:
+                duracion_value = int(data.get('duracion'))
+            except (ValueError, TypeError) as e:
+                logger.error(f"❌ Error parseando duracion: {e}")
+                duracion_value = None
+
         proyecto = Proyecto(
             id=data.get('id'),
             contrato=data.get('contrato', ''),
             cliente=data.get('cliente', ''),
             fecha_inicio=fecha_inicio_value,
             fecha_termino=fecha_termino_value,
+            duracion=duracion_value,
             region=data.get('region', ''),
             ciudad=data.get('ciudad', ''),
             estado=data.get('estado', 'Activo'),
@@ -352,6 +371,7 @@ def create_proyecto():
             orden_compra=data.get('orden_compra', False),
             contrato_doc=data.get('contrato_doc', False),
             factura=data.get('factura', False),
+            fecha_factura=fecha_factura_value,
             numero_factura=data.get('numero_factura', ''),
             numero_orden_compra=data.get('numero_orden_compra', ''),
             link_documentos=data.get('link_documentos', '')
@@ -546,17 +566,133 @@ def bulk_delete_proyectos():
             'error': str(e)
         }), 500
 
+def parse_boolean_value(value):
+    """Convierte valores CSV a booleanos"""
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, str):
+        return value.lower().strip() in ['true', '1', 'sí', 'si', 'yes', 'verdadero']
+    return False
+
+def parse_numeric_value(value, default=None):
+    """Convierte valores CSV a números"""
+    if not value or str(value).strip() == '' or str(value).lower() == 'null':
+        return default
+    try:
+        if '.' in str(value):
+            return float(value)
+        else:
+            return int(value)
+    except (ValueError, TypeError):
+        return default
+
+def normalize_column_name(column_name):
+    """Normaliza nombres de columnas CSV para mapeo consistente"""
+    if not column_name:
+        return ''
+
+    # Mapeo EXACTO de nombres de columnas CSV a nombres de campos internos
+    column_mapping = {
+        # Campos básicos - EXACTOS del CSV
+        'id': 'id',
+        'contrato': 'contrato',
+        'cliente': 'cliente',
+        'fecha_inicio': 'fecha_inicio',
+        'fecha_término': 'fecha_termino',  # Con acento como en CSV
+        'duración': 'duracion',           # Con acento como en CSV
+        'región': 'region',               # Con acento como en CSV
+        'ciudad': 'ciudad',
+        'estado': 'estado',
+        'monto': 'monto',
+
+        # Información del cliente - EXACTOS del CSV
+        'rut_cliente': 'rut_cliente',
+        'tipo_cliente': 'tipo_cliente',
+        'persona_contacto': 'persona_contacto',
+        'telefono_contacto': 'telefono_contacto',
+        'correo_contacto': 'correo_contacto',
+
+        # Información técnica - EXACTOS del CSV
+        'superficie_terreno': 'superficie_terreno',
+        'superficie_construida': 'superficie_construida',
+        'tipo_obra_lista': 'tipo_obra_lista',
+
+        # Estudios y servicios - EXACTOS del CSV
+        'ems': 'ems',
+        'estudio_sismico': 'estudio_sismico',
+        'estudio_geoeléctrico': 'estudio_geoelectrico',  # Con acento como en CSV
+        'topografía': 'topografia',                      # Con acento como en CSV
+        'sondaje': 'sondaje',
+        'hidráulica/hidrología': 'hidraulica_hidrologia', # Con acentos y / como en CSV
+        'descripción': 'descripcion',                     # Con acento como en CSV
+
+        # Documentos - EXACTOS del CSV
+        'certificado_experiencia': 'certificado_experiencia',
+        'orden_compra': 'orden_compra',
+        'contrato_existe': 'contrato_doc',
+        'factura': 'factura',
+        'fecha_factura': 'fecha_factura',
+        'numero_factura': 'numero_factura',
+        'numero_orden_compra': 'numero_orden_compra',
+        'link_documentos': 'link_documentos',
+
+        # Variaciones alternativas (por si acaso)
+        'fecha_termino': 'fecha_termino',
+        'duracion': 'duracion',
+        'region': 'region',
+        'estudio_geoelectrico': 'estudio_geoelectrico',
+        'topografia': 'topografia',
+        'hidraulica_hidrologia': 'hidraulica_hidrologia',
+        'descripcion': 'descripcion',
+        'contrato_doc': 'contrato_doc'
+    }
+
+    # Normalizar el nombre de la columna
+    normalized = column_name.lower().strip()
+    return column_mapping.get(normalized, normalized)
+
 @app.route('/api/proyectos/bulk-import', methods=['POST'])
 @admin_required
 def bulk_import_proyectos():
     """Importa múltiples proyectos"""
     try:
-        data = request.get_json()
-        proyectos_data = data.get('proyectos', [])
+        logger.info("🚀 INICIANDO IMPORTACIÓN CSV")
 
+        # Verificar que lleguen datos
+        if not request.is_json:
+            logger.error("❌ Request no es JSON")
+            return jsonify({'success': False, 'error': 'Request debe ser JSON'}), 400
+
+        data = request.get_json()
+        if not data:
+            logger.error("❌ No hay datos en el request")
+            return jsonify({'success': False, 'error': 'No hay datos'}), 400
+
+        proyectos_data = data.get('proyectos', [])
         logger.info(f"📥 Recibidos {len(proyectos_data)} proyectos para importar")
 
-        if not proyectos_data:
+        if len(proyectos_data) == 0:
+            logger.error("❌ Array de proyectos está vacío")
+            return jsonify({'success': False, 'error': 'No hay proyectos para importar'}), 400
+
+        # Log de columnas originales y primer registro
+        if proyectos_data:
+            original_columns = list(proyectos_data[0].keys())
+            logger.info(f"📋 Columnas originales CSV ({len(original_columns)}): {original_columns}")
+            logger.info(f"📄 Primer registro completo: {proyectos_data[0]}")
+
+        # Normalizar nombres de columnas en cada registro
+        normalized_data = []
+        for item in proyectos_data:
+            normalized_item = {}
+            for key, value in item.items():
+                normalized_key = normalize_column_name(key)
+                normalized_item[normalized_key] = value
+            normalized_data.append(normalized_item)
+
+        logger.info(f"📋 Ejemplo de datos normalizados: {normalized_data[0] if normalized_data else 'N/A'}")
+
+        if not normalized_data:
             return jsonify({
                 'success': False,
                 'error': 'No se proporcionaron datos de proyectos'
@@ -564,32 +700,35 @@ def bulk_import_proyectos():
 
         # Crear objetos Proyecto
         proyectos = []
-        for i, item in enumerate(proyectos_data):
+        for i, item in enumerate(normalized_data):
             logger.info(f"📋 Procesando proyecto {i+1}: {item}")
 
-            # Parsear fecha de inicio
-            fecha_inicio_str = item.get('fecha_inicio')
-            if fecha_inicio_str and fecha_inicio_str.strip() and fecha_inicio_str.lower() != 'null':
-                try:
-                    fecha_inicio = datetime.fromisoformat(fecha_inicio_str)
-                    logger.info(f"✅ Fecha inicio parseada: {fecha_inicio_str} → {fecha_inicio}")
-                except ValueError as e:
-                    logger.warning(f"⚠️ Error parseando fecha_inicio '{fecha_inicio_str}': {e}, usando None")
-                    fecha_inicio = None
-            else:
-                fecha_inicio = None
+            # Función para parsear fechas con múltiples formatos
+            def parse_date(date_str):
+                if not date_str or str(date_str).strip() == '' or str(date_str).lower() == 'null':
+                    return None
 
-            # Parsear fecha de término
-            fecha_termino_str = item.get('fecha_termino')
-            if fecha_termino_str:
-                try:
-                    fecha_termino = datetime.fromisoformat(fecha_termino_str)
-                    logger.info(f"✅ Fecha término parseada: {fecha_termino_str} → {fecha_termino}")
-                except ValueError as e:
-                    logger.warning(f"⚠️ Error parseando fecha_termino '{fecha_termino_str}': {e}, usando None")
-                    fecha_termino = None
-            else:
-                fecha_termino = None
+                date_formats = [
+                    '%Y-%m-%d',      # 2014-06-10
+                    '%d/%m/%Y',      # 10/06/2014
+                    '%d-%m-%Y',      # 10-06-2014
+                    '%m/%d/%Y',      # 06/10/2014
+                    '%Y/%m/%d'       # 2014/06/10
+                ]
+
+                for fmt in date_formats:
+                    try:
+                        return datetime.strptime(str(date_str).strip(), fmt)
+                    except ValueError:
+                        continue
+
+                logger.warning(f"⚠️ No se pudo parsear fecha: {date_str}")
+                return None
+
+            # Parsear fechas
+            fecha_inicio = parse_date(item.get('fecha_inicio'))
+            fecha_termino = parse_date(item.get('fecha_termino'))
+            fecha_factura = parse_date(item.get('fecha_factura'))
 
             proyecto = Proyecto(
                 id=item.get('id'),
@@ -597,10 +736,11 @@ def bulk_import_proyectos():
                 cliente=item.get('cliente', ''),
                 fecha_inicio=fecha_inicio,
                 fecha_termino=fecha_termino,
+                duracion=int(item.get('duracion')) if item.get('duracion') else None,
                 region=item.get('region', ''),
                 ciudad=item.get('ciudad', ''),
                 estado=item.get('estado', 'Activo'),
-                monto=float(item.get('monto', 0)),
+                monto=parse_numeric_value(item.get('monto'), 0),
                 # Información del cliente
                 rut_cliente=item.get('rut_cliente', ''),
                 tipo_cliente=item.get('tipo_cliente', ''),
@@ -608,21 +748,22 @@ def bulk_import_proyectos():
                 telefono_contacto=item.get('telefono_contacto', ''),
                 correo_contacto=item.get('correo_contacto', ''),
                 # Información técnica
-                superficie_terreno=item.get('superficie_terreno'),
-                superficie_construida=item.get('superficie_construida'),
+                superficie_terreno=parse_numeric_value(item.get('superficie_terreno')),
+                superficie_construida=parse_numeric_value(item.get('superficie_construida')),
                 tipo_obra_lista=item.get('tipo_obra_lista', ''),
                 # Estudios y servicios
-                ems=item.get('ems', False),
-                estudio_sismico=item.get('estudio_sismico', False),
-                estudio_geoelectrico=item.get('estudio_geoelectrico', False),
-                topografia=item.get('topografia', False),
-                sondaje=item.get('sondaje', False),
-                hidraulica_hidrologia=item.get('hidraulica_hidrologia', False),
+                ems=parse_boolean_value(item.get('ems', False)),
+                estudio_sismico=parse_boolean_value(item.get('estudio_sismico', False)),
+                estudio_geoelectrico=parse_boolean_value(item.get('estudio_geoelectrico', False)),
+                topografia=parse_boolean_value(item.get('topografia', False)),
+                sondaje=parse_boolean_value(item.get('sondaje', False)),
+                hidraulica_hidrologia=parse_boolean_value(item.get('hidraulica_hidrologia', False)),
                 descripcion=item.get('descripcion', ''),
-                certificado_experiencia=item.get('certificado_experiencia', False),
-                orden_compra=item.get('orden_compra', False),
-                contrato_doc=item.get('contrato_doc', False),
-                factura=item.get('factura', False),
+                certificado_experiencia=parse_boolean_value(item.get('certificado_experiencia', False)),
+                orden_compra=parse_boolean_value(item.get('orden_compra', False)),
+                contrato_doc=parse_boolean_value(item.get('contrato_doc', False)),
+                factura=parse_boolean_value(item.get('factura', False)),
+                fecha_factura=fecha_factura,
                 numero_factura=item.get('numero_factura', ''),
                 numero_orden_compra=item.get('numero_orden_compra', ''),
                 link_documentos=item.get('link_documentos', '')

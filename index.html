@@ -132,6 +132,26 @@
                     </div>
                 </div>
 
+                <!-- Row 4: Duration and Invoice Date Filters -->
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="duracionDesde">Duración Desde (días)</label>
+                        <input type="number" id="duracionDesde" class="filter-input" min="0" placeholder="Días mínimos">
+                    </div>
+                    <div class="filter-group">
+                        <label for="duracionHasta">Duración Hasta (días)</label>
+                        <input type="number" id="duracionHasta" class="filter-input" min="0" placeholder="Días máximos">
+                    </div>
+                    <div class="filter-group">
+                        <label for="fechaFacturaDesde">Fecha Factura Desde</label>
+                        <input type="date" id="fechaFacturaDesde" class="filter-input">
+                    </div>
+                    <div class="filter-group">
+                        <label for="fechaFacturaHasta">Fecha Factura Hasta</label>
+                        <input type="date" id="fechaFacturaHasta" class="filter-input">
+                    </div>
+                </div>
+
                 <!-- Row 4: Amount Filters -->
                 <div class="filter-row">
                     <div class="filter-group">
@@ -346,6 +366,7 @@
                             <th style="min-width: 250px;">Cliente</th>
                             <th style="min-width: 120px;">Fecha Inicio</th>
                             <th style="min-width: 120px;">Fecha Término</th>
+                            <th style="min-width: 100px;">Duración (días)</th>
                             <th style="min-width: 150px;">Región</th>
                             <th style="min-width: 120px;">Ciudad</th>
                             <th style="min-width: 100px;">Estado</th>
@@ -369,6 +390,7 @@
                             <th style="min-width: 120px;">Orden Compra</th>
                             <th style="min-width: 100px;">Contrato</th>
                             <th style="min-width: 100px;">Factura</th>
+                            <th style="min-width: 120px;">Fecha Factura</th>
                             <th style="min-width: 150px;">Número Factura</th>
                             <th style="min-width: 180px;">Número Orden Compra</th>
                             <th style="min-width: 200px;">Link Documentos</th>

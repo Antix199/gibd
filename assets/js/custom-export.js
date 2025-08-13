@@ -26,6 +26,7 @@ class CustomExportManager {
             { key: 'cliente', label: 'Cliente', type: 'text' },
             { key: 'fecha_inicio', label: 'Fecha de Inicio', type: 'date' },
             { key: 'fecha_termino', label: 'Fecha de Término', type: 'date' },
+            { key: 'duracion', label: 'Duración (días)', type: 'number' },
             { key: 'region', label: 'Región', type: 'text' },
             { key: 'ciudad', label: 'Ciudad', type: 'text' },
             { key: 'estado', label: 'Estado', type: 'text' },
@@ -49,6 +50,7 @@ class CustomExportManager {
             { key: 'orden_compra', label: 'Orden de Compra', type: 'boolean' },
             { key: 'contrato_doc', label: 'Contrato Documento', type: 'boolean' },
             { key: 'factura', label: 'Factura', type: 'boolean' },
+            { key: 'fecha_factura', label: 'Fecha de Factura', type: 'date' },
             { key: 'numero_factura', label: 'Número de Factura', type: 'text' },
             { key: 'numero_orden_compra', label: 'Número de Orden de Compra', type: 'text' },
             { key: 'link_documentos', label: 'Link de Documentos', type: 'text' }

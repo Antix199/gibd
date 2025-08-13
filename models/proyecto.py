@@ -14,6 +14,7 @@ class Proyecto:
                  cliente: str = "",
                  fecha_inicio: Optional[datetime] = None,
                  fecha_termino: Optional[datetime] = None,
+                 duracion: Optional[int] = None,
                  region: str = "",
                  ciudad: str = "",
                  estado: str = "Activo",
@@ -40,6 +41,7 @@ class Proyecto:
                  orden_compra: bool = False,
                  contrato_doc: bool = False,
                  factura: bool = False,
+                 fecha_factura: Optional[datetime] = None,
                  numero_factura: str = "",
                  numero_orden_compra: str = "",
                  link_documentos: str = "",
@@ -51,6 +53,7 @@ class Proyecto:
         self.cliente = cliente
         self.fecha_inicio = fecha_inicio
         self.fecha_termino = fecha_termino
+        self.duracion = duracion
         self.region = region
         self.ciudad = ciudad
         self.estado = estado
@@ -77,6 +80,7 @@ class Proyecto:
         self.orden_compra = orden_compra
         self.contrato_doc = contrato_doc
         self.factura = factura
+        self.fecha_factura = fecha_factura
         self.numero_factura = numero_factura
         self.numero_orden_compra = numero_orden_compra
         self.link_documentos = link_documentos
@@ -92,6 +96,7 @@ class Proyecto:
             'cliente': self.cliente,
             'fecha_inicio': self.fecha_inicio,
             'fecha_termino': self.fecha_termino,
+            'duracion': self.duracion,
             'region': self.region,
             'ciudad': self.ciudad,
             'estado': self.estado,
@@ -118,6 +123,7 @@ class Proyecto:
             'orden_compra': self.orden_compra,
             'contrato_doc': self.contrato_doc,
             'factura': self.factura,
+            'fecha_factura': self.fecha_factura,
             'numero_factura': self.numero_factura,
             'numero_orden_compra': self.numero_orden_compra,
             'link_documentos': self.link_documentos,
@@ -140,6 +146,7 @@ class Proyecto:
             cliente=data.get('cliente', ''),
             fecha_inicio=data.get('fecha_inicio'),
             fecha_termino=data.get('fecha_termino'),
+            duracion=data.get('duracion'),
             region=data.get('region', ''),
             ciudad=data.get('ciudad', ''),
             estado=data.get('estado', 'Activo'),
@@ -166,6 +173,7 @@ class Proyecto:
             orden_compra=data.get('orden_compra', False),
             contrato_doc=data.get('contrato_doc', False),
             factura=data.get('factura', False),
+            fecha_factura=data.get('fecha_factura'),
             numero_factura=data.get('numero_factura', ''),
             numero_orden_compra=data.get('numero_orden_compra', ''),
             link_documentos=data.get('link_documentos', ''),

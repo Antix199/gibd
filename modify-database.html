@@ -131,11 +131,31 @@
                     </div>
                 </div>
 
-                <!-- Row 4: Amount and Surface Filters -->
+                <!-- Row 4: Duration and Invoice Date Filters -->
                 <div class="filter-row">
                     <div class="filter-group">
                         <label for="quickFechaTerminoHasta">Fecha Término Hasta</label>
                         <input type="date" id="quickFechaTerminoHasta" class="filter-input">
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickDuracionDesde">Duración Desde (días)</label>
+                        <input type="number" id="quickDuracionDesde" class="filter-input" min="0" placeholder="Días mínimos">
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickDuracionHasta">Duración Hasta (días)</label>
+                        <input type="number" id="quickDuracionHasta" class="filter-input" min="0" placeholder="Días máximos">
+                    </div>
+                    <div class="filter-group">
+                        <label for="quickFechaFacturaDesde">Fecha Factura Desde</label>
+                        <input type="date" id="quickFechaFacturaDesde" class="filter-input">
+                    </div>
+                </div>
+
+                <!-- Row 5: Amount and Surface Filters -->
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="quickFechaFacturaHasta">Fecha Factura Hasta</label>
+                        <input type="date" id="quickFechaFacturaHasta" class="filter-input">
                     </div>
                     <div class="filter-group">
                         <label for="quickMontoDesde">Monto Desde (CLP)</label>
@@ -151,7 +171,7 @@
                     </div>
                 </div>
 
-                <!-- Row 5: Surface and Client Info -->
+                <!-- Row 6: Surface and Client Info -->
                 <div class="filter-row">
                     <div class="filter-group">
                         <label for="quickSuperficieTerrenoHasta">Superficie Terreno Hasta (m²)</label>
@@ -377,6 +397,10 @@
                             <label for="recordFechaTermino">Fecha Término</label>
                             <input type="date" id="recordFechaTermino" name="recordFechaTermino" class="form-input">
                         </div>
+                        <div class="form-group">
+                            <label for="recordDuracion">Duración (días) <span style="color: #666;">(opcional)</span></label>
+                            <input type="number" id="recordDuracion" name="recordDuracion" class="form-input" min="0" placeholder="Duración en días (opcional)">
+                        </div>
                     </div>
                 </div>
 
@@ -477,12 +501,21 @@
                     </div>
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="recordNumeroOrdenCompra">Número Orden de Compra</label>
-                            <input type="text" id="recordNumeroOrdenCompra" name="recordNumeroOrdenCompra" class="form-input">
+                            <label for="recordFechaFactura">Fecha de Factura <span style="color: #666;">(opcional)</span></label>
+                            <input type="date" id="recordFechaFactura" name="recordFechaFactura" class="form-input">
                         </div>
                         <div class="form-group">
                             <label for="recordNumeroFactura">Número de Factura</label>
                             <input type="text" id="recordNumeroFactura" name="recordNumeroFactura" class="form-input">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="recordNumeroOrdenCompra">Número Orden de Compra</label>
+                            <input type="text" id="recordNumeroOrdenCompra" name="recordNumeroOrdenCompra" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <!-- Empty space for alignment -->
                         </div>
                     </div>
                 </div>
@@ -553,6 +586,7 @@
                             <th style="min-width: 250px;">Cliente</th>
                             <th style="min-width: 120px;">Fecha Inicio</th>
                             <th style="min-width: 120px;">Fecha Término</th>
+                            <th style="min-width: 100px;">Duración (días)</th>
                             <th style="min-width: 150px;">Región</th>
                             <th style="min-width: 120px;">Ciudad</th>
                             <th style="min-width: 100px;">Estado</th>
@@ -576,6 +610,7 @@
                             <th style="min-width: 120px;">Orden Compra</th>
                             <th style="min-width: 100px;">Contrato</th>
                             <th style="min-width: 100px;">Factura</th>
+                            <th style="min-width: 120px;">Fecha Factura</th>
                             <th style="min-width: 150px;">Número Factura</th>
                             <th style="min-width: 180px;">Número Orden Compra</th>
                             <th style="min-width: 200px;">Link Documentos</th>
@@ -635,6 +670,15 @@
                             <div class="form-group">
                                 <label for="editFechaTermino">Fecha Término</label>
                                 <input type="date" id="editFechaTermino" class="form-input">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="editDuracion">Duración (días) <span style="color: #666;">(opcional)</span></label>
+                                <input type="number" id="editDuracion" class="form-input" min="0" placeholder="Duración en días (opcional)">
+                            </div>
+                            <div class="form-group">
+                                <!-- Empty space for alignment -->
                             </div>
                         </div>
                         <div class="form-row">
@@ -764,12 +808,21 @@
                         </div>
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="editNumeroOrdenCompra">Número Orden de Compra</label>
-                                <input type="text" id="editNumeroOrdenCompra" class="form-input">
+                                <label for="editFechaFactura">Fecha de Factura <span style="color: #666;">(opcional)</span></label>
+                                <input type="date" id="editFechaFactura" class="form-input">
                             </div>
                             <div class="form-group">
                                 <label for="editNumeroFactura">Número de Factura</label>
                                 <input type="text" id="editNumeroFactura" class="form-input">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="editNumeroOrdenCompra">Número Orden de Compra</label>
+                                <input type="text" id="editNumeroOrdenCompra" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <!-- Empty space for alignment -->
                             </div>
                         </div>
                     </div>
@@ -838,6 +891,8 @@
                             <ul>
                                 <li>Fecha_Inicio</li>
                                 <li>Fecha_Termino</li>
+                                <li>Duracion (días) - <em>opcional</em></li>
+                                <li>Fecha_Factura - <em>opcional</em></li>
                             </ul>
 
                             <h5>👤 Cliente:</h5>
@@ -886,10 +941,10 @@
 
                     <h4>💡 Formato esperado CSV:</h4>
                     <div style="background: #f5f5f5; padding: 10px; border-radius: 5px; margin: 10px 0;">
-                        <code style="font-size: 11px;">Id,Contrato,Cliente,fecha_inicio,fecha_término,Región,Ciudad,Estado,Monto,RUT_cliente,Tipo_cliente,
+                        <code style="font-size: 11px;">Id,Contrato,Cliente,fecha_inicio,fecha_término,duración(días),Región,Ciudad,Estado,Monto,RUT_cliente,Tipo_cliente,
                             Persona_contacto,Telefono_contacto,Correo_contacto,Superficie_terreno,Superficie_construida,
                             Tipo_obra_lista,EMS,Estudio_sismico,Estudio_Geoeléctrico,Topografía,Sondaje,Hidráulica/Hidrología,
-                            Descripción,Certificado_experiencia,Orden_compra,Contrato_existe,Factura,Numero_factura,
+                            Descripción,Certificado_experiencia,Orden_compra,Contrato_existe,Factura,fecha_factura,Numero_factura,
                             Numero_orden_compra,Link_documentos</code>
                     </div>
                 <h4>⚠️ Notas Importantes:</h4>

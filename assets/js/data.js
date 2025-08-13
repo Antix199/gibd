@@ -230,6 +230,7 @@ class DataManager {
                     cliente: recordData.cliente,
                     fecha_inicio: recordData.fecha_inicio,
                     fecha_termino: recordData.fecha_termino,
+                    duracion: recordData.duracion ? parseInt(recordData.duracion) : null,
                     region: recordData.region,
                     ciudad: recordData.ciudad,
                     estado: recordData.estado,
@@ -256,6 +257,7 @@ class DataManager {
                     orden_compra: recordData.orden_compra || false,
                     contrato_doc: recordData.contrato_doc || false,
                     factura: recordData.factura || false,
+                    fecha_factura: recordData.fecha_factura || null,
                     numero_factura: recordData.numero_factura || '',
                     numero_orden_compra: recordData.numero_orden_compra || '',
                     link_documentos: recordData.link_documentos || ''
@@ -366,6 +368,7 @@ class DataManager {
                 cliente: record.cliente,
                 fecha_inicio: record.fecha_inicio || null,
                 fecha_termino: record.fecha_termino || null,
+                duracion: record.duracion ? parseInt(record.duracion) : null,
                 region: record.region,
                 ciudad: record.ciudad,
                 estado: record.estado || 'Activo',
@@ -392,6 +395,7 @@ class DataManager {
                 orden_compra: record.orden_compra || false,
                 contrato_doc: record.contrato_doc || false,
                 factura: record.factura || false,
+                fecha_factura: record.fecha_factura || null,
                 numero_factura: record.numero_factura || '',
                 numero_orden_compra: record.numero_orden_compra || '',
                 link_documentos: record.link_documentos || ''

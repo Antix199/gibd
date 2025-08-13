@@ -22,6 +22,10 @@ class MainPage {
             fechaInicioHasta: '',
             fechaTerminoDesde: '',
             fechaTerminoHasta: '',
+            duracionDesde: '',
+            duracionHasta: '',
+            fechaFacturaDesde: '',
+            fechaFacturaHasta: '',
             montoDesde: '',
             montoHasta: '',
             // Información del cliente
@@ -126,6 +130,7 @@ class MainPage {
         const filterInputs = [
             'idFilter', 'contratoFilter', 'clienteFilter', 'ciudadFilter',
             'fechaInicioDesde', 'fechaInicioHasta', 'fechaTerminoDesde', 'fechaTerminoHasta',
+            'duracionDesde', 'duracionHasta', 'fechaFacturaDesde', 'fechaFacturaHasta',
             'montoDesde', 'montoHasta', 'superficieTerrenoDesde', 'superficieTerrenoHasta',
             'superficieConstruidaDesde', 'superficieConstruidaHasta',
             'rutClienteFilter', 'personaContactoFilter', 'telefonoContactoFilter',
@@ -202,6 +207,14 @@ class MainPage {
         this.currentFilters.fechaInicioHasta = document.getElementById('fechaInicioHasta')?.value || '';
         this.currentFilters.fechaTerminoDesde = document.getElementById('fechaTerminoDesde')?.value || '';
         this.currentFilters.fechaTerminoHasta = document.getElementById('fechaTerminoHasta')?.value || '';
+
+        // Filtros de duración
+        this.currentFilters.duracionDesde = document.getElementById('duracionDesde')?.value || '';
+        this.currentFilters.duracionHasta = document.getElementById('duracionHasta')?.value || '';
+
+        // Filtros de fecha de factura
+        this.currentFilters.fechaFacturaDesde = document.getElementById('fechaFacturaDesde')?.value || '';
+        this.currentFilters.fechaFacturaHasta = document.getElementById('fechaFacturaHasta')?.value || '';
 
         // Filtros de montos y superficies
         this.currentFilters.montoDesde = document.getElementById('montoDesde')?.value || '';
@@ -355,17 +368,53 @@ class MainPage {
         // Filtros de fecha de término
         if (this.currentFilters.fechaTerminoDesde || this.currentFilters.fechaTerminoHasta) {
             const fechaTermino = project.fecha_termino ? new Date(project.fecha_termino) : null;
-            
+
             if (this.currentFilters.fechaTerminoDesde) {
                 const fechaDesde = new Date(this.currentFilters.fechaTerminoDesde);
                 if (!fechaTermino || fechaTermino < fechaDesde) {
                     return false;
                 }
             }
-            
+
             if (this.currentFilters.fechaTerminoHasta) {
                 const fechaHasta = new Date(this.currentFilters.fechaTerminoHasta);
                 if (!fechaTermino || fechaTermino > fechaHasta) {
+                    return false;
+                }
+            }
+        }
+
+        // Filtros de duración
+        if (this.currentFilters.duracionDesde || this.currentFilters.duracionHasta) {
+            const duracion = project.duracion;
+
+            if (this.currentFilters.duracionDesde) {
+                if (!duracion || duracion < parseInt(this.currentFilters.duracionDesde)) {
+                    return false;
+                }
+            }
+
+            if (this.currentFilters.duracionHasta) {
+                if (!duracion || duracion > parseInt(this.currentFilters.duracionHasta)) {
+                    return false;
+                }
+            }
+        }
+
+        // Filtros de fecha de factura
+        if (this.currentFilters.fechaFacturaDesde || this.currentFilters.fechaFacturaHasta) {
+            const fechaFactura = project.fecha_factura ? new Date(project.fecha_factura) : null;
+
+            if (this.currentFilters.fechaFacturaDesde) {
+                const fechaDesde = new Date(this.currentFilters.fechaFacturaDesde);
+                if (!fechaFactura || fechaFactura < fechaDesde) {
+                    return false;
+                }
+            }
+
+            if (this.currentFilters.fechaFacturaHasta) {
+                const fechaHasta = new Date(this.currentFilters.fechaFacturaHasta);
+                if (!fechaFactura || fechaFactura > fechaHasta) {
                     return false;
                 }
             }
@@ -623,6 +672,7 @@ class MainPage {
                 <td class="long-text">${project.cliente || 'N/A'}</td>
                 <td>${this.formatDate(project.fecha_inicio)}</td>
                 <td>${this.formatDate(project.fecha_termino)}</td>
+                <td>${project.duracion !== null && project.duracion !== undefined ? project.duracion : '-'}</td>
                 <td>${project.region || 'N/A'}</td>
                 <td>${project.ciudad || 'N/A'}</td>
                 <td><span class="status-badge status-${(project.estado || 'pendiente').toLowerCase()}">${project.estado || 'Pendiente'}</span></td>
@@ -646,6 +696,7 @@ class MainPage {
                 <td>${project.orden_compra ? '✓' : '✗'}</td>
                 <td>${project.contrato_doc ? '✓' : '✗'}</td>
                 <td>${project.factura ? '✓' : '✗'}</td>
+                <td>${this.formatDate(project.fecha_factura)}</td>
                 <td>${project.numero_factura || 'N/A'}</td>
                 <td>${project.numero_orden_compra || 'N/A'}</td>
                 <td>${project.link_documentos && project.link_documentos.trim() !== '' ? `<a href="${project.link_documentos}" target="_blank" rel="noopener noreferrer">Ver Documentos</a>` : 'N/A'}</td>
@@ -740,6 +791,7 @@ class MainPage {
             'searchInput', 'idFilter', 'contratoFilter', 'clienteFilter', 'estadoFilter',
             'regionFilter', 'ciudadFilter', 'tipoClienteFilter', 'tipoObraFilter',
             'fechaInicioDesde', 'fechaInicioHasta', 'fechaTerminoDesde', 'fechaTerminoHasta',
+            'duracionDesde', 'duracionHasta', 'fechaFacturaDesde', 'fechaFacturaHasta',
             'montoDesde', 'montoHasta', 'superficieTerrenoDesde', 'superficieTerrenoHasta',
             'superficieConstruidaDesde', 'superficieConstruidaHasta',
             'rutClienteFilter', 'personaContactoFilter', 'telefonoContactoFilter', 'correoContactoFilter',

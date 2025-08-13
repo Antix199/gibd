@@ -21,6 +21,10 @@ class ModifyDatabasePage {
             fechaInicioHasta: '',
             fechaTerminoDesde: '',
             fechaTerminoHasta: '',
+            duracionDesde: '',
+            duracionHasta: '',
+            fechaFacturaDesde: '',
+            fechaFacturaHasta: '',
             montoDesde: '',
             montoHasta: '',
             // Información del cliente
@@ -143,6 +147,7 @@ class ModifyDatabasePage {
         const filterInputs = [
             'quickIdFilter', 'quickContratoFilter', 'quickClienteFilter', 'quickCiudadFilter',
             'quickFechaInicioDesde', 'quickFechaInicioHasta', 'quickFechaTerminoDesde', 'quickFechaTerminoHasta',
+            'quickDuracionDesde', 'quickDuracionHasta', 'quickFechaFacturaDesde', 'quickFechaFacturaHasta',
             'quickMontoDesde', 'quickMontoHasta', 'quickSuperficieTerrenoDesde', 'quickSuperficieTerrenoHasta',
             'quickSuperficieConstruidaDesde', 'quickSuperficieConstruidaHasta',
             'quickRutClienteFilter', 'quickPersonaContactoFilter', 'quickTelefonoContactoFilter',
@@ -231,6 +236,14 @@ class ModifyDatabasePage {
         this.currentFilters.fechaInicioHasta = document.getElementById('quickFechaInicioHasta')?.value || '';
         this.currentFilters.fechaTerminoDesde = document.getElementById('quickFechaTerminoDesde')?.value || '';
         this.currentFilters.fechaTerminoHasta = document.getElementById('quickFechaTerminoHasta')?.value || '';
+
+        // Filtros de duración
+        this.currentFilters.duracionDesde = document.getElementById('quickDuracionDesde')?.value || '';
+        this.currentFilters.duracionHasta = document.getElementById('quickDuracionHasta')?.value || '';
+
+        // Filtros de fecha de factura
+        this.currentFilters.fechaFacturaDesde = document.getElementById('quickFechaFacturaDesde')?.value || '';
+        this.currentFilters.fechaFacturaHasta = document.getElementById('quickFechaFacturaHasta')?.value || '';
 
         // Filtros de monto
         this.currentFilters.montoDesde = document.getElementById('quickMontoDesde')?.value || '';
@@ -322,6 +335,7 @@ class ModifyDatabasePage {
                 // Fechas (opcional)
                 fecha_inicio: data.recordFechaInicio || null,
                 fecha_termino: data.recordFechaTermino || null,
+                duracion: (data.recordDuracion && data.recordDuracion.trim() !== '') ? parseInt(data.recordDuracion) : null,
 
                 // Información del cliente (opcional)
                 rut_cliente: data.recordRutCliente || null,
@@ -350,6 +364,7 @@ class ModifyDatabasePage {
                 factura: data.recordFactura === 'on' || false,
 
                 // Números de documentos (opcional)
+                fecha_factura: (data.recordFechaFactura && data.recordFechaFactura.trim() !== '') ? data.recordFechaFactura : null,
                 numero_orden_compra: data.recordNumeroOrdenCompra || '',
                 numero_factura: data.recordNumeroFactura || '',
 
@@ -544,8 +559,9 @@ class ModifyDatabasePage {
                 // Obtener valores de fecha antes de parsear
                 const fechaInicioRaw = this.getCSVValue(row, ['fecha_inicio', 'Fecha_Inicio', 'fecha inicio', 'start_date', 'Start Date']);
                 const fechaTerminoRaw = this.getCSVValue(row, ['fecha_termino', 'fecha_término', 'Fecha_Termino', 'Fecha_Término', 'fecha termino', 'end_date', 'End Date']);
+                const fechaFacturaRaw = this.getCSVValue(row, ['fecha_factura', 'Fecha_Factura', 'fecha factura', 'invoice_date', 'Invoice Date']);
 
-                console.log(`Proyecto ID ${idValue}: fecha_inicio raw = "${fechaInicioRaw}", fecha_termino raw = "${fechaTerminoRaw}"`);
+                console.log(`Proyecto ID ${idValue}: fecha_inicio raw = "${fechaInicioRaw}", fecha_termino raw = "${fechaTerminoRaw}", fecha_factura raw = "${fechaFacturaRaw}"`);
 
                 const proyecto = {
                     id: idValue ? parseInt(idValue) : null,
@@ -553,6 +569,7 @@ class ModifyDatabasePage {
                     cliente: this.getCSVValue(row, ['cliente', 'Cliente', 'client', 'Client']),
                     fecha_inicio: this.parseDate(fechaInicioRaw),
                     fecha_termino: this.parseDate(fechaTerminoRaw),
+                    duracion: this.parseNumeric(this.getCSVValue(row, ['duracion', 'duración', 'Duracion', 'Duración', 'duration', 'Duration'])),
                     region: this.getCSVValue(row, ['region', 'Region', 'región', 'Región']),
                     ciudad: this.getCSVValue(row, ['ciudad', 'Ciudad', 'city', 'City']),
                     estado: this.mapEstado(this.getCSVValue(row, ['estado', 'Estado', 'status', 'Status'])),
@@ -579,6 +596,7 @@ class ModifyDatabasePage {
                     orden_compra: this.parseBoolean(this.getCSVValue(row, ['Orden_compra', 'orden_compra', 'Orden Compra'])),
                     contrato_doc: this.parseBoolean(this.getCSVValue(row, ['Contrato_existe', 'contrato_existe', 'Contrato Existe', 'Contrato'])),
                     factura: this.parseBoolean(this.getCSVValue(row, ['Factura', 'factura'])),
+                    fecha_factura: this.parseDate(fechaFacturaRaw),
                     numero_factura: this.getCSVValue(row, ['Numero_factura', 'numero_factura', 'Número Factura']),
                     numero_orden_compra: this.getCSVValue(row, ['Numero_orden_compra', 'numero_orden_compra', 'Número Orden Compra']),
                     link_documentos: this.getCSVValue(row, ['Link_documentos', 'link_documentos', 'Link Documentos'])
@@ -729,6 +747,28 @@ class ModifyDatabasePage {
         return validStates.includes(capitalizedState) ? capitalizedState : 'Activo';
     }
 
+    parseNumeric(numericString) {
+        // Parsea valores numéricos (enteros o decimales)
+        if (!numericString ||
+            numericString.toString().trim() === '' ||
+            numericString.toString().toLowerCase() === 'null' ||
+            numericString.toString().toLowerCase() === 'undefined') {
+            return null;
+        }
+
+        try {
+            const cleanValue = numericString.toString().replace(/[^\d.-]/g, '');
+            if (cleanValue === '' || cleanValue === '-') {
+                return null;
+            }
+            const parsed = parseFloat(cleanValue);
+            return isNaN(parsed) ? null : (cleanValue.includes('.') ? parsed : parseInt(cleanValue));
+        } catch (error) {
+            console.warn('Error parsing numeric value:', numericString, error);
+            return null;
+        }
+    }
+
     parseMonto(montoString) {
         // Parsea diferentes formatos de monto
         if (!montoString) return 0;
@@ -820,6 +860,7 @@ class ModifyDatabasePage {
                 <td class="long-text">${record.cliente}</td>
                 <td>${record.fecha_inicio ? formatDate(record.fecha_inicio) : '-'}</td>
                 <td>${record.fecha_termino ? formatDate(record.fecha_termino) : '-'}</td>
+                <td>${record.duracion !== null && record.duracion !== undefined ? record.duracion : '-'}</td>
                 <td>${record.region}</td>
                 <td>${record.ciudad}</td>
                 <td>
@@ -847,6 +888,7 @@ class ModifyDatabasePage {
                 <td>${record.orden_compra ? '✓' : '✗'}</td>
                 <td>${record.contrato_doc ? '✓' : '✗'}</td>
                 <td>${record.factura ? '✓' : '✗'}</td>
+                <td>${record.fecha_factura ? formatDate(record.fecha_factura) : '-'}</td>
                 <td>${record.numero_factura || 'N/A'}</td>
                 <td>${record.numero_orden_compra || 'N/A'}</td>
                 <td>${record.link_documentos && record.link_documentos.trim() !== '' ? `<a href="${record.link_documentos}" target="_blank" rel="noopener noreferrer">Ver Documentos</a>` : 'N/A'}</td>
@@ -903,6 +945,7 @@ class ModifyDatabasePage {
             document.getElementById('editCliente').value = record.cliente || '';
             document.getElementById('editFechaInicio').value = record.fecha_inicio ? formatDate(record.fecha_inicio) : '';
             document.getElementById('editFechaTermino').value = record.fecha_termino ? formatDate(record.fecha_termino) : '';
+            document.getElementById('editDuracion').value = record.duracion !== null && record.duracion !== undefined ? record.duracion : '';
             document.getElementById('editRegion').value = record.region || '';
             document.getElementById('editCiudad').value = record.ciudad || '';
             document.getElementById('editEstado').value = record.estado || 'Activo';
@@ -935,6 +978,7 @@ class ModifyDatabasePage {
             document.getElementById('editFactura').checked = record.factura || false;
 
             // Números de documentos
+            document.getElementById('editFechaFactura').value = record.fecha_factura ? formatDate(record.fecha_factura) : '';
             document.getElementById('editNumeroOrdenCompra').value = record.numero_orden_compra || '';
             document.getElementById('editNumeroFactura').value = record.numero_factura || '';
 
@@ -974,8 +1018,9 @@ class ModifyDatabasePage {
                 // Información básica
                 contrato: document.getElementById('editContrato').value,
                 cliente: document.getElementById('editCliente').value,
-                fecha_inicio: document.getElementById('editFechaInicio').value,
-                fecha_termino: document.getElementById('editFechaTermino').value,
+                fecha_inicio: document.getElementById('editFechaInicio').value || null,
+                fecha_termino: document.getElementById('editFechaTermino').value || null,
+                duracion: document.getElementById('editDuracion').value ? parseInt(document.getElementById('editDuracion').value) : null,
                 region: document.getElementById('editRegion').value,
                 ciudad: document.getElementById('editCiudad').value,
                 estado: document.getElementById('editEstado').value,
@@ -1008,6 +1053,7 @@ class ModifyDatabasePage {
                 factura: document.getElementById('editFactura').checked,
 
                 // Números de documentos
+                fecha_factura: document.getElementById('editFechaFactura').value || null,
                 numero_orden_compra: document.getElementById('editNumeroOrdenCompra').value,
                 numero_factura: document.getElementById('editNumeroFactura').value,
 
@@ -1163,6 +1209,42 @@ class ModifyDatabasePage {
             if (this.currentFilters.fechaTerminoHasta) {
                 const fechaHasta = new Date(this.currentFilters.fechaTerminoHasta);
                 if (!fechaTermino || fechaTermino > fechaHasta) {
+                    return false;
+                }
+            }
+        }
+
+        // Filtros de duración
+        if (this.currentFilters.duracionDesde || this.currentFilters.duracionHasta) {
+            const duracion = record.duracion;
+
+            if (this.currentFilters.duracionDesde) {
+                if (!duracion || duracion < parseInt(this.currentFilters.duracionDesde)) {
+                    return false;
+                }
+            }
+
+            if (this.currentFilters.duracionHasta) {
+                if (!duracion || duracion > parseInt(this.currentFilters.duracionHasta)) {
+                    return false;
+                }
+            }
+        }
+
+        // Filtros de fecha de factura
+        if (this.currentFilters.fechaFacturaDesde || this.currentFilters.fechaFacturaHasta) {
+            const fechaFactura = record.fecha_factura ? new Date(record.fecha_factura) : null;
+
+            if (this.currentFilters.fechaFacturaDesde) {
+                const fechaDesde = new Date(this.currentFilters.fechaFacturaDesde);
+                if (!fechaFactura || fechaFactura < fechaDesde) {
+                    return false;
+                }
+            }
+
+            if (this.currentFilters.fechaFacturaHasta) {
+                const fechaHasta = new Date(this.currentFilters.fechaFacturaHasta);
+                if (!fechaFactura || fechaFactura > fechaHasta) {
                     return false;
                 }
             }
@@ -1415,6 +1497,7 @@ class ModifyDatabasePage {
                 <td class="long-text">${record.cliente}</td>
                 <td>${record.fecha_inicio ? formatDate(record.fecha_inicio) : '-'}</td>
                 <td>${record.fecha_termino ? formatDate(record.fecha_termino) : '-'}</td>
+                <td>${record.duracion || 'N/A'}</td>
                 <td>${record.region}</td>
                 <td>${record.ciudad}</td>
                 <td>
@@ -1442,6 +1525,7 @@ class ModifyDatabasePage {
                 <td>${record.orden_compra ? '✓' : '✗'}</td>
                 <td>${record.contrato_doc ? '✓' : '✗'}</td>
                 <td>${record.factura ? '✓' : '✗'}</td>
+                <td>${record.fecha_factura ? formatDate(record.fecha_factura) : 'N/A'}</td>
                 <td>${record.numero_factura || 'N/A'}</td>
                 <td>${record.numero_orden_compra || 'N/A'}</td>
                 <td>${record.link_documentos && record.link_documentos.trim() !== '' ? `<a href="${record.link_documentos}" target="_blank" rel="noopener noreferrer">Ver Documentos</a>` : 'N/A'}</td>
@@ -1472,6 +1556,7 @@ class ModifyDatabasePage {
             'quickSearchFilter', 'quickIdFilter', 'quickContratoFilter', 'quickClienteFilter', 'quickEstadoFilter',
             'quickRegionFilter', 'quickCiudadFilter', 'quickTipoClienteFilter', 'quickTipoObraFilter',
             'quickFechaInicioDesde', 'quickFechaInicioHasta', 'quickFechaTerminoDesde', 'quickFechaTerminoHasta',
+            'quickDuracionDesde', 'quickDuracionHasta', 'quickFechaFacturaDesde', 'quickFechaFacturaHasta',
             'quickMontoDesde', 'quickMontoHasta', 'quickSuperficieTerrenoDesde', 'quickSuperficieTerrenoHasta',
             'quickSuperficieConstruidaDesde', 'quickSuperficieConstruidaHasta',
             'quickRutClienteFilter', 'quickPersonaContactoFilter', 'quickTelefonoContactoFilter', 'quickCorreoContactoFilter',
