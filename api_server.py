@@ -9,6 +9,7 @@ from flask_cors import CORS
 import logging
 import sys
 import os
+import platform
 from datetime import datetime
 import json
 import secrets
@@ -22,10 +23,21 @@ from models.proyecto import Proyecto, STATUS_OPTIONS
 from db.conexion import test_mongodb_connection
 
 # Configurar logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
+if getattr(sys, 'frozen', False):
+    # Ejecutable: logging más simple sin colores
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(levelname)s: %(message)s'
+    )
+    # Desactivar logs de werkzeug en ejecutables
+    logging.getLogger('werkzeug').setLevel(logging.WARNING)
+else:
+    # Desarrollo: logging completo
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    )
+
 logger = logging.getLogger(__name__)
 
 # Crear aplicación Flask
@@ -856,10 +868,28 @@ def main():
         logger.info("   🔧 API: http://localhost:5003/api/")
         logger.info("   📊 Health Check: http://localhost:5003/api/health")
 
+        # Abrir navegador automáticamente en ejecutables
+        if getattr(sys, 'frozen', False):
+            # Estamos ejecutando desde un ejecutable
+            import threading
+            import webbrowser
+            import time
+
+            def open_browser():
+                time.sleep(2)  # Esperar a que el servidor inicie
+                try:
+                    webbrowser.open('http://localhost:5003')
+                    logger.info("🌐 Navegador abierto automáticamente")
+                except Exception as e:
+                    logger.warning(f"No se pudo abrir el navegador: {e}")
+
+            # Abrir navegador en hilo separado
+            threading.Thread(target=open_browser, daemon=True).start()
+
         app.run(
             host='0.0.0.0',
             port=5003,
-            debug=True,
+            debug=False if getattr(sys, 'frozen', False) else True,  # Sin debug en ejecutables
             use_reloader=False  # Evitar problemas con imports
         )
 

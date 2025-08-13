@@ -108,7 +108,7 @@ def build_executable(target_platform=None):
         'api_server.py'
     ]
 
-    # Agregar directorios solo si existen
+    # Agregar directorios y archivos necesarios
     if os.path.exists('assets'):
         if platform_name == 'windows':
             args.append('--add-data=assets;assets')
@@ -126,6 +126,15 @@ def build_executable(target_platform=None):
             args.append('--add-data=static;static')
         else:
             args.append('--add-data=static:static')
+
+    # Agregar archivos HTML individuales
+    html_files = ['index.html', 'login.html', 'reader.html', 'modify-database.html']
+    for html_file in html_files:
+        if os.path.exists(html_file):
+            if platform_name == 'windows':
+                args.append(f'--add-data={html_file};.')
+            else:
+                args.append(f'--add-data={html_file}:.')
     
     # Configuración específica por plataforma
     if platform_name == 'windows':
