@@ -18,13 +18,13 @@ jobs:
         include:
           - os: ubuntu-latest
             platform: linux
-            executable: GIBD
+            executable: GlaciarIng
           - os: macos-latest
             platform: mac
-            executable: GIBD
+            executable: GlaciarIng
           - os: windows-latest
             platform: windows
-            executable: GIBD.exe
+            executable: GlaciarIng.exe
 
     steps:
     - name: Checkout code
@@ -63,7 +63,7 @@ jobs:
     - name: Set executable permissions (Linux/Mac)
       if: matrix.platform != 'windows'
       run: |
-        chmod +x dist/${{ matrix.platform }}/GIBD
+        chmod +x dist/${{ matrix.platform }}/GlaciarIng
         ls -la dist/${{ matrix.platform }}/
 
     - name: Create release archive
@@ -71,12 +71,12 @@ jobs:
         cd dist/${{ matrix.platform }}
         if [ "${{ matrix.platform }}" = "mac" ] || [ "${{ matrix.platform }}" = "windows" ]; then
           if [ "${{ matrix.platform }}" = "windows" ]; then
-            zip -r ../../GIBD-${{ matrix.platform }}.zip GIBD.exe
+            zip -r ../../GlaciarIng-${{ matrix.platform }}.zip GlaciarIng.exe
           else
-            zip -r ../../GIBD-${{ matrix.platform }}.zip GIBD
+            zip -r ../../GlaciarIng-${{ matrix.platform }}.zip GlaciarIng
           fi
         else
-          tar -czf ../../GIBD-${{ matrix.platform }}.tar.gz GIBD
+          tar -czf ../../GlaciarIng-${{ matrix.platform }}.tar.gz GlaciarIng
         fi
         cd ../..
       shell: bash
@@ -84,9 +84,9 @@ jobs:
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: GIBD-${{ matrix.platform }}
+        name: GlaciarIng-${{ matrix.platform }}
         path: |
-          GIBD-${{ matrix.platform }}.*
+          GlaciarIng-${{ matrix.platform }}.*
         retention-days: 30
 
   release:
@@ -102,9 +102,8 @@ jobs:
       uses: softprops/action-gh-release@v2
       with:
         files: |
-          GIBD-linux/GIBD-linux.tar.gz
-          GIBD-mac/GIBD-mac.zip
-          GIBD-windows/GIBD-windows.zip
+          GlaciarIng-linux/GlaciarIng-linux.tar.gz
+          GlaciarIng-mac/GlaciarIng-mac.zip
         draft: false
         prerelease: false
         generate_release_notes: true

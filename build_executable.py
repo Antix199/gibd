@@ -78,7 +78,7 @@ def build_executable(target_system=None):
     args = [
         'api_server.py',
         '--onefile',
-        '--name=GIBD',
+        '--name=GlaciarIng',
         '--add-data=assets:assets',
         '--add-data=*.html:.',
         '--hidden-import=pymongo',

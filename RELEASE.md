@@ -20,15 +20,15 @@ git push origin v1.0.0
 ## Descargas
 
 Los ejecutables se generan automáticamente para:
-- **Linux**: `GIBD-linux.tar.gz`
-- **macOS**: `GIBD-mac.zip`
-- **Windows**: `GIBD-windows.zip`
+- **Linux**: `GlaciarIng-linux.tar.gz`
+- **macOS**: `GlaciarIng-mac.zip`
+- **Windows**: `GlaciarIng-windows.zip`
 
 ## Estructura de archivos
 
 ```
 releases/
-├── GIBD-linux.tar.gz    # Ejecutable para Linux
-├── GIBD-mac.zip         # Ejecutable para macOS
-└── GIBD-windows.zip     # Ejecutable para Windows
+├── GlaciarIng-linux.tar.gz    # Ejecutable para Linux
+├── GlaciarIng-mac.zip         # Ejecutable para macOS
+└── GlaciarIng-windows.zip     # Ejecutable para Windows
 ```

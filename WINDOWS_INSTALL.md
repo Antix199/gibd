@@ -1,4 +1,4 @@
-# 🪟 GIBD para Windows
+# 🪟 GlaciarIng para Windows
 
 ## 📦 Instalación
 
@@ -12,16 +12,16 @@
 
 1. **Descargar el Ejecutable**
    - Ve a la página de [Releases](https://github.com/tu-usuario/glaciaring/releases)
-   - Descarga `GIBD-windows.zip`
+   - Descarga `GlaciarIng-windows.zip`
 
 2. **Extraer el Archivo**
-   - Haz clic derecho en `GIBD-windows.zip`
+   - Haz clic derecho en `GlaciarIng-windows.zip`
    - Selecciona "Extraer todo..."
-   - Elige una carpeta de destino (ej: `C:\GIBD\`)
+   - Elige una carpeta de destino (ej: `C:\GlaciarIng\`)
 
 3. **Ejecutar la Aplicación**
    - Navega a la carpeta extraída
-   - Doble clic en `GIBD.exe`
+   - Doble clic en `GlaciarIng.exe`
 
 ## 🛡️ Seguridad de Windows
 
@@ -37,7 +37,7 @@ Si Windows Defender bloquea la aplicación:
    - Ir a "Protección contra virus y amenazas"
    - Clic en "Administrar configuración" bajo "Configuración de protección contra virus y amenazas"
    - Clic en "Agregar o quitar exclusiones"
-   - Agregar la carpeta de GIBD
+   - Agregar la carpeta de GlaciarIng
 
 ### SmartScreen
 Si aparece SmartScreen:
@@ -48,7 +48,7 @@ Si aparece SmartScreen:
 
 ### Primera Ejecución
 1. **Ejecutar como Administrador** (recomendado):
-   - Clic derecho en `GIBD.exe`
+   - Clic derecho en `GlaciarIng.exe`
    - Seleccionar "Ejecutar como administrador"
 
 2. **Configuración Inicial**:
@@ -56,7 +56,7 @@ Si aparece SmartScreen:
    - URL: `http://localhost:5000`
 
 ### Uso Normal
-- Doble clic en `GIBD.exe`
+- Doble clic en `GlaciarIng.exe`
 - Esperar a que aparezca la ventana del navegador
 - ¡Listo para usar!
 
@@ -89,8 +89,8 @@ Si aparece SmartScreen:
 ## 📁 Estructura de Archivos
 
 ```
-GIBD/
-├── GIBD.exe                # Ejecutable principal
+GlaciarIng/
+├── GlaciarIng.exe          # Ejecutable principal
 ├── _internal/              # Archivos internos de Python
 ├── assets/                 # Recursos web (CSS, JS, imágenes)
 ├── models/                 # Modelos de datos
@@ -103,7 +103,7 @@ GIBD/
 
 ### Método Manual
 1. Descargar nueva versión
-2. Cerrar GIBD actual
+2. Cerrar GlaciarIng actual
 3. Reemplazar archivos
 4. Ejecutar nueva versión
 
@@ -125,9 +125,6 @@ Los logs se guardan en:
    - Versión de GlaciarIng
    - Mensaje de error completo
 
-   - Versión de GIBD
-   - Mensaje de error completo
-
 2. **Pasos para Reproducir**:
    - Qué estabas haciendo
    - Qué esperabas que pasara
@@ -141,7 +138,7 @@ Los logs se guardan en:
 ## 💡 Consejos
 
 ### Rendimiento
-- **Cerrar otras aplicaciones** pesadas mientras usas GIBD
+- **Cerrar otras aplicaciones** pesadas mientras usas GlaciarIng
 - **Usar SSD** para mejor rendimiento de base de datos
 - **8 GB RAM** o más para proyectos grandes
 
@@ -157,6 +154,6 @@ Los logs se guardan en:
 
 ## 🎉 ¡Listo!
 
-GIBD está ahora instalado y listo para usar en Windows.
+GlaciarIng está ahora instalado y listo para usar en Windows. 
 
 **¿Necesitas ayuda?** Consulta la documentación completa o contacta soporte.
