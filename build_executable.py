@@ -24,17 +24,17 @@ def get_platform():
 
 def install_dependencies():
     """Instala las dependencias necesarias"""
-    print("📦 Instalando dependencias...")
-    
+    print("Instalando dependencias...")
+
     # Instalar PyInstaller
     subprocess.run([sys.executable, '-m', 'pip', 'install', 'pyinstaller'], check=True)
-    
+
     # Instalar Pillow para iconos (especialmente Windows)
     try:
         subprocess.run([sys.executable, '-m', 'pip', 'install', 'Pillow'], check=True)
-        print("✅ Pillow instalado para conversión de iconos")
+        print("Pillow instalado para conversion de iconos")
     except subprocess.CalledProcessError:
-        print("⚠️ No se pudo instalar Pillow, usando icono PNG")
+        print("No se pudo instalar Pillow, usando icono PNG")
 
 def create_icon_for_platform(platform_name):
     """Crea el icono apropiado para cada plataforma"""
@@ -48,10 +48,10 @@ def create_icon_for_platform(platform_name):
             ico_path = 'assets/images/gibd.ico'
             sizes = [(16, 16), (32, 32), (48, 48), (64, 64), (128, 128), (256, 256)]
             img.save(ico_path, format='ICO', sizes=sizes)
-            print("✅ Icono ICO creado para Windows")
+            print("Icono ICO creado para Windows")
             return ico_path
         except Exception as e:
-            print(f"⚠️ No se pudo crear icono ICO: {e}")
+            print(f"No se pudo crear icono ICO: {e}")
             return icon_path
     
     elif platform_name == 'mac':
@@ -63,10 +63,10 @@ def create_icon_for_platform(platform_name):
                     'sips', '-s', 'format', 'icns', 
                     icon_path, '--out', icns_path
                 ], check=True)
-                print("✅ Icono ICNS creado para Mac")
+                print("Icono ICNS creado para Mac")
                 return icns_path
         except Exception as e:
-            print(f"⚠️ No se pudo crear icono ICNS: {e}")
+            print(f"No se pudo crear icono ICNS: {e}")
     
     # Usar PNG por defecto
     return icon_path
@@ -80,7 +80,7 @@ def build_executable(target_platform=None):
     else:
         platform_name = get_platform()
     
-    print(f"🚀 Construyendo GIBD para {platform_name}...")
+    print(f"Construyendo GIBD para {platform_name}...")
     
     # Limpiar directorios anteriores
     dist_dir = f"dist/{platform_name}"
@@ -102,14 +102,30 @@ def build_executable(target_platform=None):
         f'--icon={icon_path}',
         f'--distpath={dist_dir}',
         f'--workpath={build_dir}',
-        '--add-data=assets:assets',
-        '--add-data=templates:templates',
-        '--add-data=static:static',
         '--hidden-import=werkzeug.security',
         '--hidden-import=flask',
         '--hidden-import=sqlite3',
         'api_server.py'
     ]
+
+    # Agregar directorios solo si existen
+    if os.path.exists('assets'):
+        if platform_name == 'windows':
+            args.append('--add-data=assets;assets')
+        else:
+            args.append('--add-data=assets:assets')
+
+    if os.path.exists('templates'):
+        if platform_name == 'windows':
+            args.append('--add-data=templates;templates')
+        else:
+            args.append('--add-data=templates:templates')
+
+    if os.path.exists('static'):
+        if platform_name == 'windows':
+            args.append('--add-data=static;static')
+        else:
+            args.append('--add-data=static:static')
     
     # Configuración específica por plataforma
     if platform_name == 'windows':
@@ -117,12 +133,12 @@ def build_executable(target_platform=None):
     elif platform_name == 'mac':
         args.append('--windowed')  # Sin consola en Mac
     
-    print(f"📋 Ejecutando: {' '.join(args)}")
+    print(f"Ejecutando: {' '.join(args)}")
     
     # Ejecutar PyInstaller
     try:
         result = subprocess.run(args, check=True, capture_output=True, text=True)
-        print("✅ Construcción exitosa!")
+        print("Construccion exitosa!")
         
         # Verificar que el ejecutable se creó
         if platform_name == 'windows':
@@ -132,20 +148,20 @@ def build_executable(target_platform=None):
         
         if os.path.exists(executable_path):
             size = os.path.getsize(executable_path)
-            print(f"📁 Ejecutable creado: {executable_path} ({size // 1024 // 1024} MB)")
-            
+            print(f"Ejecutable creado: {executable_path} ({size // 1024 // 1024} MB)")
+
             # Dar permisos de ejecución en Unix
             if platform_name in ['linux', 'mac']:
                 os.chmod(executable_path, 0o755)
-                print("✅ Permisos de ejecución establecidos")
+                print("Permisos de ejecucion establecidos")
             
             return executable_path
         else:
-            print("❌ El ejecutable no se encontró después de la construcción")
+            print("El ejecutable no se encontro despues de la construccion")
             return None
             
     except subprocess.CalledProcessError as e:
-        print(f"❌ Error en la construcción: {e}")
+        print(f"Error en la construccion: {e}")
         if e.stdout:
             print("STDOUT:", e.stdout)
         if e.stderr:
@@ -155,7 +171,7 @@ def build_executable(target_platform=None):
 def create_archive(platform_name, executable_path):
     """Crea un archivo comprimido del ejecutable"""
     if not executable_path or not os.path.exists(executable_path):
-        print("❌ No se puede crear archivo: ejecutable no encontrado")
+        print("No se puede crear archivo: ejecutable no encontrado")
         return None
     
     dist_dir = os.path.dirname(executable_path)
@@ -167,7 +183,7 @@ def create_archive(platform_name, executable_path):
         import zipfile
         with zipfile.ZipFile(archive_name, 'w', zipfile.ZIP_DEFLATED) as zipf:
             zipf.write(executable_path, executable_name)
-        print(f"📦 Archivo ZIP creado: {archive_name}")
+        print(f"Archivo ZIP creado: {archive_name}")
         return archive_name
     
     else:
@@ -176,22 +192,22 @@ def create_archive(platform_name, executable_path):
         import tarfile
         with tarfile.open(archive_name, 'w:gz') as tar:
             tar.add(executable_path, arcname=executable_name)
-        print(f"📦 Archivo TAR.GZ creado: {archive_name}")
+        print(f"Archivo TAR.GZ creado: {archive_name}")
         return archive_name
 
 def main():
     """Función principal"""
-    print("🔨 GIBD - Constructor de Ejecutables")
+    print("GIBD - Constructor de Ejecutables")
     print("=" * 50)
     
     # Obtener plataforma objetivo de argumentos
     target_platform = None
     if len(sys.argv) > 1:
         target_platform = sys.argv[1]
-        print(f"🎯 Plataforma objetivo: {target_platform}")
+        print(f"Plataforma objetivo: {target_platform}")
     else:
         target_platform = get_platform()
-        print(f"🖥️ Plataforma detectada: {target_platform}")
+        print(f"Plataforma detectada: {target_platform}")
     
     try:
         # Instalar dependencias
@@ -205,17 +221,17 @@ def main():
             archive_path = create_archive(target_platform, executable_path)
             
             if archive_path:
-                print("\n🎉 ¡Construcción completada exitosamente!")
-                print(f"📁 Ejecutable: {executable_path}")
-                print(f"📦 Archivo: {archive_path}")
+                print("\nConstruccion completada exitosamente!")
+                print(f"Ejecutable: {executable_path}")
+                print(f"Archivo: {archive_path}")
             else:
-                print("\n⚠️ Ejecutable creado pero no se pudo archivar")
+                print("\nEjecutable creado pero no se pudo archivar")
         else:
-            print("\n❌ Falló la construcción del ejecutable")
+            print("\nFallo la construccion del ejecutable")
             sys.exit(1)
-            
+
     except Exception as e:
-        print(f"\n❌ Error general: {e}")
+        print(f"\nError general: {e}")
         sys.exit(1)
 
 if __name__ == "__main__":
